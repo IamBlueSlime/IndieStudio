@@ -1,0 +1,44 @@
+{
+  "code": "OOP_indie_studio_2018",
+  "name": "Indie Studio",
+  "owner": "jeremy.levilain@epitech.eu",
+  "collaborators": [
+    {
+      "email": "gwendal.dumail@epitech.eu",
+      "accept_debug": true
+    },
+    {
+      "email": "juel.marques-garcia@epitech.eu",
+      "accept_debug": true
+    },
+    {
+      "email": "guillaume.hector@epitech.eu",
+      "accept_debug": true
+    },
+    {
+      "email": "cohen.adam@epitech.eu",
+      "accept_debug": true
+    },
+    {
+      "email": "jonathan.bibas@epitech.eu",
+      "accept_debug": true
+    }
+  ],
+  "languages": [
+    "c++"
+  ],
+  "modules": [
+    {
+      "id": "post_email_trace",
+      "configuration": {}
+    },
+    {
+      "id": "build_cmake",
+      "configuration": {}
+    },
+    {
+      "id": "test_criterion",
+      "configuration": {}
+    }
+  ]
+}
