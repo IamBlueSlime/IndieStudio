@@ -10,6 +10,7 @@ add_compile_options(-Wall -Wextra -Werror)
 add_executable(bomberman
     src/Main.cpp
     src/Bootstraper.cpp
+    src/ecs/UUID.cpp
 )
 
 target_include_directories(bomberman PRIVATE include)
