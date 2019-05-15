@@ -12,6 +12,7 @@ add_executable(bomberman
     src/Bootstraper.cpp
     src/common/Registry.cpp
     src/ecs/Signature.cpp
+    src/ecs/UUID.cpp
 )
 
 target_include_directories(bomberman PRIVATE include)
