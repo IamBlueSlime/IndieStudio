@@ -20,18 +20,17 @@ namespace Ecs
             return getIndex<ToSearch, 0, Types...>();
         }
 
-        template<typename ToSearch, int idx, ToSearch, typename... Tail>
-        static int getIndex() {
-            return idx;
-        }
-
         template<typename ToSearch, int idx, typename Head, typename... Tail>
         static int getIndex() {
+            if (typeid(Head) == typeid(ToSearch)) {
+                return idx;
+            }
             return getIndex<ToSearch, idx + 1, Tail...>();
         }
 
         template<typename ToSearch, int idx>
         static int getIndex() {
+//            static_assert(idx != idx, "The type you are searching for is not in the TypeList! Are you using systems without appropriate components?\n")
             return -1;
         }
 
@@ -65,12 +64,7 @@ namespace Ecs
         using EntityType = Entity<components_types...>;
 
     public:
-        Manager() {
-            std::cout << "Length of typelist : " << Components::size << std::endl;
-            std::cout << "Index of string : " << Components::template getIndex<std::string>() << std::endl;
-            std::cout << "Index of bool : " << Components::template getIndex<bool>() << std::endl;
-            std::cout << "Index of int : " << Components::template getIndex<int>() << std::endl;
-        }
+        Manager() {}
         ~Manager() {}
 
         template<typename... components_searched>
@@ -79,6 +73,7 @@ namespace Ecs
             std::cout << mask << std::endl;
             TypeList<components_searched...>::forEach([&mask](auto component, int idx) {
                 int tmp = Components::template getIndex<typeof(component)>();
+                std::cout << "Found " << tmp << std::endl;
                 if (tmp != -1) {
                     mask[tmp] = true;
                 }
