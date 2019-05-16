@@ -1,0 +1,31 @@
+
+
+
+Un manager
+ - une liste de type (component) donné à la construction
+ - map d'entity (pas une unordered) (id => unique ptr entity)
+ - une fonction qui itère sur les entity qui matchent un certain bitset (a definir, peut etre plus opti d iterer sur les entity et regarder quel system match)
+
+Definir une entity (struct)
+ - Un UID
+ - Un UID parent  (peut etre à redefinir pour des raisons d opti)
+ - Pas de reference sur les enfants, no need
+ - son bitset (recalculé dès qu'il y a un component ajouté ou enlevé)
+ - tuple templaté sur tous les components possibles (type défini à la compilation, arg variadique tmtc)
+
+
+component : struct { /* ... */ }
+
+system : struct
+ - Une ref sur le manager
+ - Une lambda
+ - Une fonction process, qui call l'iterable templaté du manager sur les types qui l'interessent et call la lambda dessus
+
+
+ - List de ComponentTypes (pour generer le bitmask)
+ - bitmask (soit generé ici, soit généré dans les fonction templatées du manager (cf vidéo :) 9:19)
+ - lambda, la logique de jeu
+
+
+
+tuple<Vie, Ai, Position, Speed, ...> components
