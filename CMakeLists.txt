@@ -18,6 +18,8 @@ add_executable(bomberman
     src/world/WorldManager.cpp
     src/utils/ByteBufferUtils.cpp
     src/utils/CRCUtils.cpp
+    # TODO: remove this below
+    src/Base.cpp
 )
 
 target_include_directories(bomberman PRIVATE include)
