@@ -10,9 +10,14 @@ add_compile_options(-Wall -Wextra -Werror -g3)
 add_executable(bomberman
     src/Main.cpp
     src/Bootstraper.cpp
+    src/common/Logger.cpp
     src/common/Registry.cpp
     src/ecs/Signature.cpp
     src/ecs/UUID.cpp
+    src/world/World.cpp
+    src/world/WorldManager.cpp
+    src/utils/ByteBufferUtils.cpp
+    src/utils/CRCUtils.cpp
 )
 
 target_include_directories(bomberman PRIVATE include)

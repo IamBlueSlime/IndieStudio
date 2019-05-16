@@ -6,29 +6,20 @@
 */
 
 #include "indiestudio/ecs/Signature.hpp"
+#include "indiestudio/utils/ByteBufferUtils.hpp"
 
 namespace IndieStudio {
 
     template<>
     void Signature::packType<std::string>(const std::string &type, ByteBuffer &buffer)
     {
-        buffer << type.size();
-
-        for (const char &c : type)
-            buffer << c;
+        ByteBufferUtils::writeString(buffer, type);
     }
 
     template<>
     void Signature::unpackType<std::string>(std::string &type, ByteBuffer &buffer)
     {
-        std::size_t len;
-        buffer >> len;
-
-        for (std::size_t i = 0; i < len; i += 1) {
-            char c;
-            buffer >> c;
-            type += c;
-        }
+        type = ByteBufferUtils::readString(buffer);
     }
 
 }

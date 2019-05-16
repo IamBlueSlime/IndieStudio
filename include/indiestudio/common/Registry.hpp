@@ -18,7 +18,8 @@ namespace IndieStudio {
         ~Registry() = default;
 
         void add(K key, V value, bool overrideExisting = false);
-        bool remove(K key);
+        bool removeKey(K key);
+        bool removeValue(V &value);
         const V &get(K key) const;
 
         bool has(K key) const;

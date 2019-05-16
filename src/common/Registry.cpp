@@ -28,11 +28,24 @@ namespace IndieStudio {
     }
 
     template<typename K, typename V>
-    bool Registry<K, V>::remove(K key)
+    bool Registry<K, V>::removeKey(K key)
     {
         if (this->has(key)) {
             this->internal.erase(key);
             return true;
+        }
+
+        return false;
+    }
+
+    template<typename K, typename V>
+    bool Registry<K, V>::removeValue(V &value)
+    {
+        for (auto it = this->internal.begin(); it != this->internal.end(); ++it) {
+            if (&it.second == &value) {
+                this->removeKey(it.first);
+                return true;
+            }
         }
 
         return false;

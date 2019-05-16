@@ -33,10 +33,10 @@ namespace IndieStudio {
         MyComponent cpnt2 = { 0, 0, 0, "" };
         MyComponentSignature::unpack(cpnt2, a);
 
-        std::cout << cpnt.a << std::endl;
-        std::cout << cpnt.b << std::endl;
-        std::cout << cpnt.c << std::endl;
-        std::cout << cpnt.d << std::endl;
+        std::cout << cpnt2.a << std::endl;
+        std::cout << cpnt2.b << std::endl;
+        std::cout << cpnt2.c << std::endl;
+        std::cout << cpnt2.d << std::endl;
 
         return 0;
     }
