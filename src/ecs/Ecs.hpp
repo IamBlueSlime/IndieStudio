@@ -64,7 +64,22 @@ namespace Ecs
         using EntityType = Entity<components_types...>;
 
     public:
-        Manager() {}
+        Manager() {
+            EntityType test1;
+            test1.component_signature[0] = true;
+
+            EntityType test2;
+            test2.component_signature[2] = true;
+
+            EntityType test3;
+            test3.component_signature[0] = true;
+            test3.component_signature[1] = true;
+            test3.component_signature[2] = true;
+
+            this->entities[0] = test1;
+            this->entities[1] = test2;
+            this->entities[2] = test3;
+        }
         ~Manager() {}
 
         template<typename... components_searched>
@@ -82,11 +97,11 @@ namespace Ecs
         }
 
         template<typename... components_searched>
-        void forEntitiesWith(const std::function<void (EntityType&, std::size_t id)>) {
-            auto mask = generateMask<components_searched...>();
+        void forEntitiesWith(const std::function<void (EntityType&, std::size_t id)> func) {
+            const auto mask = generateMask<components_searched...>();
             for (auto entity : this->entities) {
-                std::cout << typeid(entity).name() << std::endl;
-                // TODO: check si la signature match et lance la lambda
+                if ((entity.second.component_signature & mask) == mask)
+                    func(entity.second, entity.first);
             }
         }
 
