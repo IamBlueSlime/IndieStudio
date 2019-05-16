@@ -16,12 +16,12 @@ namespace Ecs
         static constexpr auto size = sizeof...(Types);
 
         template<typename ToSearch>
-        static int getIndex() {
+        static constexpr int getIndex() {
             return getIndex<ToSearch, 0, Types...>();
         }
 
         template<typename ToSearch, int idx, typename Head, typename... Tail>
-        static int getIndex() {
+        static constexpr int getIndex() {
             if (typeid(Head) == typeid(ToSearch)) {
                 return idx;
             }
@@ -29,24 +29,24 @@ namespace Ecs
         }
 
         template<typename ToSearch, int idx>
-        static int getIndex() {
+        static constexpr int getIndex() {
 //            static_assert(idx != idx, "The type you are searching for is not in the TypeList! Are you using systems without appropriate components?\n")
             return -1;
         }
 
         template<typename Callable>
-        static void forEach(Callable func) {
+        static constexpr void forEach(Callable func) {
             forEach<Callable, 0, Types...>(func);
         }
 
         template<typename Callable, int idx, typename Head, typename... Tail>
-        static void forEach(Callable func) {
+        static constexpr void forEach(Callable func) {
             func(Head(), idx);
             forEach<Callable, idx + 1, Tail...>(func);
         }
 
         template<typename Callable, int idx>
-        static void forEach(Callable func) {
+        static constexpr void forEach(Callable func) {
         }
     };
 
@@ -68,9 +68,8 @@ namespace Ecs
         ~Manager() {}
 
         template<typename... components_searched>
-        void forEntitiesWith(const std::function<void (EntityType&, std::size_t id)>) {
+        constexpr std::bitset<Components::size> generateMask() {
             std::bitset<Components::size> mask;
-            std::cout << mask << std::endl;
             TypeList<components_searched...>::forEach([&mask](auto component, int idx) {
                 int tmp = Components::template getIndex<typeof(component)>();
                 std::cout << "Found " << tmp << std::endl;
@@ -78,8 +77,13 @@ namespace Ecs
                     mask[tmp] = true;
                 }
             });
-            std::cout << mask << std::endl;
-            // TODO: bitmask generated! But should be modified using a constexpr, this mask can be generated at compile time
+            std::cout << "Mask: " << mask << std::endl;
+            return mask;
+        }
+
+        template<typename... components_searched>
+        void forEntitiesWith(const std::function<void (EntityType&, std::size_t id)>) {
+            auto mask = generateMask<components_searched...>();
             for (auto entity : this->entities) {
                 std::cout << typeid(entity).name() << std::endl;
                 // TODO: check si la signature match et lance la lambda
