@@ -13,6 +13,8 @@ add_executable(bomberman
     src/common/Registry.cpp
     src/ecs/Signature.cpp
     src/ecs/UUID.cpp
+    # TODO: remove this below
+    src/Base.cpp
 )
 
 target_include_directories(bomberman PRIVATE include)

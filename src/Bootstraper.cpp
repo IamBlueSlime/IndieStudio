@@ -38,6 +38,8 @@ namespace IndieStudio {
         std::cout << cpnt.c << std::endl;
         std::cout << cpnt.d << std::endl;
 
+        test();
+
         return 0;
     }
 
