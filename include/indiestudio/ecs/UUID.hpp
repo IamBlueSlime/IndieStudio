@@ -5,15 +5,16 @@
 ** UUID
 */
 
-#ifndef UUID_HPP_
-#define UUID_HPP_
+#pragma once
 
 #include <string>
 #include <sstream>
 #include <time.h>
 #include <iostream>
 
-class UUID {
+namespace IndieStudio {
+
+	class UUID {
 	public:
 		UUID() = default;
 		inline UUID(const std::size_t id) { id_ = id; };
@@ -31,8 +32,8 @@ class UUID {
 	protected:
 	private:
         std::size_t id_;
-};
+	};
 
-std::ostream &operator<<(std::ostream &stream, const UUID &id);
+}
 
-#endif /* !UUID_HPP_ */
+std::ostream &operator<<(std::ostream &stream, const IndieStudio::UUID &id);
