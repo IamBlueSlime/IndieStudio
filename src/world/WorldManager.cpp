@@ -6,6 +6,7 @@
 */
 
 #include <exception>
+#include <iostream>
 #include <fstream>
 #include "indiestudio/world/WorldManager.hpp"
 #include "indiestudio/utils/CRCUtils.hpp"
@@ -13,15 +14,16 @@
 namespace IndieStudio {
 
     const unsigned char WorldManager::FILE_MAGIC[sizeof(World::FileHeader::magic)] =
-        { '\\', 'B', 'B', 'M' };
+        { '\\', 'B', 'M', 'M' };
     const unsigned char WorldManager::FILE_FORMAT_VERSION = 1;
 
-    WorldManager::WorldManager() : logger("WorldManager")
+    WorldManager::WorldManager() : logger("worldmanager")
     {}
 
     World WorldManager::load(const std::string &path)
     {
-        std::ifstream file(path, std::ios::binary);
+        logger.info("Loading world file '" + path + "'...");
+        std::ifstream file(path, std::ios::binary | std::ios::ate);
 
         if (!file.good())
             throw std::runtime_error("Failed to open the file");
@@ -39,12 +41,15 @@ namespace IndieStudio {
 
         World world;
         world.unpack(buffer);
+        logger.info("Loaded world '" + world.getSettings().name + "'.");
+
         return world;
     }
 
-    void WorldManager::save(const World &world)
+    void WorldManager::save(const std::string &path, const World &world)
     {
-        std::ofstream file(world.getSettings().name + ".bmm", std::ios::trunc);
+        logger.info("Saving world '" + world.getSettings().name + "' at '" + path + "'...");
+        std::ofstream file(path, std::ios::trunc);
 
         ByteBuffer buffer;
         world.pack(buffer);
@@ -58,24 +63,29 @@ namespace IndieStudio {
         file.write((char *) &header, sizeof(header));
         file.write(*buffer, header.size);
         file.close();
+
+        logger.info("Saved world.");
     }
 
     void WorldManager::assertValidWorld(ByteBuffer &buffer)
     {
-        if (buffer.getSize() < sizeof(World::FileHeader))
-            throw new std::logic_error("The provided file is not a Bomberman map");
-        
         World::FileHeader header;
+
+        std::cout << buffer.getSize() << std::endl;
+
+        if (buffer.getSize() < sizeof(header))
+            throw std::logic_error("The provided file is not a Bomberman map");
+        
         buffer >> header;
 
         if (std::memcmp(header.magic, FILE_MAGIC, sizeof(header.magic)) != 0)
-            throw new std::logic_error("The provided file is not a Bomberman map");
+            throw std::logic_error("The provided file is not a Bomberman map");
         
         if (header.formatVersion != FILE_FORMAT_VERSION)
-            throw new std::logic_error("The map was created with a different version and therefore is not compatible");
+            throw std::logic_error("The map was created with a different version and therefore is not compatible");
         
         if (buffer.getSize() - buffer.getReadCursor() != header.size)
-            throw new std::logic_error("The map size dosn't match the saved one");
+            throw std::logic_error("The map size dosn't match the saved one");
         
         void *payload = *buffer + sizeof(World::FileHeader);
 
@@ -83,7 +93,7 @@ namespace IndieStudio {
             CRCUtils::crc32(payload, header.size);
         
         if (computedChecksum != header.checksum)
-            throw new std::logic_error("The map checksum doesn't match");
+            throw std::logic_error("The map checksum doesn't match");
     }
 
 }

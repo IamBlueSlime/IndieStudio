@@ -8,6 +8,9 @@
 #include <iostream>
 #include "indiestudio/Bootstraper.hpp"
 #include "indiestudio/ecs/Signature.hpp"
+#include "indiestudio/mod/ModManager.hpp"
+#include "indiestudio/world/World.hpp"
+#include "indiestudio/world/WorldManager.hpp"
 
 namespace IndieStudio {
 
@@ -26,6 +29,8 @@ namespace IndieStudio {
         (void) ac;
         (void) av;
 
+        std::cout << std::endl << "== TEST SIGNATURE ==" << std::endl;
+
         MyComponent cpnt = { 3, true, 3.5, "hello world" };
         ByteBuffer a;
 
@@ -37,6 +42,22 @@ namespace IndieStudio {
         std::cout << cpnt2.b << std::endl;
         std::cout << cpnt2.c << std::endl;
         std::cout << cpnt2.d << std::endl;
+
+        std::cout << std::endl << "== TEST WORLD ==" << std::endl;
+
+        World w = World();
+        w.getSettings().name = "my_world";
+
+        WorldManager worldManager;
+        worldManager.save("my_world.bmm", w);
+
+        World w2 = worldManager.load("my_world.bmm");
+        std::cout << w2.getSettings().name << std::endl;
+
+        std::cout << std::endl << "== TEST MOD ==" << std::endl;
+
+        ModManager modManager;
+        modManager.reload("mods");
 
         test();
 

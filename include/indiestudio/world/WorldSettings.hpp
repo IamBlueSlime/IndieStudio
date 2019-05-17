@@ -18,13 +18,13 @@ namespace IndieStudio {
         /* ISerializable implementation */
         void pack(ByteBuffer &buffer) const override
         {
-            ByteBufferUtils::writeString(buffer, this->name);
+            ByteBufferUtils::writeString<unsigned short>(buffer, this->name);
         }
 
         void unpack(ByteBuffer &buffer) override
         {
-            this->name = ByteBufferUtils::readString(buffer);
+            this->name = ByteBufferUtils::readString<unsigned short>(buffer);
         }
-    };
+    } __attribute__((packed));
 
 }
