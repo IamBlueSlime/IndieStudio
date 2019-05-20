@@ -18,27 +18,35 @@ namespace IndieStudio {
         open(name);
     }
 
+    LibraryWrapper::~LibraryWrapper()
+    {
+        close();
+    }
+
     bool LibraryWrapper::open(const std::string &name)
     {
-        if (handle_ != nullptr)
+        if (this->handle != nullptr)
             close();
-        
-        name_ = name;
-        handle_ = dlopen(name.c_str(), RTLD_NOW);
-        return handle_ != nullptr;
+
+        this->name = name;
+#ifdef WIN32
+        this->handle = LoadLibrary(TEXT(name.c_str()));
+#else
+        this->handle = dlopen(name.c_str(), RTLD_NOW);
+#endif
+        return this->handle != nullptr;
     }
 
     void LibraryWrapper::close()
     {
-        if (handle_ == nullptr)
+        if (this->handle == nullptr)
             return;
-        
-        dlclose(handle_);
-        handle_ = nullptr;
-    }
 
-    const std::string &LibraryWrapper::getName() const
-    {
-        return name_;
+#ifdef WIN32
+        FreeLibrary(this->handle);
+#else
+        dlclose(this->handle);
+#endif
+        this->handle = nullptr;
     }
 }

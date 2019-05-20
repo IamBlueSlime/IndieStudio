@@ -8,7 +8,12 @@
 #pragma once
 
 #include <string>
+
+#ifdef WIN32
+#include <windows.h>
+#else
 #include <dlfcn.h>
+#endif
 
 namespace IndieStudio {
 
@@ -23,18 +28,22 @@ namespace IndieStudio {
         template<typename T>
         T getSymbol(const std::string &symbolName)
         {
-            if (handle_ == nullptr)
+            if (handle == nullptr)
                 return nullptr;
 
-            return static_cast<T>(dlsym(handle_, symbolName.c_str()));
+#ifdef WIN32
+            return static_cast<T>(GetProcAddress(handle, symbolName.c_str()));
+#else
+            return static_cast<T>(dlsym(handle, symbolName.c_str()));
+#endif
         }
 
-        const std::string &getName() const;
+        const std::string &getName() const { return this->name; }
 
     protected:
     private:
-        std::string name_;
-        void *handle_ = nullptr;
+        std::string name;
+        void *handle = nullptr;
     };
 
 }

@@ -24,4 +24,8 @@ add_executable(bomberman
 )
 
 target_include_directories(bomberman PRIVATE include)
-target_link_libraries(bomberman dl Irrlicht)
+target_link_libraries(bomberman Irrlicht)
+
+if (UNIX)
+    target_link_libraries(bomberman dl)
+endif ()
