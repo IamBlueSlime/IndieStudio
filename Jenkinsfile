@@ -18,7 +18,6 @@ pipeline {
     }
     post {
         always {
-            unstableIfFound 'Build failed'
             cobertura coberturaReportFile: '**/coverage.xml'
             junit '**/report.xml'
             archiveArtifacts artifacts: 'trace.txt'
