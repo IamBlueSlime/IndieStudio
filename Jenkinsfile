@@ -1,13 +1,3 @@
-import org.apache.commons.lang.StringUtils
-
-def unstableIfFound(String str) {
-    def logs = currentBuild.rawBuild.getLog(10000).join('\n')
-    int count = StringUtils.countMatches(logs, str);
-
-    if (count > occurrence -1)
-        currentBuild.result = 'UNSTABLE'
-}
-
 pipeline {
     agent { docker { image 'epitechcontent/epitest-docker' } }
     stages {
