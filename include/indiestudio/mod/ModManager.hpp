@@ -9,6 +9,7 @@
 
 #include <unordered_map>
 #include <string>
+#include <memory>
 #include <vector>
 #include "indiestudio/common/Logger.hpp"
 #include "indiestudio/mod/IMod.hpp"
