@@ -20,3 +20,4 @@ trace.txt
 cmake-*
 tmp*
 /build
+*.bmm

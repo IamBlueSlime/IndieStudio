@@ -28,7 +28,7 @@ namespace IndieStudio {
         void pack(ByteBuffer &buffer) const override;
         void unpack(ByteBuffer &buffer) override;
 
-        WorldSettings &getSettings() { return this->settings; };
+        WorldSettings &getSettings() { return this->settings; }
         const WorldSettings &getSettings() const { return this->settings; }
 
     protected:

@@ -14,13 +14,14 @@ add_executable(bomberman
     src/common/Registry.cpp
     src/ecs/Signature.cpp
     src/ecs/UUID.cpp
+    src/mod/LibraryWrapper.cpp
+    src/mod/ModManager.cpp
     src/world/World.cpp
     src/world/WorldManager.cpp
-    src/utils/ByteBufferUtils.cpp
     src/utils/CRCUtils.cpp
     # TODO: remove this below
     src/Base.cpp
 )
 
 target_include_directories(bomberman PRIVATE include)
-target_link_libraries(bomberman Irrlicht)
+target_link_libraries(bomberman dl Irrlicht)

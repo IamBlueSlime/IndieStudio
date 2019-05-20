@@ -21,7 +21,7 @@ namespace IndieStudio {
         WorldManager();
 
         World load(const std::string &path);
-        void save(const World &world);
+        void save(const std::string &path, const World &world);
 
     protected:
     private:

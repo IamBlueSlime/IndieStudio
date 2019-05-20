@@ -14,27 +14,18 @@ namespace IndieStudio {
 
     class Signature {
 	public:
-        template<typename U>
-        using pack_type = std::function<void(const U &, ByteBuffer &)>;
-
-        template<typename U>
-        using unpack_type = std::function<void(U &, ByteBuffer &)>;
-
-        template<typename U>
-        using pack_pair = std::pair<pack_type<U>, unpack_type<U>>;
-
-        template<typename T>
+        template<typename Component>
         struct of {
             template<typename ...Members>
             struct with {
-                static void pack(const T &object, ByteBuffer &buffer)
+                static void pack(const Component &object, ByteBuffer &buffer)
                 {
                     std::size_t delta = 0;
                     Signature::internalPack<Members...>(
                         static_cast<const void *>(&object), buffer, delta);
                 }
 
-                static void unpack(T &object, ByteBuffer &buffer)
+                static void unpack(Component &object, ByteBuffer &buffer)
                 {
                     std::size_t delta = 0;
                     Signature::internalUnpack<Members...>(
