@@ -10,6 +10,8 @@ set(Irrlicht_DIR "vendor/Irrlicht")
 include(FindIrrlicht)
 find_package(Irrlicht)
 include_directories(${Irrlicht_INCLUDE_DIRS})
+message("-- Found Irrlicht include directories: " ${Irrlicht_INCLUDE_DIRS})
+message("-- Found Irrlicht libraries: " ${Irrlicht_LIBRARIES})
 
 option(ENABLE_GAME "Enable build for the game" ON)
 option(ENABLE_MODS "Enable build for the mods" ON)
