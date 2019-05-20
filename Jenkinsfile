@@ -18,7 +18,10 @@ pipeline {
     }
     post {
         always {
-            cobertura coberturaReportFile: '**/coverage.xml'
+            cobertura (
+                coberturaReportFile: '**/coverage.xml',
+                failNoReports: false
+            )
             junit '**/report.xml'
             archiveArtifacts artifacts: 'trace.txt'
         }
