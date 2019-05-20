@@ -40,7 +40,7 @@ if (ENABLE_GAME)
     )
 
     target_include_directories(bomberman PRIVATE ${INDIE_INCLUDE_DIRS})
-    target_link_libraries(bomberman ${Irrlicht_LIBRARIES})
+    target_link_libraries(bomberman ${Irrlicht_LIBRARIES} stdc++fs)
 
     if (UNIX)
         target_link_libraries(bomberman dl)
