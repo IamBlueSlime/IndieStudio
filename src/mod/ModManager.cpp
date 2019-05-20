@@ -5,7 +5,7 @@
 ** mod ModManager.cpp
 */
 
-//#include <experimental/filesystem>
+#include <filesystem>
 #include <sstream>
 #include "indiestudio/mod/ModManager.hpp"
 
@@ -18,9 +18,9 @@ namespace IndieStudio {
     {
         logger.info("Searching for mods in the '" + path + "' folder...");
 
-        // if (std::experimental::filesystem::is_directory(path))
-        //     for (auto &path : std::experimental::filesystem::directory_iterator(path))
-        //         loadMod(path.path().string());
+        if (std::filesystem::is_directory(path))
+            for (auto &path : std::filesystem::directory_iterator(path))
+                loadMod(path.path().string());
 
         std::stringstream ss;
         ss << "Found " << mods.size() << " mod" <<
