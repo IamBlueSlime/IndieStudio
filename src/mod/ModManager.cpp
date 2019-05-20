@@ -5,7 +5,7 @@
 ** mod ModManager.cpp
 */
 
-#include <filesystem>
+//#include <experimental/filesystem>
 #include <sstream>
 #include "indiestudio/mod/ModManager.hpp"
 
@@ -18,9 +18,9 @@ namespace IndieStudio {
     {
         logger.info("Searching for mods in the '" + path + "' folder...");
 
-        if (std::filesystem::is_directory(path))
-            for (auto &path : std::filesystem::directory_iterator(path))
-                loadMod(path.path().string());
+        // if (std::experimental::filesystem::is_directory(path))
+        //     for (auto &path : std::experimental::filesystem::directory_iterator(path))
+        //         loadMod(path.path().string());
 
         std::stringstream ss;
         ss << "Found " << mods.size() << " mod" <<
@@ -50,7 +50,7 @@ namespace IndieStudio {
         modsLibraries.push_back(wrapper);
         IMod *mod = descriptor->entryPoint();
         mods.insert(std::make_pair(descriptor, UIMod(mod)));
-        
+
         logger.debug("Enabling mod '" + descriptor->name + "'.");
         mod->onEnable();
         logger.debug("Enabled mod '" + descriptor->name + "'.");
@@ -65,7 +65,7 @@ namespace IndieStudio {
 
         if (!wrapper.open(path)) {
             logger.error(dlerror());
-            throw std::runtime_error("Failed to load mod '" + path + "'");   
+            throw std::runtime_error("Failed to load mod '" + path + "'");
         }
 
         return wrapper;
