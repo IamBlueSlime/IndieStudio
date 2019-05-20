@@ -21,6 +21,7 @@ namespace IndieStudio {
     public:
         LibraryWrapper();
         LibraryWrapper(const std::string &name);
+        ~LibraryWrapper();
 
         bool open(const std::string &name);
         void close();
