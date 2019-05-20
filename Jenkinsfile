@@ -22,7 +22,10 @@ pipeline {
                 coberturaReportFile: '**/coverage.xml',
                 failNoReports: false
             )
-            junit '**/report.xml'
+            junit (
+                testResults: '**/report.xml',
+                allowEmptyResults: true
+            )
             archiveArtifacts artifacts: 'trace.txt'
         }
     }
