@@ -4,9 +4,11 @@ cmake_minimum_required(VERSION 3.11)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/mods)
+set(POSITION_INDEPENDENT_CODE ON)
 
 # Irrlicht support either for Linux and Windows
 set(Irrlicht_DIR "vendor/Irrlicht")
+set(Irrlicht_FIND_REQUIRED TRUE)
 include(FindIrrlicht)
 find_package(Irrlicht)
 include_directories(${Irrlicht_INCLUDE_DIRS})
@@ -16,12 +18,12 @@ message("-- Found Irrlicht libraries: " ${Irrlicht_LIBRARIES})
 option(ENABLE_GAME "Enable build for the game" ON)
 option(ENABLE_MODS "Enable build for the mods" ON)
 
-set(INDIE_INCLUDE_DIRS include)
+set(INDIE_API_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/api)
 
 if (ENABLE_GAME)
     project(bomberman VERSION 1.0.0 LANGUAGES CXX)
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
-    add_compile_options(-Wall -Wextra)
+    add_compile_options(-Wall -Wextra -g3)
 
     add_executable(bomberman
         src/Main.cpp
@@ -39,7 +41,8 @@ if (ENABLE_GAME)
         src/Base.cpp
     )
 
-    target_include_directories(bomberman PRIVATE ${INDIE_INCLUDE_DIRS})
+    target_include_directories(bomberman PRIVATE ${INDIE_API_INCLUDE_DIRS})
+    target_include_directories(bomberman PRIVATE include)
     target_link_libraries(bomberman ${Irrlicht_LIBRARIES} stdc++fs)
 
     if (UNIX)

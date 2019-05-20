@@ -7,26 +7,16 @@
 
 #pragma once
 
-#include <string>
+#include "indiestudio/common/ILogger.hpp"
 
 namespace IndieStudio {
 
-    class Logger {
+    class Logger : public ILogger {
     public:
         Logger(const std::string &name);
 
-        enum LogLevel {
-            DEBUG, INFO, WARNING, ERROR, CRITICAL
-        };
-
-        void log(LogLevel targetLevel, const std::string &message);
-        void debug(const std::string &message) { log(DEBUG, message); }
-        void info(const std::string &message) { log(INFO, message); }
-        void warning(const std::string &message) { log(WARNING, message); }
-        void error(const std::string &message) { log(ERROR, message); }
-        void critical(const std::string &message) { log(CRITICAL, message); }
-
-        void setLevel(LogLevel level);
+        void log(LogLevel targetLevel, const std::string &message) override;
+        void setLevel(LogLevel level) override;
 
     protected:
     private:

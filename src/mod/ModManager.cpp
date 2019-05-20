@@ -5,6 +5,7 @@
 ** mod ModManager.cpp
 */
 
+#include <iostream>
 #include <experimental/filesystem>
 #include <sstream>
 #include "indiestudio/mod/ModManager.hpp"
@@ -18,11 +19,16 @@ namespace IndieStudio {
 
     void ModManager::reload(const std::string &path)
     {
+        this->flush();
+
         logger.info("Searching for mods in the '" + path + "' folder...");
 
-        if (stdfs::is_directory(path))
-            for (auto &path : stdfs::directory_iterator(path))
-                loadMod(path.path().string());
+        if (stdfs::is_directory(path)) {
+            for (auto &fpath : stdfs::directory_iterator(path)) {
+                if (stdfs::is_regular_file(fpath))
+                    loadMod(fpath.path().string());
+            }
+        }
 
         std::stringstream ss;
         ss << "Found " << mods.size() << " mod" <<
@@ -30,11 +36,33 @@ namespace IndieStudio {
         logger.info(ss.str());
     }
 
+    void ModManager::flush()
+    {
+        for (auto it = this->mods.begin(); it != this->mods.end(); ++it)
+            it->second->onDisable();
+        
+        this->mods.clear();
+
+        for (LibraryWrapper &wrapper : this->modsLibraries)
+            wrapper.close();
+
+        this->modsLibraries.clear();
+    }
+
     void ModManager::loadMod(const std::string &path)
     {
-        LibraryWrapper wrapper = this->openLibrary(path);
-        IMod::Descriptor *descriptor =
-            wrapper.getSymbol<IMod::Descriptor *>("MOD_DESCRIPTOR");
+        LibraryWrapper wrapper;
+
+        try {
+            wrapper = this->openLibrary(path);
+        } catch (const std::runtime_error &e) {
+            this->logger.warning(e.what());
+            return;
+        }
+
+        this->logger.debug("Looking for descriptor...");
+        AMod::Descriptor *descriptor =
+            wrapper.getSymbol<AMod::Descriptor *>("MOD_DESCRIPTOR");
 
         if (descriptor == nullptr) {
             throw std::runtime_error(
@@ -50,8 +78,12 @@ namespace IndieStudio {
         }
 
         modsLibraries.push_back(wrapper);
-        IMod *mod = descriptor->entryPoint();
-        mods.insert(std::make_pair(descriptor, UIMod(mod)));
+
+        this->logger.debug("Instanciating mod...");
+        AMod *mod = descriptor->entryPoint();
+        std::unique_ptr<ILogger> modLogger = std::make_unique<Logger>(descriptor->id);
+        mod->setLogger(modLogger);
+        mods.insert(std::make_pair(descriptor, UAMod(mod)));
 
         logger.debug("Enabling mod '" + descriptor->name + "'.");
         mod->onEnable();
@@ -66,8 +98,14 @@ namespace IndieStudio {
         LibraryWrapper wrapper;
 
         if (!wrapper.open(path)) {
-            logger.error(dlerror());
-            throw std::runtime_error("Failed to load mod '" + path + "'");
+            std::stringstream ss;
+            ss << "Failed to load mod '" << path << "'";
+
+#ifndef WIN32
+            ss << " (" << dlerror() << ")";
+#endif
+
+            throw std::runtime_error(ss.str());
         }
 
         return wrapper;
