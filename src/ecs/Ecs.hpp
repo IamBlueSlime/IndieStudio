@@ -54,10 +54,10 @@ namespace Ecs {
         }
 
         template<typename... SystemTypes>
-        void run([[gnu::unused]] Systems<SystemTypes...> systems) {
-            auto tmp = SystemsImpl<typeof(*this), SystemTypes...>(*this);
+        void run([[gnu::unused]] Systems<SystemTypes...> tmp) {
+            auto systems = SystemsImpl<typeof(*this), SystemTypes...>(*this);
             while (true) {
-                tmp.process();
+                systems.process();
             }
         }
 
@@ -71,7 +71,7 @@ namespace Ecs {
         }
 
         // Delete the given entity from the manager
-        void delEntity(EntityType entity) {
+        void delEntity(EntityType &entity) {
             this->entities.erase(entity.id);
         }
 
@@ -156,6 +156,7 @@ namespace Ecs {
             return mask;
         }
 
+        // TODO: Tej cette merde
         void recomputeBitset(EntityType &entity) {
             Components::forEach([this, &entity](auto component, int idx) {
                 if (this->hasComponent<typeof(component)>(entity)) {
@@ -168,7 +169,6 @@ namespace Ecs {
         }
 
         std::map<std::size_t, EntityType> entities; //TODO entity en unique ptr! Possibilité d'en ajouter / retirer oklm
-        std::unique_ptr<ISyst> systems;
     };
 }
 

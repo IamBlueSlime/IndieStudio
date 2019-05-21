@@ -41,7 +41,7 @@ namespace Ecs {
 
         template<typename... SystemTypes>
         struct Systems : public ISyst {
-            virtual void process() override {}
+            void process() override {}
         };
 
         template<typename ManagerType, typename... SystemTypes>
