@@ -21,6 +21,10 @@ coverage:
 
 clean:
 			rm -Rf build
+			find . -name "*.gc*" -delete | true
+			find . -name "report.xml" -delete | true
+			find . -name "coverage.xml" -delete | true
+			find . -name "coverage-litteral.txt" -delete | true
 
 fclean:		clean
 			rm -f bomberman
