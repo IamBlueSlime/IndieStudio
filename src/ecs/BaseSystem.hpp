@@ -15,7 +15,6 @@
 #include <variant>
 
 #include "./TypeList.hpp"
-#include "./Components.hpp"
 #include "./Entity.hpp"
 
 namespace Ecs {
@@ -33,53 +32,6 @@ namespace Ecs {
             virtual ~BaseSystem() = default;
 
             virtual void process([[gnu::unused]] ManagerType &manager) {}
-        };
-
-        template<typename ManagerType>
-        struct System1 : public BaseSystem<ManagerType> {
-
-            void process(ManagerType &manager) override {
-                manager.template forEntitiesWith<Component1>(
-                    [&manager](auto &data, [[gnu::unused]] auto id) {
-                        auto &comp1 = manager.template getComponent<Component1>(data);
-
-                        std::cout << comp1.x << "x " << comp1.y << "y" << std::endl;
-                    }
-                );
-            }
-
-        };
-
-        template<typename ManagerType>
-        struct System2 : public BaseSystem<ManagerType> {
-
-            void process(ManagerType &manager) override {
-                manager.template forEntitiesWith<Component1, Component3>(
-                    [&manager](auto &data, [[gnu::unused]] auto id) {
-                        auto &comp1 = manager.template getComponent<Component1>(data);
-
-                        std::cout << comp1.x << "x " << comp1.y << "y" << std::endl;
-                    }
-                );
-            }
-
-        };
-
-        template<typename ManagerType>
-        struct System3 : public BaseSystem<ManagerType> {
-
-            void process(ManagerType &manager) override {
-                manager.template forEntitiesWith<Component1, Component2, Component3>(
-                    [&manager](auto &data, [[gnu::unused]] auto id) {
-                        auto &comp1 = manager.template getComponent<Component1>(data);
-                        auto &comp2 = manager.template getComponent<Component2>(data);
-
-                        std::cout << comp1.x << "x " << comp1.y << "y" << std::endl;
-                        std::cout << comp2.str << std::endl;
-                    }
-                );
-            }
-
         };
 
         struct ISyst {
