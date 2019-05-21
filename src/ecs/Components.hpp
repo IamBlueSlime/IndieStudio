@@ -10,23 +10,23 @@
 
 #include <string>
 
-namespace Ecs {
-    namespace Component {
-        struct Component1 {
-            int x;
-            int y;
-        };
+namespace Ecs::Component {
 
-        struct Component2 {
-            Component2(const std::string &str_ = "Default")
-            :
-            str(str_) {}
-            std::string str;
-        };
+    struct Component1 {
+        int x;
+        int y;
+    };
 
-        struct Component3 {
-        };
-    }
+    struct Component2 {
+        Component2(const std::string &str_ = "Default")
+        :
+        str(str_) {}
+        std::string str;
+    };
+
+    struct Component3 {
+    };
+
 }
 
 #endif /* !COMPONENTS_HPP_ */
