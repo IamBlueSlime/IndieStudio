@@ -22,6 +22,7 @@ set(INDIE_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/include)
 set(INDIE_SRC_DIR ${CMAKE_SOURCE_DIR}/src)
 set(INDIE_SRC
     ${INDIE_SRC_DIR}/Bootstraper.cpp
+    ${INDIE_SRC_DIR}/Game.cpp
     ${INDIE_SRC_DIR}/common/Logger.cpp
     ${INDIE_SRC_DIR}/common/Registry.cpp
     ${INDIE_SRC_DIR}/ecs/Signature.cpp
