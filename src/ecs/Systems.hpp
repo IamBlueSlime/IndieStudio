@@ -17,6 +17,7 @@ namespace Ecs::System {
 
     template<typename ManagerType>
     struct System1 : public BaseSystem<ManagerType> {
+
         void process(ManagerType &manager) override {
             manager.template forEntitiesWith<Component1>(
                 [&manager](auto &data, [[gnu::unused]] auto id) {
@@ -25,10 +26,12 @@ namespace Ecs::System {
                 }
             );
         }
+
     };
 
     template<typename ManagerType>
     struct System2 : public BaseSystem<ManagerType> {
+
         void process(ManagerType &manager) override {
             manager.template forEntitiesWith<Component1, Component3>(
                 [&manager](auto &data, [[gnu::unused]] auto id) {
@@ -37,10 +40,12 @@ namespace Ecs::System {
                 }
             );
         }
+
     };
 
     template<typename ManagerType>
     struct System3 : public BaseSystem<ManagerType> {
+
         void process(ManagerType &manager) override {
             manager.template forEntitiesWith<Component1, Component2, Component3>(
                 [&manager](auto &data, [[gnu::unused]] auto id) {
@@ -51,6 +56,7 @@ namespace Ecs::System {
                 }
             );
         }
+
     };
 }
 
