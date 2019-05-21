@@ -48,12 +48,14 @@ namespace IndieStudio {
         template<typename T>
         static void packType(const T &type, ByteBuffer &buffer)
         {
+            static_assert(std::is_fundamental<T>::value);
             buffer << type;
         }
 
         template<typename T>
         static void unpackType(T &type, ByteBuffer &buffer)
         {
+            static_assert(std::is_fundamental<T>::value);
             buffer >> type;
         }
 
