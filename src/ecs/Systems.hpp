@@ -11,47 +11,53 @@
 #include "./Components.hpp"
 #include "./BaseSystem.hpp"
 
-namespace Ecs {
+namespace Ecs::System {
 
-    template<typename... ComponentTypes>
-    class Manager;
+    using namespace Ecs::Component;
 
-    namespace System {
+    template<typename ManagerType>
+    struct System1 : public BaseSystem<ManagerType> {
 
-        using namespace Component;
+        void process(ManagerType &manager) override {
+            manager.template forEntitiesWith<Component1>(
+                [&manager](auto &data, [[gnu::unused]] auto id) {
+                    auto &comp1 = manager.template getComponent<Component1>(data);
+                    std::cout << comp1.x << "x " << comp1.y << "y" << std::endl;
+                }
+            );
+        }
 
-        template<typename... ComponentTypes>
-        using ISystem = BaseSystem<ComponentTypes...>
+    };
 
-        struct System1 : public ISystem {
-            void process() override {
-                this->manager.forEntitiesWith<Component1, Component3>(
-                [](auto &entity, auto id) {
-                    std::cout << "System1 found " << id << std::endl;
-                });
-            }
-        };
+    template<typename ManagerType>
+    struct System2 : public BaseSystem<ManagerType> {
 
-        struct System2 : public ISystem {
-            void process() override {
-                this->manager.forEntitiesWith<Component1, Component2, Component3>(
-                [](auto &entity, auto id) {
-                    std::cout << "System2 found " << id << std::endl;
-                });
-            }
+        void process(ManagerType &manager) override {
+            manager.template forEntitiesWith<Component1, Component3>(
+                [&manager](auto &data, [[gnu::unused]] auto id) {
+                    auto &comp1 = manager.template getComponent<Component1>(data);
+                    std::cout << comp1.x << "x " << comp1.y << "y" << std::endl;
+                }
+            );
+        }
 
-        };
+    };
 
-        struct System3 : public ISystem {
-            void process() override {
-                this->manager.forEntitiesWith<Component1>(
-                [](auto &entity, auto id) {
-                    std::cout << "System3 found " << id << std::endl;
-                });
-            }
-        };
-    }
+    template<typename ManagerType>
+    struct System3 : public BaseSystem<ManagerType> {
+
+        void process(ManagerType &manager) override {
+            manager.template forEntitiesWith<Component1, Component2, Component3>(
+                [&manager](auto &data, [[gnu::unused]] auto id) {
+                    auto &comp1 = manager.template getComponent<Component1>(data);
+                    auto &comp2 = manager.template getComponent<Component2>(data);
+                    std::cout << comp1.x << "x " << comp1.y << "y" << std::endl;
+                    std::cout << comp2.str << std::endl;
+                }
+            );
+        }
+
+    };
 }
 
-#endif /* !SYSTEMS_HPP_ */
-
+#endif /* !SYSTEMS_HPP */
