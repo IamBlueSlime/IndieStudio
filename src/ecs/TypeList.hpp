@@ -8,12 +8,18 @@
 #ifndef TYPELIST_HPP_
 #define TYPELIST_HPP_
 
+#include <cassert>
+
 namespace Ecs {
 
     template<typename... Types>
     struct TypeList {
 
+        /*  Size    */
+
         static constexpr auto size = sizeof...(Types);
+
+        /*  getIndex    */
 
         template<typename ToSearch>
         static constexpr int getIndex() {
@@ -34,6 +40,8 @@ namespace Ecs {
             assert(false);
             return -1;
         }
+
+        /*  forEach */
 
         template<typename Callable>
         static constexpr void forEach(Callable func) {

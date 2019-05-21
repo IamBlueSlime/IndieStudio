@@ -1,3 +1,13 @@
+/*
+** EPITECH PROJECT, 2019
+** OOP_indie_studio_2018
+** File description:
+** Entity
+*/
+
+#ifndef ENTITY_HPP_
+#define ENTITY_HPP_
+
 #include <cstdint>
 #include <optional>
 #include <bitset>
@@ -22,3 +32,5 @@ namespace Ecs {
 
 template<typename... ComponentsTypes>
 size_t Ecs::Entity<ComponentsTypes...>::id_seed = 0;
+
+#endif /* !ENTITY_HPP_ */
