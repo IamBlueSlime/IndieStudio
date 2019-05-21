@@ -21,3 +21,4 @@ cmake-*
 tmp*
 /build
 *.bmm
+/mods/*.so

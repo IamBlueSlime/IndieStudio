@@ -25,6 +25,6 @@ namespace IndieStudio {
         {
             this->name = ByteBufferUtils::readString<unsigned short>(buffer);
         }
-    } __attribute__((packed));
+    };
 
 }
