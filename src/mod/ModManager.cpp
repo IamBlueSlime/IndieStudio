@@ -89,7 +89,8 @@ namespace IndieStudio {
         mod->onEnable();
         logger.debug("Enabled mod '" + descriptor->name + "'.");
 
-        logger.info("Loaded mod '" + descriptor->name + "'.");
+        logger.info("Loaded mod '" + descriptor->name + "' (" +
+            descriptor->version + ") by " + descriptor->author + ".");
     }
 
     LibraryWrapper ModManager::openLibrary(const std::string &path)
