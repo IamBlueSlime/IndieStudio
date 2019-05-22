@@ -24,3 +24,4 @@ tmp*
 /mods/*.so
 /units
 /Testing/
+/statistics.ini
