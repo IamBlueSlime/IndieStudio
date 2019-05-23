@@ -10,10 +10,12 @@
 
 #include "./Components.hpp"
 #include "./BaseSystem.hpp"
+#include "./Events.hpp"
 
 namespace Ecs::System {
 
     using namespace Ecs::Component;
+    using namespace Ecs::Event;
 
     template<typename ManagerType>
     struct System1 : public BaseSystem<ManagerType> {
@@ -58,6 +60,32 @@ namespace Ecs::System {
         }
 
     };
+
+    template<typename ManagerType>
+    struct EventSystem : public BaseSystem<ManagerType> {
+
+        void process(ManagerType &manager) override {
+            manager.template forEntitiesWith<EventCallbacks>(
+                [&manager](auto &data, [[gnu::unused]] auto id) {
+                    auto &event_manager = manager.getEventManager();
+                    const auto &callbacks = manager.template getComponent<EventCallbacks>(data).getCallbacks();
+
+                    for (const auto &event : event_manager.getEventQueue()) {
+                        const auto &callback = callbacks.find(event);
+                        if (callback != callbacks.end()) {
+                            auto funcs = callback->second;
+                            for (const auto &func : funcs) {
+                                func(event);
+                            }
+                        }
+                    }
+                }
+            );
+        }
+
+    };
+
+
 }
 
 #endif /* !SYSTEMS_HPP */

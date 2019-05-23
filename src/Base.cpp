@@ -2,6 +2,13 @@
 #include <iostream>
 #include <string>
 
+class MyClass : public irr::IEventReceiver {
+    bool OnEvent(const irr::SEvent& event) override {
+        // push dans notre event queue
+        return true;
+    }
+};
+
 // TODO: rm this monster
 
 int test()

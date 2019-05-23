@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.11)
 
-#set(CMAKE_CXX_COMPILER clang++)
+set(CMAKE_CXX_COMPILER clang++)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/mods)
@@ -35,7 +35,7 @@ set(INDIE_SRC
     # TODO: remove this below
     ${INDIE_SRC_DIR}/Base.cpp
 )
-set(INDIE_REQUIRED_LIBRARIES ${Irrlicht_LIBRARIES} stdc++fs)
+set(INDIE_REQUIRED_LIBRARIES ${Irrlicht_LIBRARIES} stdc++fs pthread)
 
 if (UNIX)
     set(INDIE_REQUIRED_LIBRARIES ${INDIE_REQUIRED_LIBRARIES} dl)

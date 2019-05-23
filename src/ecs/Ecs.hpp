@@ -23,7 +23,7 @@
 #include "./Entity.hpp"
 #include "./Components.hpp"
 #include "./Systems.hpp"
-
+#include "./Events.hpp"
 
 namespace Ecs {
 
@@ -39,6 +39,7 @@ namespace Ecs {
     public:
         Manager() {}
         ~Manager() {}
+
         // Iterate only on entities owning components given as template types, and apply the given lambda
         //
         // Lambda parameters are a reference on the currently inspected entity and its ID
@@ -58,12 +59,16 @@ namespace Ecs {
             auto systems = SystemsImpl<typeof(*this), SystemTypes...>(*this);
             while (true) {
                 systems.process();
+                this->event_manager.getEventQueue().clear();
             }
+        }
+
+        EventManager &getEventManager() {
+            return this->event_manager;
         }
 
         // Add an empty entity to the manager, with a unique ID, and return a reference on it
         EntityType &addEntity() {
-            std::cout << "Adding new entity! Id attributed : " << EntityType::id_seed << std::endl;
             EntityType &new_entity = this->entities[EntityType::id_seed];
             new_entity.id = EntityType::id_seed;
             EntityType::id_seed += 1;
@@ -152,7 +157,6 @@ namespace Ecs {
             TypeList<components_searched...>::forEach([&mask](auto component, [[gnu::unused]] int idx) {
                 mask[Components::template getIndex<typeof(component)>()] = true;
             });
-            std::cout << "Mask of forEntityWith: " << mask << std::endl;
             return mask;
         }
 
@@ -165,10 +169,10 @@ namespace Ecs {
                     entity.component_signature[idx] = false;
                 }
             });
-            std::cout << "Changes detected in entity << " << entity.id << " : recomputed bitmap : " << entity.component_signature << std::endl;
         }
 
         std::map<std::size_t, EntityType> entities; //TODO entity en unique ptr! Possibilité d'en ajouter / retirer oklm
+        EventManager event_manager;
     };
 }
 

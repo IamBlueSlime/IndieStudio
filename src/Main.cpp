@@ -8,22 +8,27 @@
 #include "ecs/Ecs.hpp"
 #include "indiestudio/Bootstraper.hpp"
 
+#include <thread>
+
+
 using namespace Ecs::Component;
 
 // Components registers in the manager
 using EcsManager = Ecs::Manager<
 Component1,
 Component2,
-Component3
+Component3,
+EventCallbacks
 >;
 
 using namespace Ecs::System;
 
 // Systems used to run the manager
 using EcsSystems = Systems<
-System1<EcsManager>,
-System2<EcsManager>,
-System3<EcsManager>
+// System1<EcsManager>,
+// System2<EcsManager>,
+// System3<EcsManager>,
+EventSystem<EcsManager>
 >;
 
 int main(int ac, char **av)
@@ -58,6 +63,46 @@ int main(int ac, char **av)
     // Get return a reference, so you can modify the component
     manager.getComponent<Component2>(entity3).str = "I'm a reference!";
     std::cout << manager.getComponent<Component2>(entity3).str << std::endl;
+
+
+    auto &test_entity = manager.addEntity();
+    EventCallbacks event_listener;
+
+        EventData event_left;
+        event_left.type = EventType::KEYBOARD_EVENT;
+        event_left.keyInput.Key = irr::KEY_LEFT;
+
+        EventData event_right;
+        event_right.type = EventType::KEYBOARD_EVENT;
+        event_right.keyInput.Key = irr::KEY_RIGHT;
+
+    event_listener.addCallback(event_left, [](const EventData &event) {
+        std::cout << "left pressed" << std::endl;
+    });
+
+    event_listener.addCallback(event_right, [](const EventData &event) {
+        std::cout << "right pressed" << std::endl;
+    });
+
+    manager.setComponent(test_entity, event_listener);
+
+    std::thread t([&manager]() {
+
+        EventData event_left;
+        event_left.type = EventType::KEYBOARD_EVENT;
+        event_left.keyInput.Key = irr::KEY_LEFT;
+
+        EventData event_right;
+        event_right.type = EventType::KEYBOARD_EVENT;
+        event_right.keyInput.Key = irr::KEY_RIGHT;
+
+        while (true) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+            std::cout << "Sended events" << std::endl;
+            manager.getEventManager().push_event(event_left);
+            manager.getEventManager().push_event(event_right);
+        }
+    });
 
     // Run le manager avec les systems spécifiés
     manager.run(EcsSystems());

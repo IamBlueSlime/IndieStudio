@@ -9,8 +9,16 @@
 #define COMPONENTS_HPP_
 
 #include <string>
+#include <unordered_map>
+#include <map>
+#include <vector>
+#include <functional>
+
+#include "./Events.hpp"
 
 namespace Ecs::Component {
+
+    using namespace Ecs::Event;
 
     struct Component1 {
         int x;
@@ -25,6 +33,19 @@ namespace Ecs::Component {
     };
 
     struct Component3 {
+    };
+
+    struct EventCallbacks {
+        using CallbackType = std::function<void(const EventData&)>;
+    public:
+        const auto &getCallbacks() { return callbacks; }
+
+        void addCallback(const EventData &event, CallbackType &&callback) {
+            this->callbacks[event].push_back(std::forward<CallbackType>(callback));
+        }
+
+    private:
+        std::unordered_map<EventData, std::vector<CallbackType>> callbacks;
     };
 
 }
