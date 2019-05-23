@@ -18,19 +18,14 @@
 #include <iostream>
 #include <variant>
 #include <memory>
-#include <cassert>
 
-//#include "./Systems.hpp"
 #include "./TypeList.hpp"
 #include "./Entity.hpp"
 #include "./Components.hpp"
+#include "./Systems.hpp"
+
 
 namespace Ecs {
-
-    namespace System {
-        template<typename ...ComponentTypes>
-        struct BaseSystem;
-    }
 
     using namespace Ecs::System;
     using namespace Ecs::Component;
@@ -52,37 +47,37 @@ namespace Ecs {
         void forEntitiesWith(const std::function<void (EntityType&, std::size_t id)> func) {
             const auto mask = generateMask<components_searched...>();
             for (auto entity : this->entities) {
-                if ((entity.second.component_signature & mask) == mask)
+                if ((entity.second.component_signature & mask) == mask) {
                     func(entity.second, entity.first);
+                }
+            }
+        }
+
+        template<typename... SystemTypes>
+        void run([[gnu::unused]] Systems<SystemTypes...> tmp) {
+            auto systems = SystemsImpl<typeof(*this), SystemTypes...>(*this);
+            while (true) {
+                systems.process();
             }
         }
 
         // Add an empty entity to the manager, with a unique ID, and return a reference on it
         EntityType &addEntity() {
+            std::cout << "Adding new entity! Id attributed : " << EntityType::id_seed << std::endl;
             EntityType &new_entity = this->entities[EntityType::id_seed];
+            new_entity.id = EntityType::id_seed;
             EntityType::id_seed += 1;
             return new_entity;
         }
 
         // Delete the given entity from the manager
-        void delEntity(EntityType entity) {
+        void delEntity(EntityType &entity) {
             this->entities.erase(entity.id);
         }
 
         // Delete the entity of the given ID from the manager
-        void delEntity(size_t id) {
+        void delEntity(std::size_t id) {
             this->entities.erase(id);
-        }
-
-        // TODO: définir une manière d'ajouter des systems
-        // template<typename Types>
-        // void addSystem() {
-        //     Types::forEach
-        // }
-
-        // TODO: définir une manière de delete un système avec le groupe
-        void delSystem() {
-
         }
 
         // Return true is the given entity own the component, false otherwise
@@ -161,6 +156,7 @@ namespace Ecs {
             return mask;
         }
 
+        // TODO: Tej cette merde
         void recomputeBitset(EntityType &entity) {
             Components::forEach([this, &entity](auto component, int idx) {
                 if (this->hasComponent<typeof(component)>(entity)) {
@@ -169,11 +165,10 @@ namespace Ecs {
                     entity.component_signature[idx] = false;
                 }
             });
-            std::cout << "Changes detected in entity ; recomputed bitmap : " << entity.component_signature << std::endl;
+            std::cout << "Changes detected in entity << " << entity.id << " : recomputed bitmap : " << entity.component_signature << std::endl;
         }
 
         std::map<std::size_t, EntityType> entities; //TODO entity en unique ptr! Possibilité d'en ajouter / retirer oklm
-//        std::vector<BaseSystem> systems;    //TODO systems en unique ptr!
     };
 }
 

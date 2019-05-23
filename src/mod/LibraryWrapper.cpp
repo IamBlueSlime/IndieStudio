@@ -5,7 +5,6 @@
 ** src LibraryWrapper.cpp
 */
 
-#include <iostream>
 #include "indiestudio/mod/LibraryWrapper.hpp"
 
 namespace IndieStudio {
@@ -16,11 +15,6 @@ namespace IndieStudio {
     LibraryWrapper::LibraryWrapper(const std::string &name)
     {
         open(name);
-    }
-
-    LibraryWrapper::~LibraryWrapper()
-    {
-        close();
     }
 
     bool LibraryWrapper::open(const std::string &name)

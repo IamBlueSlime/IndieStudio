@@ -2,25 +2,28 @@
 ** EPITECH PROJECT, 2019
 ** OOP_indie_studio_2018
 ** File description:
-** DebugOverlay DebugOverlay.cpp
+** DebugOverlay DebugOverlay.hpp
 */
 
 #pragma once
 
-#include "indiestudio/mod/IMod.hpp"
+#include "indiestudio/mod/AMod.hpp"
 
 namespace IndieStudio {
 
     namespace DebugOverlay {
 
-        class DebugOverlay : public IMod {
+        class DebugOverlay : public AMod {
         public:
             DebugOverlay();
-            ~DebugOverlay();
+
+            void onEnable() override;
+            void onDisable() override;
 
         protected:
         private:
         };
 
     }
+
 }

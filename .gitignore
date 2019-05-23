@@ -22,3 +22,6 @@ tmp*
 /build
 *.bmm
 /mods/*.so
+/units
+/Testing/
+/statistics.ini

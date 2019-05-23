@@ -12,10 +12,19 @@ all:
 			cd build && cmake .. && cmake --build . -- --no-print-directory
 
 tests_run:
+			if [ ! -d  build ]; then mkdir build; fi
+			cd build && cmake .. -DBUILD_TESTS=ON && cmake --build . -- --no-print-directory && make test ARGS="-V"
+
 coverage:
+			gcovr -r . --exclude-directories tests | tee coverage-litteral.txt
+			gcovr -r . --exclude-directories tests --xml-pretty > coverage.xml
 
 clean:
 			rm -Rf build
+			find . -name "*.gc*" -delete | true
+			find . -name "report.xml" -delete | true
+			find . -name "coverage.xml" -delete | true
+			find . -name "coverage-litteral.txt" -delete | true
 
 fclean:		clean
 			rm -f bomberman

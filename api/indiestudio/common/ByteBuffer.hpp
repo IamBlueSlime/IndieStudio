@@ -18,6 +18,7 @@ namespace IndieStudio {
         ByteBuffer(std::size_t size = 128)
         {
             this->buffer = new char[size];
+            std::memset(this->buffer, 0, size);
             this->size = size;
         }
 

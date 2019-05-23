@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <array>
 #include <functional>
 #include "indiestudio/common/ByteBuffer.hpp"
 
@@ -18,19 +19,27 @@ namespace IndieStudio {
         struct of {
             template<typename ...Members>
             struct with {
-                static void pack(const Component &object, ByteBuffer &buffer)
-                {
-                    std::size_t delta = 0;
-                    Signature::internalPack<Members...>(
-                        static_cast<const void *>(&object), buffer, delta);
-                }
+                struct at {
+                    std::array<std::size_t, sizeof ...(Members)> offsets;
 
-                static void unpack(Component &object, ByteBuffer &buffer)
-                {
-                    std::size_t delta = 0;
-                    Signature::internalUnpack<Members...>(
-                        static_cast<void *>(&object), buffer, delta);
-                }
+                    at(std::array<std::size_t, sizeof ...(Members)> offsets)
+                        : offsets(offsets)
+                    {}
+
+                    void pack(const Component &object, ByteBuffer &buffer)
+                    {
+                        Signature::internalPack<sizeof ...(Members), Members...>(
+                            static_cast<const void *>(&object), buffer,
+                            this->offsets, 0);
+                    }
+
+                    void unpack(Component &object, ByteBuffer &buffer)
+                    {
+                        Signature::internalUnpack<sizeof ...(Members), Members...>(
+                            static_cast<void *>(&object), buffer,
+                            this->offsets, 0);
+                    }
+                };
             };
         };
 
@@ -39,49 +48,55 @@ namespace IndieStudio {
         template<typename T>
         static void packType(const T &type, ByteBuffer &buffer)
         {
+            static_assert(std::is_fundamental<T>::value);
             buffer << type;
         }
 
         template<typename T>
         static void unpackType(T &type, ByteBuffer &buffer)
         {
+            static_assert(std::is_fundamental<T>::value);
             buffer >> type;
         }
 
-        template<typename ...Empty>
+        template<std::size_t N, typename ...Empty>
         static typename std::enable_if<sizeof ...(Empty) == 0>::type internalPack(
-            const void *object, ByteBuffer &buffer, std::size_t &delta)
+            const void *object, ByteBuffer &buffer,
+            const std::array<std::size_t, N> &offsets, std::size_t idx)
         {
             (void) object;
             (void) buffer;
-            (void) delta;
+            (void) offsets;
+            (void) idx;
         }
 
-        template<typename ...Empty>
+        template<std::size_t N, typename ...Empty>
         static typename std::enable_if<sizeof ...(Empty) == 0>::type internalUnpack(
-            void *object, ByteBuffer &buffer, std::size_t &delta)
+            void *object, ByteBuffer &buffer,
+            const std::array<std::size_t, N> &offsets, std::size_t idx)
         {
             (void) object;
             (void) buffer;
-            (void) delta;
+            (void) offsets;
+            (void) idx;
         }
 
-        template<typename T, typename ...Other>
-        static void internalPack(const void *object, ByteBuffer &buffer, std::size_t &delta)
+        template<std::size_t N, typename T, typename ...Other>
+        static void internalPack(const void *object, ByteBuffer &buffer,
+            const std::array<std::size_t, N> &offsets, std::size_t idx)
         {
-            const T *targetPos = reinterpret_cast<const T *>(static_cast<const char *>(object) + delta);
+            const T *targetPos = reinterpret_cast<const T *>(static_cast<const char *>(object) + offsets[idx]);
             packType(*targetPos, buffer);
-            delta += sizeof(T);
-            internalPack<Other...>(object, buffer, delta);
+            internalPack<N, Other...>(object, buffer, offsets, idx + 1);
         }
 
-        template<typename T, typename ...Other>
-        static void internalUnpack(void *object, ByteBuffer &buffer, std::size_t &delta)
+        template<std::size_t N, typename T, typename ...Other>
+        static void internalUnpack(void *object, ByteBuffer &buffer,
+            const std::array<std::size_t, N> &offsets, std::size_t idx)
         {
-            T *targetPos = reinterpret_cast<T *>(static_cast<char *>(object) + delta);
+            T *targetPos = reinterpret_cast<T *>(static_cast<char *>(object) + offsets[idx]);
             unpackType(*targetPos, buffer);
-            delta += sizeof(T);
-            internalUnpack<Other...>(object, buffer, delta);
+            internalUnpack<N, Other...>(object, buffer, offsets, idx + 1);
         }
     };
 
