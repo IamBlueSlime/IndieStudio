@@ -9,13 +9,15 @@
 
 namespace IndieStudio {
 
-    Game::Game() : logger("game")
-    {
-    }
+    Game::Game() : logger("game"), achievementManager(*this)
+    {}
 
     void Game::start()
     {
         this->logger.info("Starting game...");
+        this->modManager.reload();
+        this->statisticManager.load();
+        // TODO: Fire achievement register event
     }
 
 }

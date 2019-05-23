@@ -9,6 +9,8 @@
 
 #include "indiestudio/common/Logger.hpp"
 #include "indiestudio/mod/ModManager.hpp"
+#include "indiestudio/statistic/AchievementManager.hpp"
+#include "indiestudio/statistic/StatisticManager.hpp"
 #include "indiestudio/world/WorldManager.hpp"
 
 namespace IndieStudio {
@@ -19,11 +21,18 @@ namespace IndieStudio {
 
         void start();
 
+        ModManager &getModManager() { return this->modManager; }
+        StatisticManager &getStatisticManager() { return this->statisticManager; }
+        AchievementManager &getAchievementManager() { return this->achievementManager; }
+        WorldManager &getWorldManager() { return this->worldManager; }
+
 	protected:
 	private:
         Logger logger;
-        WorldManager worldManager;
         ModManager modManager;
+        StatisticManager statisticManager;
+        AchievementManager achievementManager;
+        WorldManager worldManager;
     };
 
 }

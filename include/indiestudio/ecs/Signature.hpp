@@ -48,12 +48,14 @@ namespace IndieStudio {
         template<typename T>
         static void packType(const T &type, ByteBuffer &buffer)
         {
+            static_assert(std::is_fundamental<T>::value);
             buffer << type;
         }
 
         template<typename T>
         static void unpackType(T &type, ByteBuffer &buffer)
         {
+            static_assert(std::is_fundamental<T>::value);
             buffer >> type;
         }
 
@@ -97,5 +99,11 @@ namespace IndieStudio {
             internalUnpack<N, Other...>(object, buffer, offsets, idx + 1);
         }
     };
+
+    template<>
+    void Signature::packType<std::string>(const std::string &type, ByteBuffer &buffer);
+
+    template<>
+    void Signature::unpackType<std::string>(std::string &type, ByteBuffer &buffer);
 
 }

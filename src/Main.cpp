@@ -68,13 +68,13 @@ int main(int ac, char **av)
     auto &test_entity = manager.addEntity();
     EventCallbacks event_listener;
 
-        EventData event_left;
-        event_left.type = EventType::KEYBOARD_EVENT;
-        event_left.keyInput.Key = irr::KEY_LEFT;
+    EventData event_left;
+    event_left.type = EventType::KEYBOARD_EVENT;
+    event_left.keyInput.Key = irr::KEY_LEFT;
 
-        EventData event_right;
-        event_right.type = EventType::KEYBOARD_EVENT;
-        event_right.keyInput.Key = irr::KEY_RIGHT;
+    EventData event_right;
+    event_right.type = EventType::KEYBOARD_EVENT;
+    event_right.keyInput.Key = irr::KEY_RIGHT;
 
     event_listener.addCallback(event_left, [](const EventData &event) {
         std::cout << "left pressed" << std::endl;
@@ -86,23 +86,6 @@ int main(int ac, char **av)
 
     manager.setComponent(test_entity, event_listener);
 
-    std::thread t([&manager]() {
-
-        EventData event_left;
-        event_left.type = EventType::KEYBOARD_EVENT;
-        event_left.keyInput.Key = irr::KEY_LEFT;
-
-        EventData event_right;
-        event_right.type = EventType::KEYBOARD_EVENT;
-        event_right.keyInput.Key = irr::KEY_RIGHT;
-
-        while (true) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-            std::cout << "Sended events" << std::endl;
-            manager.getEventManager().push_event(event_left);
-            manager.getEventManager().push_event(event_right);
-        }
-    });
 
     // Run le manager avec les systems spécifiés
     manager.run(EcsSystems());

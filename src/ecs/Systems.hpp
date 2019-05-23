@@ -61,6 +61,7 @@ namespace Ecs::System {
 
     };
 
+    //TODO: thread safety omg
     template<typename ManagerType>
     struct EventSystem : public BaseSystem<ManagerType> {
 
@@ -71,11 +72,11 @@ namespace Ecs::System {
                     const auto &callbacks = manager.template getComponent<EventCallbacks>(data).getCallbacks();
 
                     for (const auto &event : event_manager.getEventQueue()) {
-                        const auto &callback = callbacks.find(event);
+                        const auto &callback = callbacks.find(event.first);
                         if (callback != callbacks.end()) {
                             auto funcs = callback->second;
                             for (const auto &func : funcs) {
-                                func(event);
+                                func(event.first);
                             }
                         }
                     }

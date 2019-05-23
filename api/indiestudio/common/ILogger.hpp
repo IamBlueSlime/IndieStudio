@@ -13,7 +13,7 @@ namespace IndieStudio {
 
     class ILogger {
 	public:
-		virtual ~ILogger() {};
+		virtual ~ILogger() = default;
 
         enum LogLevel {
             DEBUG, INFO, WARNING, ERROR, CRITICAL

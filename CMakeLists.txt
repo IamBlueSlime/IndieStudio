@@ -6,12 +6,16 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/mods)
 set(POSITION_INDEPENDENT_CODE ON)
 
+project(bomberman VERSION 1.0.0 LANGUAGES CXX)
+
 # Irrlicht support either for Linux and Windows
 set(Irrlicht_DIR "vendor/Irrlicht")
 set(Irrlicht_FIND_REQUIRED TRUE)
 include(FindIrrlicht)
-find_package(Irrlicht)
 include_directories(${Irrlicht_INCLUDE_DIRS})
+
+find_package(Irrlicht REQUIRED)
+find_package(SFML 2 REQUIRED audio)
 
 option(BUILD_GAME "Enable build for the game" ON)
 option(BUILD_MODS "Enable build for the mods" ON)
@@ -23,19 +27,22 @@ set(INDIE_SRC_DIR ${CMAKE_SOURCE_DIR}/src)
 set(INDIE_SRC
     ${INDIE_SRC_DIR}/Bootstraper.cpp
     ${INDIE_SRC_DIR}/Game.cpp
+    ${INDIE_SRC_DIR}/common/Configuration.cpp
     ${INDIE_SRC_DIR}/common/Logger.cpp
     ${INDIE_SRC_DIR}/common/Registry.cpp
     ${INDIE_SRC_DIR}/ecs/Signature.cpp
     ${INDIE_SRC_DIR}/ecs/UUID.cpp
     ${INDIE_SRC_DIR}/mod/LibraryWrapper.cpp
     ${INDIE_SRC_DIR}/mod/ModManager.cpp
+    ${INDIE_SRC_DIR}/statistic/AchievementManager.cpp
+    ${INDIE_SRC_DIR}/statistic/StatisticManager.cpp
     ${INDIE_SRC_DIR}/world/World.cpp
     ${INDIE_SRC_DIR}/world/WorldManager.cpp
     ${INDIE_SRC_DIR}/utils/CRCUtils.cpp
     # TODO: remove this below
     ${INDIE_SRC_DIR}/Base.cpp
 )
-set(INDIE_REQUIRED_LIBRARIES ${Irrlicht_LIBRARIES} stdc++fs pthread)
+set(INDIE_REQUIRED_LIBRARIES ${Irrlicht_LIBRARIES} sfml-audio stdc++fs pthread)
 
 if (UNIX)
     set(INDIE_REQUIRED_LIBRARIES ${INDIE_REQUIRED_LIBRARIES} dl)
@@ -48,7 +55,6 @@ if (CMAKE_BUILD_TYPE EQUAL "Debug")
 endif ()
 
 if (BUILD_GAME)
-    project(bomberman VERSION 1.0.0 LANGUAGES CXX)
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
 
     add_executable(bomberman ${INDIE_SRC_DIR}/Main.cpp ${INDIE_SRC})

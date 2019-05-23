@@ -9,11 +9,13 @@
 #define EVENTS_HPP_
 
 #include <cmath>
-#include <vector>
+#include <unordered_map>
 #include <mutex>
 #include <iostream>
 #include <cassert>
+#include <thread>
 
+#include <irrlicht/irrlicht.h>
 #include <irrlicht/IEventReceiver.h>
 
 namespace Ecs {
@@ -60,20 +62,6 @@ namespace Ecs {
                 bool custom_event_1;
             };
         };
-
-        class EventManager {
-        public:
-            std::vector<EventData> &getEventQueue() { return this->event_queue; }
-
-            void push_event(const EventData &event) {
-                std::unique_lock<std::mutex> lock;
-                event_queue.push_back(event);
-            }
-
-        private:
-            std::vector<EventData> event_queue;
-            std::mutex mutex;
-        };
     }
 }
 
@@ -87,6 +75,62 @@ namespace std {
             return static_cast<std::size_t>(std::exp(0) - 1.0);
         }
     };
+}
+
+namespace Ecs {
+    namespace Event {
+
+        class EventManager {
+        public:
+            EventManager();
+
+            std::unordered_map<EventData, bool> &getEventQueue() { return this->event_queue; }
+
+            void push_event(const EventData &event) {
+                std::unique_lock<std::mutex> lock;
+                event_queue[event] = true;
+            }
+
+        private:
+            std::unordered_map<EventData, bool> event_queue;
+            std::mutex mutex;
+            irr::IrrlichtDevice *device = irr::createDevice(irr::video::EDT_OPENGL, irr::core::dimension2d<irr::u32>(1280, 960));;
+            std::thread thread;
+        };
+
+        class IrrlichEventReceiver : public irr::IEventReceiver {
+        public:
+            IrrlichEventReceiver(EventManager &event_manager_)
+            :
+            event_manager(event_manager_) {}
+
+            bool OnEvent(const irr::SEvent& event) override {
+                EventData data;
+                switch (event.EventType) {
+                    case irr::EEVENT_TYPE::EET_KEY_INPUT_EVENT:
+                        data.type = EventType::KEYBOARD_EVENT;
+                        data.keyInput = event.KeyInput;
+                        this->event_manager.push_event(data);
+                        break;
+                    default: break;
+                }
+                return true;
+            }
+
+        private:
+            EventManager &event_manager;
+        };
+
+        inline EventManager::EventManager() {
+            device->setEventReceiver(new IrrlichEventReceiver(*this));
+            //TODO: utiliser le vrai device
+            this->thread = std::thread([this]() {
+                while (true) {
+                    this->device->run();
+                }
+            });
+        }
+    }
 }
 
 #endif /* !EVENTS_HPP_ */

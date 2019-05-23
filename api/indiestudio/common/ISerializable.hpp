@@ -13,7 +13,7 @@ namespace IndieStudio {
 
     class ISerializable {
     public:
-        virtual ~ISerializable() {};
+        virtual ~ISerializable() = default;
         virtual void pack(ByteBuffer &buffer) const = 0;
         virtual void unpack(ByteBuffer &buffer) = 0;
     };
