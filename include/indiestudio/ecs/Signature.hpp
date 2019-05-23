@@ -100,4 +100,10 @@ namespace IndieStudio {
         }
     };
 
+    template<>
+    void Signature::packType<std::string>(const std::string &type, ByteBuffer &buffer);
+
+    template<>
+    void Signature::unpackType<std::string>(std::string &type, ByteBuffer &buffer);
+
 }
