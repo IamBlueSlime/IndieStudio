@@ -35,8 +35,11 @@ namespace Ecs::Component {
     struct Component3 {
     };
 
+    template<typename ManagerType>
     struct EventCallbacks {
-        using CallbackType = std::function<void(const EventData&)>;
+
+        using CallbackType = std::function<void(const EventData&, std::size_t, ManagerType &)>;
+
     public:
         const auto &getCallbacks() { return callbacks; }
 

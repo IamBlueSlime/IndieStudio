@@ -17,18 +17,13 @@ using namespace Ecs::Component;
 using EcsManager = Ecs::Manager<
 Component1,
 Component2,
-Component3,
-EventCallbacks
+Component3
 >;
 
 using namespace Ecs::System;
 
 // Systems used to run the manager
 using EcsSystems = Systems<
-// System1<EcsManager>,
-// System2<EcsManager>,
-// System3<EcsManager>,
-EventSystem<EcsManager>
 >;
 
 int main(int ac, char **av)
@@ -66,7 +61,7 @@ int main(int ac, char **av)
 
 
     auto &test_entity = manager.addEntity();
-    EventCallbacks event_listener;
+    EventCallbacks<EcsManager> event_listener;
 
     EventData event_left;
     event_left.type = EventType::KEYBOARD_EVENT;
@@ -76,12 +71,13 @@ int main(int ac, char **av)
     event_right.type = EventType::KEYBOARD_EVENT;
     event_right.keyInput.Key = irr::KEY_RIGHT;
 
-    event_listener.addCallback(event_left, [](const EventData &event) {
-        std::cout << "left pressed" << std::endl;
+    event_listener.addCallback(event_left, [](const EventData &event, std::size_t entity_id, auto &manager) {
+        std::cout << "left pressed in entity" << entity_id << std::endl;
+//        auto &component = manager.getComponent<LeComponentCherché>(entity_id);
     });
 
-    event_listener.addCallback(event_right, [](const EventData &event) {
-        std::cout << "right pressed" << std::endl;
+    event_listener.addCallback(event_right, [](const EventData &event, std::size_t entity_id, auto &manager) {
+        std::cout << "right pressed in entity" << entity_id << std::endl;
     });
 
     manager.setComponent(test_entity, event_listener);
