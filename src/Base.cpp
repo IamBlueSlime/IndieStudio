@@ -63,44 +63,42 @@ int test()
 
 	menu(device, driver, scenemg);
 
-	// add archive in file system
-	device->getFileSystem()->addFileArchive("asset/map-20kdm2.pk3");
-
-	// get file from file system (20kdm2.bsp is in map-20kdm2.pk3)
-	irr::scene::IAnimatedMesh* mesh = scenemg->getMesh("20kdm2.bsp");
-
-	// (ISceneNode use for rendering complex geometry object and interact with it)
-	irr::scene::IMeshSceneNode* node = 0;
-
-	// get node if getMesh successfully load "20kdm2.bdp" map
-	if (mesh)
-		node = scenemg->addOctreeSceneNode(mesh->getMesh(0), 0, -1, 1024);
+	irr::scene::IAnimatedMeshSceneNode* node =
+		scenemg->addAnimatedMeshSceneNode(scenemg->getMesh("asset/maps/gwendal_cube.obj"));
 
 	irr::scene::ITriangleSelector* selector = 0;
 
 	// place map with node
 	if (node) {
-		node->setPosition(irr::core::vector3df(-1300,-144,-1249));
+		node->setMaterialTexture(0, driver->getTexture("asset/wall.bmp"));
+		node->setMaterialFlag(irr::video::EMF_LIGHTING, false);
+		node->setScale(irr::core::vector3df(20.f,20.f,20.f));
+		node->setPosition(irr::core::vector3df(100, -80, 90));
 		selector = scenemg->createOctreeTriangleSelector(node->getMesh(), node, 128);
 		node->setTriangleSelector(selector);
+		selector->drop();
+		for (int i = 0; i < 10; ++i)
+			for (int j = 0; j < 20; ++j)
+				node->clone()->setPosition(irr::core::vector3df(node->getPosition().X + node->getScale().X * j, -80, node->getPosition().Z + node->getScale().Z * i));
 	}
 
 	irr::scene::ITriangleSelector* ninja = 0;
 
 	// load 3d model animated
 	irr::scene::IAnimatedMeshSceneNode* anms =
-		scenemg->addAnimatedMeshSceneNode(scenemg->getMesh("asset/ninja.b3d"));
+		scenemg->addAnimatedMeshSceneNode(scenemg->getMesh("asset/models/Character/Bomberman.MD3"));
 	if (anms) {
+		anms->setMaterialTexture(0, driver->getTexture("asset/models/Character/BlackBombermanTextures.png"));
 		anms->setMaterialFlag(irr::video::EMF_LIGHTING, false);
-		anms->setScale(irr::core::vector3df(8.f,8.f,8.f));
+		anms->setScale(irr::core::vector3df(20.f,20.f,20.f));
 		anms->setAnimationSpeed(10);
-		anms->setPosition(irr::core::vector3df(100, -80, 90));
+		anms->setPosition(irr::core::vector3df(100, node->getPosition().Y + node->getScale().X / 2, 90));
 		ninja = scenemg->createTriangleSelector(anms);
 		anms->setTriangleSelector(ninja);
 		ninja->drop();
 	}
 
-		// get texture
+	// get texture
 	irr::video::ITexture *text = driver->getTexture((sky == "1") ? "asset/skybox.jpg" : "asset/skydome.jpg");
 
 	if (sky == "1") {
@@ -154,7 +152,7 @@ int test()
 			selector, camera, irr::core::vector3df(30,50,30),
 			irr::core::vector3df(0,-10,0), irr::core::vector3df(0,30,0));
 		selector->drop(); // As soon as we're done with the selector, drop it.
-		camera->addAnimator(anim);
+		// camera->addAnimator(anim);
 		anim->drop();
 	}
 

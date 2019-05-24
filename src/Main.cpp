@@ -28,6 +28,7 @@ using EcsSystems = Systems<
 
 int main(int ac, char **av)
 {
+    return IndieStudio::Bootstraper::start(ac, av);
     // Creating a new manager
     auto manager = EcsManager();
 
@@ -85,6 +86,4 @@ int main(int ac, char **av)
 
     // Run le manager avec les systems spécifiés
     manager.run(EcsSystems());
-
-    return IndieStudio::Bootstraper::start(ac, av);
 }
