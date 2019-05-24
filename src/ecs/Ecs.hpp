@@ -33,8 +33,8 @@ namespace Ecs {
     template<typename... ComponentTypes>
     class Manager {
 
-        using EntityType = Entity<ComponentTypes...>;
-        using Components = TypeList<ComponentTypes...>;
+        using EntityType = Entity<EventCallbacks<Manager<ComponentTypes...>>, ComponentTypes...>;
+        using Components = TypeList<EventCallbacks<Manager<ComponentTypes...>>, ComponentTypes...>;
 
     public:
         Manager() {}
@@ -56,7 +56,7 @@ namespace Ecs {
 
         template<typename... SystemTypes>
         void run([[gnu::unused]] Systems<SystemTypes...> tmp) {
-            auto systems = SystemsImpl<typeof(*this), SystemTypes...>(*this);
+            auto systems = SystemsImpl<typeof(*this), EventSystem<typeof(*this)>, SystemTypes...>(*this);
             while (true) {
                 systems.process();
                 this->event_manager.getEventQueue().clear();
