@@ -46,7 +46,7 @@ namespace Ecs {
                         break;
                     case EventType::CUSTOM_EVENT_1: return this->custom_event_1 == other.custom_event_1;
                     default:
-                        std::cout << "operator== not implemented on Ecs::Event::EventData : aborting" << std::endl;
+                        std::cout << "operator== not implemented on this Ecs::Event::EventData : aborting" << std::endl;
                         assert(false);
                         return false;
                 }
@@ -84,15 +84,33 @@ namespace Ecs {
         public:
             EventManager();
 
-            std::unordered_map<EventData, bool> &getEventQueue() { return this->event_queue; }
+            std::unordered_map<EventData, bool> &getEventQueue() {
+                if (this->event_queue_switch) {
+                    return this->event_queue2;
+                } else {
+                    return this->event_queue1;
+                }
+            }
+
+            void clear_event_queue(void) {
+                this->getEventQueue().clear();
+                this->event_queue_switch = !this->event_queue_switch;
+            }
 
             void push_event(const EventData &event) {
                 std::unique_lock<std::mutex> lock;
-                event_queue[event] = true;
+                if (this->event_queue_switch) {
+                    this->event_queue1[event] = true;
+                } else {
+                    this->event_queue2[event] = true;
+                }
             }
 
         private:
-            std::unordered_map<EventData, bool> event_queue;
+            std::unordered_map<EventData, bool> event_queue1;
+            std::unordered_map<EventData, bool> event_queue2;
+            bool event_queue_switch;
+            //TODO no need of mutex is the device is in the juel's singleton
             std::mutex mutex;
             irr::IrrlichtDevice *device = irr::createDevice(irr::video::EDT_OPENGL, irr::core::dimension2d<irr::u32>(1280, 960));;
             std::thread thread;

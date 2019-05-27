@@ -59,7 +59,7 @@ namespace Ecs {
             auto systems = SystemsImpl<typeof(*this), EventSystem<typeof(*this)>, SystemTypes...>(*this);
             while (true) {
                 systems.process();
-                this->event_manager.getEventQueue().clear();
+                this->event_manager.clear_event_queue();
             }
         }
 
