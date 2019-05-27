@@ -73,21 +73,25 @@ int test()
 		node->setMaterialTexture(0, driver->getTexture("asset/maps/clean_grass.png"));
 		node->setMaterialFlag(irr::video::EMF_LIGHTING, false);
 		node->setScale(irr::core::vector3df(20.f,20.f,20.f));
-		node->setPosition(irr::core::vector3df(0, -80, 0));
+		node->setPosition(irr::core::vector3df(0, -20 + node->getScale().X, 0));
 		selector = scenemg->createOctreeTriangleSelector(node->getMesh(), node, 128);
 		node->setTriangleSelector(selector);
 		selector->drop();
 		for (int i = 0; i < 13; ++i)
 			for (int j = 0; j < 19; ++j) {
+				if (!i && !j)
+					continue;
 				irr::scene::ISceneNode* tmp = node->clone();
-				tmp->setPosition(irr::core::vector3df(node->getPosition().X + node->getScale().X * j, -80, node->getPosition().Z + node->getScale().Z * i));
+				tmp->setPosition(irr::core::vector3df(node->getPosition().X + node->getScale().X * j, node->getScale().Y, node->getPosition().Z + node->getScale().Z * i));
 				if ((i % 2 == 0 && j % 2 == 0) || (i % 2 != 0 && j % 2 != 0))
 					tmp->setMaterialTexture(0, driver->getTexture("asset/maps/grass.png"));
 				if (i == 0 || i == 12 || j == 0 || j == 18) {
-					tmp->setPosition(irr::core::vector3df(node->getPosition().X + node->getScale().X * j, -80 + node->getScale().X, node->getPosition().Z + node->getScale().Z * i));
+					tmp->setPosition(irr::core::vector3df(node->getPosition().X + node->getScale().X * j, 2 * node->getScale().X, node->getPosition().Z + node->getScale().Z * i));
 					tmp->setMaterialTexture(0, driver->getTexture("asset/maps/my_wall.jpg"));
 				}
 			}
+		node->setPosition(irr::core::vector3df(node->getPosition().X, 2 * node->getScale().X, node->getPosition().Z));
+		node->setMaterialTexture(0, driver->getTexture("asset/maps/my_wall.jpg"));
 	}
 
 	irr::scene::ITriangleSelector* ninja = 0;
@@ -100,7 +104,7 @@ int test()
 		anms->setMaterialFlag(irr::video::EMF_LIGHTING, false);
 		anms->setScale(irr::core::vector3df(20.f,20.f,20.f));
 		anms->setAnimationSpeed(10);
-		anms->setPosition(irr::core::vector3df(anms->getScale().X, node->getPosition().Y + node->getScale().X / 2, anms->getScale().Z));
+		anms->setPosition(irr::core::vector3df(anms->getScale().X, node->getPosition().Y, anms->getScale().Z));
 		ninja = scenemg->createTriangleSelector(anms);
 		anms->setTriangleSelector(ninja);
 		ninja->drop();
@@ -126,8 +130,8 @@ int test()
 		static camera that does not react to user input (param = parent, position, camera direction)
 		if parent move, the cam will also move
 		*/
-		camera = scenemg->addCameraSceneNode(0, irr::core::vector3df(20, 500, 0));
-		camera->setRotation(irr::core::vector3df(90, 90, 90));
+		camera = scenemg->addCameraSceneNode(0, irr::core::vector3df(184, 330, -42), irr::core::vector3df(185, 50, 110));
+		// camera->setRotation(irr::core::vector3df(0, 0, 0));
 	} else if (cam == "2") {
 		// camera style that move like a basic fps (T manage by keyboard & R manage by mouse)
 
@@ -144,7 +148,7 @@ int test()
 		keyMap[4].KeyCode = irr::KEY_SPACE;
 
 
-		camera = scenemg->addCameraSceneNodeFPS(0, 100.0f, .3f, -1, keyMap, 5, true, 5.f);
+		camera = scenemg->addCameraSceneNodeFPS(0, 100.0f, .3f, -1, keyMap, 5, false, 5.f);
 		camera->setPosition(irr::core::vector3df(50,50,-60));
 
 		// remove cursor from screen
@@ -165,11 +169,6 @@ int test()
 		anim->drop();
 	}
 
-	// create a minimap that see map from above
-	irr::scene::ICameraSceneNode *miniMap = scenemg->addCameraSceneNode(0, irr::core::vector3df(0, 100, 0), irr::core::vector3df(100, -80, 90));
-	scenemg->setActiveCamera(camera);
-
-	int scale = 4;
 	// game loop
 	while (device->run()) {
 		if (device->isWindowActive()) {
@@ -180,21 +179,13 @@ int test()
 			// draw all object
 
 			// draw camera first
-			driver->setViewPort(irr::core::rect<irr::s32>(0, 0, width, height));
 			scenemg->drawAll();
 
 			// draw minimap on top of camera
-			driver->setViewPort(irr::core::rect<irr::s32>(width - (width / scale), height - (height / scale), width, height));
-			scenemg->setActiveCamera(miniMap);
-			// driver->beginScene(true, true, irr::video::SColor(255,200,0,0), irr::video::SExposedVideoData());
-
-			scenemg->drawAll();
-
 			// display method
 			driver->endScene();
 
 			// reset camera param
-			scenemg->setActiveCamera(camera);
 		} else {
 			// best feature! just render nothing so that bring down processor usage by irrlicht
 			device->yield();
