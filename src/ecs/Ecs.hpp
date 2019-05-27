@@ -69,9 +69,9 @@ namespace Ecs {
 
         // Add an empty entity to the manager, with a unique ID, and return a reference on it
         EntityType &addEntity() {
-            EntityType &new_entity = this->entities[EntityType::id_seed];
-            new_entity.id = EntityType::id_seed;
-            EntityType::id_seed += 1;
+            EntityType &new_entity = this->entities[this->id_seed];
+            new_entity.id = this->id_seed;
+            this->id_seed += 1;
             return new_entity;
         }
 
@@ -88,11 +88,7 @@ namespace Ecs {
         // Return true is the given entity own the component, false otherwise
         template <typename T>
         bool hasComponent(EntityType &entity) {
-            try {
-                std::get<T>(entity.components[Components::template getIndex<T>()]);
-                return true;
-            } catch (...) {}
-            return false;
+            return (std::get<std::optional<T>>(entity.components)).has_value();
         }
 
         // Return true is the entity matching the given ID own the component, false otherwise
@@ -106,7 +102,7 @@ namespace Ecs {
         // Will raise error if the component is missing (meaning this function should only be called from systems)
         template <typename T>
         T &getComponent(EntityType &entity) {
-            return std::get<T>(entity.components[Components::template getIndex<T>()]);
+            return (std::get<std::optional<T>>(entity.components)).value();
         }
 
         // Return the component of the templated type from entity matching the given ID
@@ -122,8 +118,8 @@ namespace Ecs {
         // Type is automatically deduced from the parameter type
         template <typename T>
         void setComponent(EntityType &entity, T value) {
-            entity.components[Components::template getIndex<T>()] = value;
-            recomputeBitset(entity);
+            std::get<std::optional<T>>(entity.components) = value;
+            entity.component_signature[Components::template getIndex<T>()] = true;
         }
 
         // Set the given component in the entity matching the given ID
@@ -137,8 +133,8 @@ namespace Ecs {
         // Remove the component of the templated type from the given entity
         template <typename T>
         void unsetComponent(EntityType &entity) {
-            entity.components[Components::template getIndex<T>()] = empty_component;
-            recomputeBitset(entity);
+            std::get<std::optional<T>>(entity.components) = std::nullopt;
+            entity.component_signature[Components::template getIndex<T>()] = false;
         }
 
         // Remove the component of the templated type from the entity matching the given ID
@@ -147,6 +143,15 @@ namespace Ecs {
             unsetComponent<T>(this->entities[id]);
         }
 
+        void recomputeEntityBitset(EntityType &entity) {
+            Components::forEach([this, &entity](auto component, int idx) {
+                if (this->hasComponent<typeof(component)>(entity)) {
+                    entity.component_signature[idx] = true;
+                } else {
+                    entity.component_signature[idx] = false;
+                }
+            });
+        }
 
     protected:
     private:
@@ -160,19 +165,9 @@ namespace Ecs {
             return mask;
         }
 
-        // TODO: Tej cette merde
-        void recomputeBitset(EntityType &entity) {
-            Components::forEach([this, &entity](auto component, int idx) {
-                if (this->hasComponent<typeof(component)>(entity)) {
-                    entity.component_signature[idx] = true;
-                } else {
-                    entity.component_signature[idx] = false;
-                }
-            });
-        }
-
-        std::map<std::size_t, EntityType> entities; //TODO entity en unique ptr! Possibilité d'en ajouter / retirer oklm
+        std::map<std::size_t, EntityType> entities;
         EventManager event_manager;
+        size_t id_seed = 0;
     };
 }
 

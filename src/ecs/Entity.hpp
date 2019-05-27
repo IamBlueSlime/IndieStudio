@@ -24,13 +24,8 @@ namespace Ecs {
         std::size_t id;
         std::optional<std::size_t> parent;
         std::bitset<sizeof...(ComponentsTypes)> component_signature;
-        std::array<std::variant<EmptyComponent, ComponentsTypes...>, sizeof...(ComponentsTypes)> components;
-
-        static size_t id_seed;
+        std::tuple<std::optional<ComponentsTypes>...> components;
     };
 }
-
-template<typename... ComponentsTypes>
-size_t Ecs::Entity<ComponentsTypes...>::id_seed = 0;
 
 #endif /* !ENTITY_HPP_ */
