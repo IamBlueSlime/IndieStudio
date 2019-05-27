@@ -70,16 +70,24 @@ int test()
 
 	// place map with node
 	if (node) {
-		node->setMaterialTexture(0, driver->getTexture("asset/wall.bmp"));
+		node->setMaterialTexture(0, driver->getTexture("asset/maps/clean_grass.png"));
 		node->setMaterialFlag(irr::video::EMF_LIGHTING, false);
 		node->setScale(irr::core::vector3df(20.f,20.f,20.f));
-		node->setPosition(irr::core::vector3df(100, -80, 90));
+		node->setPosition(irr::core::vector3df(0, -80, 0));
 		selector = scenemg->createOctreeTriangleSelector(node->getMesh(), node, 128);
 		node->setTriangleSelector(selector);
 		selector->drop();
-		for (int i = 0; i < 10; ++i)
-			for (int j = 0; j < 20; ++j)
-				node->clone()->setPosition(irr::core::vector3df(node->getPosition().X + node->getScale().X * j, -80, node->getPosition().Z + node->getScale().Z * i));
+		for (int i = 0; i < 13; ++i)
+			for (int j = 0; j < 19; ++j) {
+				irr::scene::ISceneNode* tmp = node->clone();
+				tmp->setPosition(irr::core::vector3df(node->getPosition().X + node->getScale().X * j, -80, node->getPosition().Z + node->getScale().Z * i));
+				if ((i % 2 == 0 && j % 2 == 0) || (i % 2 != 0 && j % 2 != 0))
+					tmp->setMaterialTexture(0, driver->getTexture("asset/maps/grass.png"));
+				if (i == 0 || i == 12 || j == 0 || j == 18) {
+					tmp->setPosition(irr::core::vector3df(node->getPosition().X + node->getScale().X * j, -80 + node->getScale().X, node->getPosition().Z + node->getScale().Z * i));
+					tmp->setMaterialTexture(0, driver->getTexture("asset/maps/my_wall.jpg"));
+				}
+			}
 	}
 
 	irr::scene::ITriangleSelector* ninja = 0;
@@ -92,7 +100,7 @@ int test()
 		anms->setMaterialFlag(irr::video::EMF_LIGHTING, false);
 		anms->setScale(irr::core::vector3df(20.f,20.f,20.f));
 		anms->setAnimationSpeed(10);
-		anms->setPosition(irr::core::vector3df(100, node->getPosition().Y + node->getScale().X / 2, 90));
+		anms->setPosition(irr::core::vector3df(anms->getScale().X, node->getPosition().Y + node->getScale().X / 2, anms->getScale().Z));
 		ninja = scenemg->createTriangleSelector(anms);
 		anms->setTriangleSelector(ninja);
 		ninja->drop();
@@ -113,12 +121,13 @@ int test()
 
 	irr::scene::ICameraSceneNode *camera;
 
-	if (cam == "1") {
+	if (cam == "2") {
 		/*
 		static camera that does not react to user input (param = parent, position, camera direction)
 		if parent move, the cam will also move
 		*/
-		camera = scenemg->addCameraSceneNode(0, irr::core::vector3df(400, 1500, 1500), irr::core::vector3df(0, 0, 10));
+		camera = scenemg->addCameraSceneNode(0, irr::core::vector3df(20, 500, 0));
+		camera->setRotation(irr::core::vector3df(90, 90, 90));
 	} else if (cam == "2") {
 		// camera style that move like a basic fps (T manage by keyboard & R manage by mouse)
 
