@@ -44,36 +44,36 @@ setupExplosion<EcsManager>,
 drawEntities<EcsManager>
 >;
 
-int main()
+int main(int ac, char **av)
 {
-//    return IndieStudio::Bootstraper::start(ac, av);
+    IndieStudio::Bootstraper::start(ac, av);
     // Creating a new manager
     auto manager = EcsManager();
 
     // Creating entity
-    auto &player = manager.addEntity();
-    auto &bomb = manager.addEntity();
-    auto &player2 = manager.addEntity();
+    // auto &player = manager.addEntity();
+    // auto &bomb = manager.addEntity();
+    // auto &player2 = manager.addEntity();
     // Donc forget to get the REFERENCE, so you can modify the entity with it
 
     // Create component
-    Position position1 = {11, 12, 9};
-    Position position2 = {10, 12, 9};
-    Position posBomb = {9, 2, 1};
-//    Position posBomb2 = {8, 2, 1};
+    // Position position1 = {11, 12, 9};
+    // Position position2 = {10, 12, 9};
+    // Position posBomb = {9, 2, 1};
+    // Position posBomb2 = {8, 2, 1};
 
-    // Set this component on the entity
-    manager.setComponent(player, position2);
-    manager.setComponent(player, Alive());
+    // // Set this component on the entity
+    // manager.setComponent(player, position2);
+    // manager.setComponent(player, Alive());
 
-    manager.setComponent(player2, position1);
-    manager.setComponent(player2, Alive());
+    // manager.setComponent(player2, position1);
+    // manager.setComponent(player2, Alive());
 
-    manager.setComponent(bomb, posBomb);
-//    manager.setComponent(bomb, IsExploding());
-    manager.setComponent(bomb, IsBomb());
-    manager.setComponent(bomb, ExplosionRange());
-    manager.setComponent(bomb, LifeTime());
+    // manager.setComponent(bomb, posBomb);
+    // manager.setComponent(bomb, IsExploding());
+    // manager.setComponent(bomb, IsBomb());
+    // manager.setComponent(bomb, ExplosionRange());
+    // manager.setComponent(bomb, LifeTime());
 //    manager.setComponent(bomb, ExplosionLifeTime());
 
 //     auto &test_entity = manager.addEntity();
