@@ -102,7 +102,7 @@ int test()
 
 
 	irr::scene::IAnimatedMeshSceneNode* node =
-		scenemg->addAnimatedMeshSceneNode(scenemg->getMesh("asset/maps/gwendal_cube.obj"));
+		scenemg->addAnimatedMeshSceneNode(scenemg->getMesh("assets/models/cube.obj"));
 
 
 
@@ -119,8 +119,8 @@ int test()
 	node2 = scenemg->addWaterSurfaceSceneNode(mesh->getMesh(0), 3.0f, 300.0f, 30.0f);
 	node2->setPosition(irr::core::vector3df(0,7,0));
 
-	node2->setMaterialTexture(0, driver->getTexture("asset/stones.jpg"));
-	node2->setMaterialTexture(1, driver->getTexture("asset/water.jpg"));
+	node2->setMaterialTexture(0, driver->getTexture("assets/textures/water_stones.jpg"));
+	node2->setMaterialTexture(1, driver->getTexture("assets/textures/water.jpg"));
 
 	node2->setMaterialType(irr::video::EMT_REFLECTION_2_LAYER);
 
@@ -151,10 +151,10 @@ int test()
 
 	// place map with node
 	if (node) {
-		node->setMaterialTexture(0, driver->getTexture("tmp/textures/block_ground_1.png"));
+		node->setMaterialTexture(0, driver->getTexture("assets/textures/block_ground_1.png"));
 		node->setMaterialFlag(irr::video::EMF_LIGHTING, false);
 		node->setScale(irr::core::vector3df(s, s, s));
-		node->setPosition(irr::core::vector3df(0.5, 0, 0.5));
+		node->setPosition(irr::core::vector3df(0.5, 50, 0.5));
 		// node->addShadowVolumeSceneNode();
 		// selector = scenemg->createOctreeTriangleSelector(node->getMesh(), node, 128);
 		// node->setTriangleSelector(selector);
@@ -168,18 +168,18 @@ int test()
 
 			tmp->setPosition(irr::core::vector3df(
 				node->getPosition().X + node->getScale().X * x,
-				node->getScale().Y * (y == 1 ? 1 : 0),
+				node->getPosition().Y + node->getScale().Y * (y == 1 ? 1 : 0),
 				node->getPosition().Z + node->getScale().Z * z
 			));
 
 			if (c == MapPattern::GROUND_FIRST_TILE) {
-				tmp->setMaterialTexture(0, driver->getTexture("tmp/textures/block_ground_1.png"));
+				tmp->setMaterialTexture(0, driver->getTexture("assets/textures/block_ground_1.png"));
 			} else if (c == MapPattern::GROUND_SECOND_TILE) {
-				tmp->setMaterialTexture(0, driver->getTexture("tmp/textures/block_ground_2.png"));
+				tmp->setMaterialTexture(0, driver->getTexture("assets/textures/block_ground_2.png"));
 			} else if (c == MapPattern::BORDER_WALL_TILE || c == MapPattern::INNER_WALL_TILE) {
-				tmp->setMaterialTexture(0, driver->getTexture("tmp/textures/block_wall.png"));
+				tmp->setMaterialTexture(0, driver->getTexture("assets/textures/block_wall.png"));
 			} else if (c == MapPattern::BREAKABLE_BLOCK_TILE) {
-				tmp->setMaterialTexture(0, driver->getTexture("tmp/textures/block_brick.png"));
+				tmp->setMaterialTexture(0, driver->getTexture("assets/textures/block_brick.png"));
 			}
 		});
 	}
@@ -190,9 +190,9 @@ int test()
 
 	// load 3d model animated
 	irr::scene::IAnimatedMeshSceneNode* anms =
-		scenemg->addAnimatedMeshSceneNode(scenemg->getMesh("asset/models/Character/Bomberman.MD3"));
+		scenemg->addAnimatedMeshSceneNode(scenemg->getMesh("assets/models/player.md3"));
 	if (anms) {
-		anms->setMaterialTexture(0, driver->getTexture("asset/models/Character/BlackBombermanTextures.png"));
+		anms->setMaterialTexture(0, driver->getTexture("assets/textures/player_black.png"));
 		anms->setMaterialFlag(irr::video::EMF_LIGHTING, false);
 		anms->setScale(irr::core::vector3df(s, s, s));
 		anms->setAnimationSpeed(10);
@@ -211,8 +211,8 @@ int test()
 	// scenemg->addSkyBoxSceneNode(text, text, text, text, text, text);
 
 	irr::scene::ICameraSceneNode *camera = scenemg->addCameraSceneNode(0,
-		irr::core::vector3df(s * (w / 2), s * (w / 1.5), s * 3),
-		irr::core::vector3df(s * (w / 2), 1, s * (h / 2)));
+		irr::core::vector3df(s * (w / 2), 50 + s * (w / 1.5), s * 3),
+		irr::core::vector3df(s * (w / 2), 50, s * (h / 2)));
 
 	if (selector) {
 		irr::scene::ISceneNodeAnimator* anim = scenemg->createCollisionResponseAnimator(
