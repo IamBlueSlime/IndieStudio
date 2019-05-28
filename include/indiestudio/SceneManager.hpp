@@ -28,9 +28,9 @@ class SceneManager {
 		SceneManager();
 		~SceneManager() = default;
 
-		std::optional<Scene> createScene(std::string &key);
-		void setActiveScene(std::string &key);
-		std::optional<Scene> getScene(std::string &key);
+		std::optional<Scene> createScene(const std::string &key);
+		void setActiveScene(const std::string &key);
+		std::optional<Scene> getScene(const std::string &key);
 		bool draw();
 
 	protected:

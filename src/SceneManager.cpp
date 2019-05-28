@@ -35,20 +35,21 @@ SceneManager::Scene &SceneManager::Scene::operator=(const SceneManager::Scene &o
 }
 
 
-std::optional<SceneManager::Scene> SceneManager::createScene(std::string &key)
+std::optional<SceneManager::Scene> SceneManager::createScene(const std::string &key)
 {
     this->container[key] = Scene(this->sceneRoot->createNewSceneManager(), 0);
     if (this->container.find(key) == this->container.end())
         return std::nullopt;
+    this->active = key;
     return std::optional<SceneManager::Scene>(this->container[key]);
 }
 
-void SceneManager::setActiveScene(std::string &key)
+void SceneManager::setActiveScene(const std::string &key)
 {
     this->active = key;
 }
 
-std::optional<SceneManager::Scene> SceneManager::getScene(std::string &key)
+std::optional<SceneManager::Scene> SceneManager::getScene(const std::string &key)
 {
     if (this->container.find(key) == this->container.end())
         return std::nullopt;
