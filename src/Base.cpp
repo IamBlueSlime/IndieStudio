@@ -2,6 +2,17 @@
 #include <iostream>
 #include <string>
 #include "indiestudio/utils/UniqueIrrPtr.hpp"
+#include "ecs/Ecs.hpp"
+
+using namespace Ecs::Component;
+
+// Components registers in the manager
+using EcsManager = Ecs::Manager<
+Component1,
+Component2,
+Component3
+//AnimatedMesh
+>;
 
 class MyClass : public irr::IEventReceiver {
     bool OnEvent(const irr::SEvent& event) override {
@@ -18,6 +29,14 @@ void menu(irr::IrrlichtDevice *device, irr::video::IVideoDriver* driver, irr::sc
 	(void) driver;
 	(void) scenemg;
 }
+
+// int map_maker(EcsManager manager, irr::scene::ISceneManager* scenemg, irr::IrrlichtDevice *device) {
+//     auto &block = manager.addEntity();
+
+//     AnimatedMesh node(scenemg->getMesh("asset/maps/gwendal_cube.obj"));
+
+//     manager.setComponent(block, node);
+// }
 
 int test()
 {
@@ -46,7 +65,7 @@ int test()
 	// create window (EDT_OPENGL= force irrlicth to use openGL, dimension2d<T> window x y)
 
 	// IndieStudio::uniqueIrr_ptr<irr::IrrlichtDevice> device(
-		irr::IrrlichtDevice *device =  irr::createDevice(irr::video::EDT_OPENGL, irr::core::dimension2d<irr::u32>(width, height));
+	irr::IrrlichtDevice *device =  irr::createDevice(irr::video::EDT_OPENGL, irr::core::dimension2d<irr::u32>(width, height));
 
 	// if create window failed
 	if (device == 0)
@@ -62,6 +81,8 @@ int test()
 	irr::scene::ISceneManager* scenemg = device->getSceneManager();
 
 	menu(device, driver, scenemg);
+
+
 
 	irr::scene::IAnimatedMeshSceneNode* node =
 		scenemg->addAnimatedMeshSceneNode(scenemg->getMesh("asset/maps/gwendal_cube.obj"));
