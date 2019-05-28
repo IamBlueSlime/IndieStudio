@@ -19,6 +19,8 @@ Component3
 
 class MyClass : public irr::IEventReceiver {
     bool OnEvent(const irr::SEvent& event) override {
+		(void)event;
+		std::cout << "Event" << std::endl;
         // push dans notre event queue
         return true;
     }
