@@ -19,14 +19,9 @@ Position,
 Speed,
 Movable,
 Alive,
-<<<<<<< Updated upstream
 Indestructible,
 LifeTime,
 ExplosionLifeTime,
-=======
-Destructible,
-LifeTime,
->>>>>>> Stashed changes
 IsExploding,
 ExplosionRange,
 BombType,
