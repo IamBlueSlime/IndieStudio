@@ -73,12 +73,12 @@ int main(int ac, char **av)
     event_right.keyInput.Key = irr::KEY_RIGHT;
 
     event_listener.addCallback(event_left, [](const EventData &event, std::size_t entity_id, auto &manager) {
-        std::cout << "left pressed in entity" << entity_id << std::endl;
+        std::cout << "left pressed to entity" << entity_id << std::endl;
 //        auto &component = manager.getComponent<LeComponentCherché>(entity_id);
     });
 
     event_listener.addCallback(event_right, [](const EventData &event, std::size_t entity_id, auto &manager) {
-        std::cout << "right pressed in entity" << entity_id << std::endl;
+        std::cout << "right pressed to entity" << entity_id << std::endl;
     });
 
     manager.setComponent(test_entity, event_listener);

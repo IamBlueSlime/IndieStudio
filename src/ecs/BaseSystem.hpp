@@ -49,26 +49,16 @@ namespace Ecs {
 
             SystemsImpl(ManagerType &manager_)
             :
-            manager(manager_) {
-                TypeList<SystemTypes...>::forEach([this](auto system, std::size_t idx) {
-                    this->systems[idx] = system;
+            manager(manager_) {}
+
+            void process() final {
+                TypeList<SystemTypes...>::forEach([this](auto ref, [[gnu::unused]] std::size_t idx) {
+                    std::get<typeof(ref)>(this->systems).process(this->manager);
                 });
             }
 
-            void process() final {
-                for (auto system : this->systems) {
-                    // TODO:    Getting type without the loop
-                    TypeList<SystemTypes...>::forEach([this, system](auto ref, [[gnu::unused]] std::size_t idx) {
-                        try {
-                            auto sys = std::get<typeof(ref)>(system.second);
-                            sys.process(this->manager);
-                        } catch (...) {}
-                    });
-                }
-            }
-
             ManagerType &manager;
-            std::map<std::size_t, std::variant<SystemTypes...>> systems;
+            std::tuple<SystemTypes...> systems;
 
         };
     }
