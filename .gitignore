@@ -18,7 +18,6 @@ trace.txt
 .idea/
 /bomberman
 cmake-*
-tmp*
 /build
 *.bmm
 /mods/*.so
