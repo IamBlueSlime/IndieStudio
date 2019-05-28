@@ -13,26 +13,120 @@
 #include <map>
 #include <vector>
 #include <functional>
+#include <ctime>
 
 #include "./Events.hpp"
 
+using namespace Ecs::Event;
+
 namespace Ecs::Component {
 
-    using namespace Ecs::Event;
-
-    struct Component1 {
-        int x;
-        int y;
+    struct Position {
+        float x;
+        float y;
+        float z;
     };
 
-    struct Component2 {
-        Component2(const std::string &str_ = "Default")
+    struct Speed {
+        float x;
+        float y;
+        float z;
+    };
+
+    struct Alive {
+    };
+
+    struct Movable {
+    };
+
+    struct Destructible {
+    };
+
+    struct LifeTime {
+        LifeTime(int _lifeTime = std::time(nullptr))
         :
-        str(str_) {}
-        std::string str;
+        lifeTime(_lifeTime) {}
+        int lifeTime;
     };
 
-    struct Component3 {
+    struct IsExploding {
+    };
+
+    struct ExplosionRange {
+        ExplosionRange(float _explosionRange = 3.0f)
+        :
+        explosionRangeUp(_explosionRange),
+        explosionRangeLeft(_explosionRange),
+        explosionRangeDown(_explosionRange),
+        explosionRangeRight(_explosionRange) {}
+
+        float explosionRangeUp;
+        float explosionRangeLeft;
+        float explosionRangeDown;
+        float explosionRangeRight;
+    };
+
+    struct BombType {
+        enum {
+            DEFAULT = 1,
+            STICKY = 2,
+            MEGA = 4
+        };
+
+        BombType(int _bombType = BombType::DEFAULT)
+        :
+        bombType(_bombType) {}
+
+        int bombType;
+    };
+
+    struct IsPlayer {
+    };
+
+    struct IsAI {
+    };
+
+    struct IsBomb {
+    };
+
+    struct SoundID {
+        SoundID(int _soundID = 0)
+        :
+        soundID(_soundID) {}
+
+        int soundID;
+    };
+
+    struct Direction {
+        enum {
+            STAY = 1,
+            UP = 2,
+            LEFT = 4,
+            DOWN = 8,
+            RIGHT = 16
+        };
+
+        Direction(int _direction = Direction::STAY)
+        :
+        direction(_direction) {}
+
+        int direction;
+    };
+
+    struct Texture {
+        Texture(std::string _texture = "")
+        :
+        texture(_texture) {}
+
+        std::string texture;
+    };
+
+    struct ID {
+        ID(int _id)
+        :
+        id(_id) {}
+
+        int id;
     };
 
     template<typename ManagerType>

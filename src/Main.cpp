@@ -15,76 +15,86 @@ using namespace Ecs::Component;
 
 // Components registers in the manager
 using EcsManager = Ecs::Manager<
-Component1,
-Component2,
-Component3
+Position,
+Speed,
+Movable,
+Alive,
+Destructible,
+LifeTime,
+IsExploding,
+ExplosionRange,
+BombType,
+IsPlayer,
+IsAI,
+IsBomb,
+SoundID,
+Direction,
+Texture,
+ID
 >;
 
 using namespace Ecs::System;
 
 // Systems used to run the manager
 using EcsSystems = Systems<
-System1<EcsManager>
+applyExplosion<EcsManager>
 >;
 
-int main(int ac, char **av)
+int main()
 {
 //    return IndieStudio::Bootstraper::start(ac, av);
     // Creating a new manager
     auto manager = EcsManager();
 
     // Creating entity
-    auto &entity1 = manager.addEntity();
+    auto &player = manager.addEntity();
+    auto &bomb = manager.addEntity();
+    auto &player2 = manager.addEntity();
     // Donc forget to get the REFERENCE, so you can modify the entity with it
 
     // Create component
-    Component1 comp1 = {10, 12};
+    Position position1 = {11, 12, 9};
+    Position position2 = {10, 12, 9};
+    Position posBomb = {9, 2, 1};
+//    Position posBomb2 = {8, 2, 1};
 
     // Set this component on the entity
-    manager.setComponent(entity1, comp1);
-    // The component type is automatically deduced from the parameter
+    manager.setComponent(player, position2);
+    manager.setComponent(player, Alive());
+    manager.setComponent(player, Destructible());
 
-    // Add more entity / components
-    auto &entity2 = manager.addEntity();
-    manager.setComponent(entity2, Component1());
-    manager.setComponent(entity2, Component2("Bonjour"));
-    auto &entity3 = manager.addEntity();
-    manager.setComponent(entity3, Component1());
-    manager.setComponent(entity3, Component2());
-    manager.setComponent(entity3, Component3());
+    manager.setComponent(player2, position1);
+    manager.setComponent(player2, Alive());
+    manager.setComponent(player2, Destructible());
 
-    // Get un component
-    std::cout << manager.getComponent<Component2>(entity3).str << std::endl;
-    // Get will raise an error if the component is missing, so should be called only from systems
+    manager.setComponent(bomb, posBomb);
+    manager.setComponent(bomb, IsExploding());
+    manager.setComponent(bomb, IsBomb());
+    manager.setComponent(bomb, ExplosionRange());
 
-    // Get return a reference, so you can modify the component
-    manager.getComponent<Component2>(entity3).str = "I'm a reference!";
-    std::cout << manager.getComponent<Component2>(entity3).str << std::endl;
+//     auto &test_entity = manager.addEntity();
+//     EventCallbacks<EcsManager> event_listener;
 
+//     EventData event_left;
+//     event_left.type = EventType::KEYBOARD_EVENT;
+//     event_left.keyInput.Key = irr::KEY_LEFT;
 
-    auto &test_entity = manager.addEntity();
-    EventCallbacks<EcsManager> event_listener;
+//     EventData event_right;
+//     event_right.type = EventType::KEYBOARD_EVENT;
+//     event_right.keyInput.Key = irr::KEY_RIGHT;
 
-    EventData event_left;
-    event_left.type = EventType::KEYBOARD_EVENT;
-    event_left.keyInput.Key = irr::KEY_LEFT;
+//     event_listener.addCallback(event_left, [](const EventData &event, std::size_t entity_id, auto &manager) {
+//         std::cout << "left pressed in entity" << entity_id << std::endl;
+// //        auto &component = manager.getComponent<LeComponentCherché>(entity_id);
+//     });
 
-    EventData event_right;
-    event_right.type = EventType::KEYBOARD_EVENT;
-    event_right.keyInput.Key = irr::KEY_RIGHT;
+//     event_listener.addCallback(event_right, [](const EventData &event, std::size_t entity_id, auto &manager) {
+//         std::cout << "right pressed in entity" << entity_id << std::endl;
+//     });
 
-    event_listener.addCallback(event_left, [](const EventData &event, std::size_t entity_id, auto &manager) {
-        std::cout << "left pressed to entity" << entity_id << std::endl;
-//        auto &component = manager.getComponent<LeComponentCherché>(entity_id);
-    });
-
-    event_listener.addCallback(event_right, [](const EventData &event, std::size_t entity_id, auto &manager) {
-        std::cout << "right pressed to entity" << entity_id << std::endl;
-    });
-
-    manager.setComponent(test_entity, event_listener);
+//     manager.setComponent(test_entity, event_listener);
 
 
-    // Run le manager avec les systems spécifiés
+//    Run le manager avec les systems spécifiés
     manager.run(EcsSystems());
 }
