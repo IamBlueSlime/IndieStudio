@@ -20,8 +20,10 @@ namespace Ecs::System {
 
         void process(ManagerType &manager) override {
             auto videoDrive = IndieStudio::Game::getDevice()->getVideoDriver();
+            auto sceneManager = IndieStudio::Game::getDevice()->getSceneManager();
+
             videoDrive->beginScene(true, true, irr::video::SColor{255, 200, 200, 200});
-            // TODO: choper le scene manager et drawAll :)
+            sceneManager->drawAll();
             videoDrive->endScene();
         }
     };

@@ -40,7 +40,8 @@ using namespace Ecs::System;
 using EcsSystems = Systems<
 applyExplosion<EcsManager>,
 explosionDuration<EcsManager>,
-setupExplosion<EcsManager>
+setupExplosion<EcsManager>,
+drawEntities<EcsManager>
 >;
 
 int main()
