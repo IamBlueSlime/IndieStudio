@@ -19,6 +19,8 @@
 #include <variant>
 #include <memory>
 
+#include "indiestudio/Game.hpp"
+
 #include "./TypeList.hpp"
 #include "./Entity.hpp"
 #include "./Components.hpp"
@@ -59,6 +61,7 @@ namespace Ecs {
             auto systems = SystemsImpl<typeof(*this), EventSystem<typeof(*this)>, SystemTypes...>(*this);
             while (true) {
                 systems.process();
+                IndieStudio::Game::getDevice()->run();
                 this->event_manager.clear_event_queue();
             }
         }

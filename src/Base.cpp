@@ -85,8 +85,8 @@ int test()
 	irr::video::IVideoDriver* driver = device->getVideoDriver();
 
 	// get scene Manager (manage camera, object like model 3d and animation)
-	// irr::scene::ISceneManager* scenemg = device->getSceneManager();
-	irr::scene::ISceneManager* scenemg = scene.value().scene;
+	irr::scene::ISceneManager* scenemg = device->getSceneManager();
+	// irr::scene::ISceneManager* scenemg = scene.value().scene;
 
 	menu(device, driver, scenemg);
 
@@ -219,29 +219,29 @@ int test()
 	}
 
 	// game loop
-	while (device->run()) {
-		if (device->isWindowActive()) {
+	// while (device->run()) {
+	// 	if (device->isWindowActive()) {
 
-			// draw scene background
-			driver->beginScene(true, true, irr::video::SColor(255,200,200,200), irr::video::SExposedVideoData());
+	// 		// draw scene background
+	// 		driver->beginScene(true, true, irr::video::SColor(255,200,200,200), irr::video::SExposedVideoData());
 
-			// draw all object
+	// 		// draw all object
 
-			// draw camera first
-			// scenemg->drawAll();
-			manager.draw();
+	// 		// draw camera first
+	// 		// scenemg->drawAll();
+	// 		manager.draw();
 
-			// draw minimap on top of camera
-			// display method
-			driver->endScene();
+	// 		// draw minimap on top of camera
+	// 		// display method
+	// 		driver->endScene();
 
-			// reset camera param
-		} else {
-			// best feature! just render nothing so that bring down processor usage by irrlicht
-			device->yield();
-		}
-	}
-	device->drop();
+	// 		// reset camera param
+	// 	} else {
+	// 		// best feature! just render nothing so that bring down processor usage by irrlicht
+	// 		device->yield();
+	// 	}
+	// }
+	// device->drop();
 
 	return 0;
 }
