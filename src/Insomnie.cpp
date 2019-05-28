@@ -130,7 +130,7 @@ void intro()
 
     prep_button(driver, env);
 
-    irr::video::ITexture *text = driver->getTexture("/textures/skyboxes/skybox5.jpg");
+    // irr::video::ITexture *text = driver->getTexture("/textures/skyboxes/skybox5.jpg");
     // scenemg->addSkyDomeSceneNode(driver->getTexture("/textures/skyboxes/skybox5.jpg"));
     // scenemg->addSkyBoxSceneNode(text, text, text, text, text, text);
     scenemg->addSkyDomeSceneNode(driver->getTexture("sky-skydome.jpg"));

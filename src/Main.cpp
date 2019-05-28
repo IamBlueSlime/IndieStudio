@@ -29,7 +29,7 @@ System1<EcsManager>
 
 int main(int ac, char **av)
 {
-//    return IndieStudio::Bootstraper::start(ac, av);
+    return IndieStudio::Bootstraper::start(ac, av);
     // Creating a new manager
     auto manager = EcsManager();
 
@@ -74,11 +74,15 @@ int main(int ac, char **av)
     event_right.keyInput.Key = irr::KEY_RIGHT;
 
     event_listener.addCallback(event_left, [](const EventData &event, std::size_t entity_id, auto &manager) {
+        (void)event;
+        (void)manager;
         std::cout << "left pressed to entity" << entity_id << std::endl;
 //        auto &component = manager.getComponent<LeComponentCherché>(entity_id);
     });
 
     event_listener.addCallback(event_right, [](const EventData &event, std::size_t entity_id, auto &manager) {
+        (void)event;
+        (void)manager;
         std::cout << "right pressed to entity" << entity_id << std::endl;
     });
 
