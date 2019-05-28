@@ -5,6 +5,8 @@
 #include "ecs/Ecs.hpp"
 #include "indiestudio/world/MapPattern.hpp"
 #include "indiestudio/world/BasicWorldGenerator.hpp"
+#include "indiestudio/Game.hpp"
+#include "indiestudio/SceneManager.hpp"
 
 using namespace IndieStudio;
 using namespace Ecs::Component;
@@ -65,25 +67,29 @@ int test()
 	std::string sky = "1";
 	// std::cin >> sky;
 
-	int width = 1280;
-	int height = 960;
 	// create window (EDT_OPENGL= force irrlicth to use openGL, dimension2d<T> window x y)
 
 	// IndieStudio::uniqueIrr_ptr<irr::IrrlichtDevice> device(
-	irr::IrrlichtDevice *device =  irr::createDevice(irr::video::EDT_OPENGL, irr::core::dimension2d<irr::u32>(width, height));
+	irr::IrrlichtDevice *device = IndieStudio::Game::getDevice();
+
+	SceneManager manager;
+
+	std::optional<SceneManager::Scene> scene = manager.createScene("test");
+	if (scene == std::nullopt) {
+		std::cout << "manager" << std::endl;
+		return 1;
+	}
 
 	// if create window failed
 	if (device == 0)
 		return 1;
 
-	// Set window name
-    device->setWindowCaption(L"Indie Studio!");
-
 	// get video driver (manage scene background and draw loop)
 	irr::video::IVideoDriver* driver = device->getVideoDriver();
 
 	// get scene Manager (manage camera, object like model 3d and animation)
-	irr::scene::ISceneManager* scenemg = device->getSceneManager();
+	// irr::scene::ISceneManager* scenemg = device->getSceneManager();
+	irr::scene::ISceneManager* scenemg = scene.value().scene;
 
 	menu(device, driver, scenemg);
 
@@ -225,7 +231,8 @@ int test()
 			// draw all object
 
 			// draw camera first
-			scenemg->drawAll();
+			// scenemg->drawAll();
+			manager.draw();
 
 			// draw minimap on top of camera
 			// display method
@@ -237,6 +244,7 @@ int test()
 			device->yield();
 		}
 	}
+	device->drop();
 
 	return 0;
 }
