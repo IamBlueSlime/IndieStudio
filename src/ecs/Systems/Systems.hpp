@@ -15,6 +15,7 @@
 #include "./explosionDurationSystem.hpp"
 #include "./setupExplosionSystem.hpp"
 #include "./EventSystem.hpp"
+#include "./movePlayer.hpp"
 
 #include <unistd.h>
 
