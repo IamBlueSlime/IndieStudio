@@ -82,7 +82,7 @@ namespace std {
                 case Ecs::Event::EventType::CUSTOM_EVENT_1: return (hash<int>()(static_cast<int>(event.type))) ^ (hash<bool>()(event.custom_event_1 << 1)) >> 1;
                     break;
                 default:
-                    std::cout << "hash not implemented on this Ecs::Event::EventData : aborting" << std::endl;
+                    std::cout << "hash not implemented on this Ecs::Event::EventData <<: aborting" << std::endl;
                     assert(false);
                     return 0;
             }
