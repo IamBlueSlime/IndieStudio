@@ -127,19 +127,19 @@ void prep_travelling(irr::IrrlichtDevice *device, irr::scene::ISceneManager *sce
 	sa->drop();
 }
 
-void da_vinci_code(irr::IrrlichtDevice *device, irr::scene::ISceneManager* smgr)
+void da_vinci_code(irr::IrrlichtDevice *device, irr::scene::ISceneManager* scenemg)
 {
 	irr::video::IVideoDriver* driver = device->getVideoDriver();
 
-	irr::scene::IAnimatedMesh* mesh = smgr->getMesh("asset/room.3ds");
+	irr::scene::IAnimatedMesh* mesh = scenemg->getMesh("asset/room.3ds");
 
-	smgr->getMeshManipulator()->makePlanarTextureMapping(mesh->getMesh(0), 0.004f);
+	scenemg->getMeshManipulator()->makePlanarTextureMapping(mesh->getMesh(0), 0.004f);
 
-	irr::scene::ISceneNode* node = 0;
+	irr::scene::ISceneNode* snode = 0;
 
-	node = smgr->addAnimatedMeshSceneNode(mesh);
-	node->setMaterialTexture(0, driver->getTexture("asset/wall.jpg"));
-	node->getMaterial(0).SpecularColor.set(0,0,0,0);
+	snode = scenemg->addAnimatedMeshSceneNode(mesh);
+	snode->setMaterialTexture(0, driver->getTexture("asset/wall.jpg"));
+	snode->getMaterial(0).SpecularColor.set(0,0,0,0);
 
 	/*
 	Now, for the first special effect: Animated water. It works like this:
@@ -152,47 +152,47 @@ void da_vinci_code(irr::IrrlichtDevice *device, irr::scene::ISceneManager* smgr)
 	want to.
 	*/
 
-	mesh = smgr->addHillPlaneMesh( "myHill",
+	mesh = scenemg->addHillPlaneMesh( "myHill",
 		irr::core::dimension2d<irr::f32>(20,20),
 		irr::core::dimension2d<irr::u32>(40,40), 0, 0,
 		irr::core::dimension2d<irr::f32>(0,0),
 		irr::core::dimension2d<irr::f32>(10,10));
 
-	node = smgr->addWaterSurfaceSceneNode(mesh->getMesh(0), 3.0f, 300.0f, 30.0f);
-	node->setPosition(irr::core::vector3df(0,7,0));
+	snode = scenemg->addWaterSurfaceSceneNode(mesh->getMesh(0), 3.0f, 300.0f, 30.0f);
+	snode->setPosition(irr::core::vector3df(0,7,0));
 
-	node->setMaterialTexture(0, driver->getTexture("asset/stones.jpg"));
-	node->setMaterialTexture(1, driver->getTexture("asset/water.jpg"));
+	snode->setMaterialTexture(0, driver->getTexture("asset/stones.jpg"));
+	snode->setMaterialTexture(1, driver->getTexture("asset/water.jpg"));
 
-	node->setMaterialType(irr::video::EMT_REFLECTION_2_LAYER);
+	snode->setMaterialType(irr::video::EMT_REFLECTION_2_LAYER);
 
 	/*
 	The second special effect is very basic, I bet you saw it already in
 	some Irrlicht Engine demos: A transparent billboard combined with a
-	dynamic light. We simply create a light scene node, let it fly around,
+	dynamic light. We simply create a light scene snode, let it fly around,
 	and to make it look more cool, we attach a billboard scene node to it.
 	*/
 
 	// create light
 
-	node = smgr->addLightSceneNode(0, irr::core::vector3df(0,0,0),
+	snode = scenemg->addLightSceneNode(0, irr::core::vector3df(0,0,0),
 		irr::video::SColorf(1.0f, 0.6f, 0.7f, 1.0f), 800.0f);
 	irr::scene::ISceneNodeAnimator* anim = 0;
-	anim = smgr->createFlyCircleAnimator (irr::core::vector3df(0,150,0),250.0f);
-	node->addAnimator(anim);
+	anim = scenemg->createFlyCircleAnimator (irr::core::vector3df(0,150,0),250.0f);
+	snode->addAnimator(anim);
 	anim->drop();
 
 	// attach billboard to light
 
-	node = smgr->addBillboardSceneNode(node, irr::core::dimension2d<irr::f32>(50, 50));
-	node->setMaterialFlag(irr::video::EMF_LIGHTING, false);
-	node->setMaterialType(irr::video::EMT_TRANSPARENT_ADD_COLOR);
-	node->setMaterialTexture(0, driver->getTexture("asset/particlewhite.bmp"));
+	snode = scenemg->addBillboardSceneNode(snode, irr::core::dimension2d<irr::f32>(50, 50));
+	snode->setMaterialFlag(irr::video::EMF_LIGHTING, false);
+	snode->setMaterialType(irr::video::EMT_TRANSPARENT_ADD_COLOR);
+	snode->setMaterialTexture(0, driver->getTexture("asset/particlewhite.bmp"));
 
 	// create a particle system
 
 	irr::scene::IParticleSystemSceneNode* ps =
-		smgr->addParticleSystemSceneNode(false);
+		scenemg->addParticleSystemSceneNode(false);
 
 	irr::scene::IParticleEmitter* em = ps->createBoxEmitter(
 		irr::core::aabbox3d<irr::f32>(-7,0,-7,7,1,7), // emitter size
@@ -220,12 +220,12 @@ void da_vinci_code(irr::IrrlichtDevice *device, irr::scene::ISceneManager* smgr)
 	ps->setMaterialType(irr::video::EMT_TRANSPARENT_ADD_COLOR);
 
 	/*
-	Next we add a volumetric light node, which adds a glowing fake area light to
+	Next we add a volumetric light snode, which adds a glowing fake area light to
 	the scene. Like with the billboards and particle systems we also assign a
 	texture for the desired effect, though this time we'll use a texture animator
 	to create the illusion of a magical glowing area effect.
 	*/
-	irr::scene::IVolumeLightSceneNode * n = smgr->addVolumeLightSceneNode(0, -1,
+	irr::scene::IVolumeLightSceneNode * n = scenemg->addVolumeLightSceneNode(0, -1,
 				32,                              // Subdivisions on U axis
 				32,                              // Subdivisions on V axis
 				irr::video::SColor(0, 255, 255, 255), // foot color
@@ -249,28 +249,28 @@ void da_vinci_code(irr::IrrlichtDevice *device, irr::scene::ISceneManager* smgr)
 		}
 
 		// create texture animator
-		irr::scene::ISceneNodeAnimator* glow = smgr->createTextureAnimator(textures, 150);
+		irr::scene::ISceneNodeAnimator* glow = scenemg->createTextureAnimator(textures, 150);
 		n->addAnimator(glow);
 
 		// drop the animator because it was created with a create() function
 		glow->drop();
 	}
 
-	mesh = smgr->getMesh("asset/dwarf.x");
+	mesh = scenemg->getMesh("asset/dwarf.x");
 	irr::scene::IAnimatedMeshSceneNode* anode = 0;
 
-	anode = smgr->addAnimatedMeshSceneNode(mesh);
+	anode = scenemg->addAnimatedMeshSceneNode(mesh);
 	anode->setPosition(irr::core::vector3df(-50,20,-60));
 	anode->setAnimationSpeed(15);
 
 	// add shadow
 	anode->addShadowVolumeSceneNode();
-	smgr->setShadowColor(irr::video::SColor(150,0,0,0));
+	scenemg->setShadowColor(irr::video::SColor(150,0,0,0));
 
 	anode->setScale(irr::core::vector3df(2,2,2));
 	anode->setMaterialFlag(irr::video::EMF_NORMALIZE_NORMALS, true);
 
-	irr::scene::ICameraSceneNode* camera = smgr->addCameraSceneNode();
+	irr::scene::ICameraSceneNode* camera = scenemg->addCameraSceneNode();
 	camera->setPosition(irr::core::vector3df(25.6F, 360.5F, -372.7F));
     camera->setTarget(anode->getAbsolutePosition());
 	camera->setFarValue(10000.0f); // this increase a shadow visible range.
@@ -283,7 +283,7 @@ void da_vinci_code(irr::IrrlichtDevice *device, irr::scene::ISceneManager* smgr)
     	{
     		driver->beginScene(true, true, 0);
 
-    		smgr->drawAll();
+    		scenemg->drawAll();
 
     		driver->endScene();
 

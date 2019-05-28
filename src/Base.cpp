@@ -104,21 +104,22 @@ int test()
 	irr::scene::IAnimatedMeshSceneNode* node =
 		scenemg->addAnimatedMeshSceneNode(scenemg->getMesh("asset/maps/gwendal_cube.obj"));
 
-	node->setMaterialFlag(irr::video::EMF_NORMALIZE_NORMALS, true);
-	scenemg->getMeshManipulator()->makePlanarTextureMapping(node->getMesh(), 0.004F);
+		node->addShadowVolumeSceneNode();
+		node->setMaterialFlag(irr::video::EMF_NORMALIZE_NORMALS, true);
+
 
 	irr::scene::ITriangleSelector* selector = 0;
 
-	irr::scene::ILightSceneNode*  pLight = device->getSceneManager()->addLightSceneNode();
-	irr::video::SLight & l = pLight->getLightData();
-	l.Type = irr::video::ELT_POINT;
+	// irr::scene::ILightSceneNode*  pLight = device->getSceneManager()->addLightSceneNode();
+	// irr::video::SLight & l = pLight->getLightData();
+	// l.Type = irr::video::ELT_POINT;
 
-	float pd = 12.;
-	l.DiffuseColor = irr::video::SColorf(pd, pd, pd ,0.0);
+	// float pd = 12.;
+	// l.DiffuseColor = irr::video::SColorf(pd, pd, pd ,0.0);
 
-	irr::scene::ISceneNode* pNode = device->getSceneManager()->addEmptySceneNode();
-	pLight->setPosition(irr::core::vector3df(20 * 20, 20 * 20, 20 * -10)); //default is (1,1,0) for directional lights
-	pLight->setParent(pNode);
+	// irr::scene::ISceneNode* pNode = device->getSceneManager()->addEmptySceneNode();
+	// pLight->setPosition(irr::core::vector3df(20 * 20, 20 * 20, 20 * -10)); //default is (1,1,0) for directional lights
+	// pLight->setParent(pNode);
 
 	scenemg->setShadowColor(irr::video::SColor(150, 0, 0, 0));
 
@@ -127,7 +128,7 @@ int test()
 	// place map with node
 	if (node) {
 		node->setMaterialTexture(0, driver->getTexture("tmp/textures/block_ground_1.png"));
-		node->setMaterialFlag(irr::video::EMF_LIGHTING, false);
+		node->setMaterialFlag(irr::video::EMF_LIGHTING, true);
 		node->setScale(irr::core::vector3df(s, s, s));
 		node->setPosition(irr::core::vector3df(0.5, 0, 0.5));
 		// node->addShadowVolumeSceneNode();
@@ -166,6 +167,9 @@ int test()
 	// load 3d model animated
 	irr::scene::IAnimatedMeshSceneNode* anms =
 		scenemg->addAnimatedMeshSceneNode(scenemg->getMesh("asset/models/Character/Bomberman.MD3"));
+		anms->addShadowVolumeSceneNode();
+		anms->setMaterialFlag(irr::video::EMF_NORMALIZE_NORMALS, true);
+
 	if (anms) {
 		anms->setMaterialTexture(0, driver->getTexture("asset/models/Character/BlackBombermanTextures.png"));
 		anms->setMaterialFlag(irr::video::EMF_LIGHTING, false);
@@ -174,6 +178,7 @@ int test()
 		anms->setPosition(irr::core::vector3df(anms->getScale().X, node->getPosition().Y, anms->getScale().Z));
 		ninja = scenemg->createTriangleSelector(anms);
 		anms->setTriangleSelector(ninja);
+
 		ninja->drop();
 	}
 
@@ -188,6 +193,7 @@ int test()
 	irr::scene::ICameraSceneNode *camera = scenemg->addCameraSceneNode(0,
 		irr::core::vector3df(s * (w / 2), s * (w / 1.5), s * 3),
 		irr::core::vector3df(s * (w / 2), 1, s * (h / 2)));
+	camera->setFarValue(10000);
 
 	if (selector) {
 		irr::scene::ISceneNodeAnimator* anim = scenemg->createCollisionResponseAnimator(
@@ -197,6 +203,25 @@ int test()
 		// camera->addAnimator(anim);
 		anim->drop();
 	}
+
+// MARABOUTERI START
+
+	irr::scene::ISceneNode* snode = 0;
+
+	snode = scenemg->addLightSceneNode(0, irr::core::vector3df(355,100, 50),
+		irr::video::SColorf(1.0f, 1.0f, 1.0f, 1.0f), 100000.0f);
+	irr::scene::ISceneNodeAnimator* anim = 0;
+	// anim = scenemg->createFlyCircleAnimator (irr::core::vector3df(0,50,0),250.0f);
+	// snode->addAnimator(anim);
+	// anim->drop();
+
+	snode = scenemg->addBillboardSceneNode(snode, irr::core::dimension2d<irr::f32>(50, 50));
+	snode->setMaterialFlag(irr::video::EMF_LIGHTING, false);
+	snode->setMaterialType(irr::video::EMT_TRANSPARENT_ADD_COLOR);
+	snode->setMaterialTexture(0, driver->getTexture("asset/particlewhite.bmp"));
+
+// MARABOUTERI END
+
 
 	// game loop
 	while (device->run()) {
