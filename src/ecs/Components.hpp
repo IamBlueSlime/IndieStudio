@@ -35,6 +35,10 @@ namespace Ecs::Component {
     struct Component3 {
     };
 
+    struct Drawable {
+
+    };
+
     // struct AnimatedMesh : irr::scene::IAnimatedMeshSceneNode {
     // };
 

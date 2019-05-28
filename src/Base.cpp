@@ -3,7 +3,10 @@
 #include <string>
 #include "indiestudio/utils/UniqueIrrPtr.hpp"
 #include "ecs/Ecs.hpp"
+#include "indiestudio/world/MapPattern.hpp"
+#include "indiestudio/world/BasicWorldGenerator.hpp"
 
+using namespace IndieStudio;
 using namespace Ecs::Component;
 
 // Components registers in the manager
@@ -82,7 +85,9 @@ int test()
 
 	menu(device, driver, scenemg);
 
-
+	BasicWorldGenerator gen;
+	MapPattern pattern(19, 13);
+	gen.generate(pattern);
 
 	irr::scene::IAnimatedMeshSceneNode* node =
 		scenemg->addAnimatedMeshSceneNode(scenemg->getMesh("asset/maps/gwendal_cube.obj"));
@@ -98,21 +103,39 @@ int test()
 		selector = scenemg->createOctreeTriangleSelector(node->getMesh(), node, 128);
 		node->setTriangleSelector(selector);
 		selector->drop();
-		for (int i = 0; i < 13; ++i)
-			for (int j = 0; j < 19; ++j) {
-				if (!i && !j)
-					continue;
-				irr::scene::ISceneNode* tmp = node->clone();
-				tmp->setPosition(irr::core::vector3df(node->getPosition().X + node->getScale().X * j, node->getScale().Y, node->getPosition().Z + node->getScale().Z * i));
-				if ((i % 2 == 0 && j % 2 == 0) || (i % 2 != 0 && j % 2 != 0))
-					tmp->setMaterialTexture(0, driver->getTexture("asset/maps/grass.png"));
-				if (i == 0 || i == 12 || j == 0 || j == 18) {
-					tmp->setPosition(irr::core::vector3df(node->getPosition().X + node->getScale().X * j, 2 * node->getScale().X, node->getPosition().Z + node->getScale().Z * i));
-					tmp->setMaterialTexture(0, driver->getTexture("asset/maps/my_wall.jpg"));
-				}
+
+		pattern.forEach([&](int y, int x, char c) {
+			irr::scene::ISceneNode* tmp = node->clone();
+
+			tmp->setPosition(irr::core::vector3df(
+				node->getPosition().X + node->getScale().X * x,
+				node->getScale().Y * (c != MapPattern::EMPTY_TILE ? 1 : 0),
+				node->getPosition().Z + node->getScale().Z * y
+			));
+
+			if (c == MapPattern::EMPTY_TILE) {
+				tmp->setMaterialTexture(0, driver->getTexture("asset/maps/grass.png"));
+			} else if (c == MapPattern::BORDER_WALL_TILE || c == MapPattern::INNER_WALL_TILE) {
+				tmp->setMaterialTexture(0, driver->getTexture("asset/maps/my_wall.jpg"));
+			} else if (c == MapPattern::BREAKABLE_BLOCK_TILE) {
+				tmp->setMaterialTexture(0, driver->getTexture("asset/maps/cubre.jpg"));
 			}
-		node->setPosition(irr::core::vector3df(node->getPosition().X, 2 * node->getScale().X, node->getPosition().Z));
-		node->setMaterialTexture(0, driver->getTexture("asset/maps/my_wall.jpg"));
+		});
+		// for (int i = 0; i < 13; ++i)
+		// 	for (int j = 0; j < 19; ++j) {
+		// 		if (!i && !j)
+		// 			continue;
+		// 		irr::scene::ISceneNode* tmp = node->clone();
+		// 		tmp->setPosition(irr::core::vector3df(node->getPosition().X + node->getScale().X * j, node->getScale().Y, node->getPosition().Z + node->getScale().Z * i));
+		// 		if ((i % 2 == 0 && j % 2 == 0) || (i % 2 != 0 && j % 2 != 0))
+		// 			tmp->setMaterialTexture(0, driver->getTexture("asset/maps/grass.png"));
+		// 		if (i == 0 || i == 12 || j == 0 || j == 18) {
+		// 			tmp->setPosition(irr::core::vector3df(node->getPosition().X + node->getScale().X * j, 2 * node->getScale().X, node->getPosition().Z + node->getScale().Z * i));
+		// 			tmp->setMaterialTexture(0, driver->getTexture("asset/maps/my_wall.jpg"));
+		// 		}
+		// 	}
+		// node->setPosition(irr::core::vector3df(node->getPosition().X, 2 * node->getScale().X, node->getPosition().Z));
+		// node->setMaterialTexture(0, driver->getTexture("asset/maps/my_wall.jpg"));
 	}
 
 	irr::scene::ITriangleSelector* ninja = 0;
