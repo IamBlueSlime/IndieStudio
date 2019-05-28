@@ -13,9 +13,6 @@ using namespace Ecs::Component;
 
 // Components registers in the manager
 using EcsManager = Ecs::Manager<
-Component1,
-Component2,
-Component3
 //AnimatedMesh
 >;
 

@@ -97,6 +97,18 @@ int main()
 
 //     manager.setComponent(test_entity, event_listener);
 
+    // event_listener.addCallback(event_left, [](const EventData &event, std::size_t entity_id, auto &manager) {
+    //     (void)event;
+    //     (void)manager;
+    //     std::cout << "left pressed to entity" << entity_id << std::endl;
+//        auto &component = manager.getComponent<LeComponentCherché>(entity_id);
+    // });
+
+    // event_listener.addCallback(event_right, [](const EventData &event, std::size_t entity_id, auto &manager) {
+    //     (void)event;
+    //     (void)manager;
+    //     std::cout << "right pressed to entity" << entity_id << std::endl;
+    // });
 
 //    Run le manager avec les systems spécifiés
     manager.run(EcsSystems());
