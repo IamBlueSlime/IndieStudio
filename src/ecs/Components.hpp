@@ -35,6 +35,9 @@ namespace Ecs::Component {
     struct Component3 {
     };
 
+    // struct AnimatedMesh : irr::scene::IAnimatedMeshSceneNode {
+    // };
+
     template<typename ManagerType>
     struct EventCallbacks {
 
