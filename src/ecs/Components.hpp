@@ -36,6 +36,9 @@ namespace Ecs::Component {
     struct Alive {
     };
 
+    struct Drawable {
+    };
+
     struct Movable {
     };
 

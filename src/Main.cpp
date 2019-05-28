@@ -19,8 +19,9 @@ Position,
 Speed,
 Movable,
 Alive,
-Destructible,
+Indestructible,
 LifeTime,
+ExplosionLifeTime,
 IsExploding,
 ExplosionRange,
 BombType,
@@ -37,7 +38,9 @@ using namespace Ecs::System;
 
 // Systems used to run the manager
 using EcsSystems = Systems<
-applyExplosion<EcsManager>
+applyExplosion<EcsManager>,
+explosionDuration<EcsManager>,
+setupExplosion<EcsManager>
 >;
 
 int main()
@@ -61,16 +64,16 @@ int main()
     // Set this component on the entity
     manager.setComponent(player, position2);
     manager.setComponent(player, Alive());
-    manager.setComponent(player, Destructible());
 
     manager.setComponent(player2, position1);
     manager.setComponent(player2, Alive());
-    manager.setComponent(player2, Destructible());
 
     manager.setComponent(bomb, posBomb);
-    manager.setComponent(bomb, IsExploding());
+//    manager.setComponent(bomb, IsExploding());
     manager.setComponent(bomb, IsBomb());
     manager.setComponent(bomb, ExplosionRange());
+    manager.setComponent(bomb, LifeTime());
+//    manager.setComponent(bomb, ExplosionLifeTime());
 
 //     auto &test_entity = manager.addEntity();
 //     EventCallbacks<EcsManager> event_listener;

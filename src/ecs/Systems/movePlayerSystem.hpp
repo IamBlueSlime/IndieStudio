@@ -24,7 +24,7 @@ namespace Ecs::System {
                     auto &speed = manager.template getComponent<Speed>(data);
                     pos.x += speed.x;
                     pos.y += speed.y;
-                    pos.z += speed.z;       
+                    pos.z += speed.z;
             });
         }
     };
