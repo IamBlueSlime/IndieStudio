@@ -39,7 +39,7 @@ namespace Ecs::Component {
     struct Movable {
     };
 
-    struct Destructible {
+    struct Indestructible {
     };
 
     struct LifeTime {
