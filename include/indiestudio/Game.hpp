@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include "indiestudio/IGame.hpp"
 #include "indiestudio/common/Logger.hpp"
 #include "indiestudio/mod/ModManager.hpp"
 #include "indiestudio/statistic/AchievementManager.hpp"
@@ -15,24 +16,24 @@
 
 namespace IndieStudio {
 
-    class Game {
+    class Game : public IGame {
 	public:
 		Game();
 
         void start();
 
+        IStatisticManager &getStatisticManager() override { return this->statisticManager; }
+        IAchievementManager &getAchievementManager() override { return this->achievementManager; }
+        IWorldManager &getWorldManager() override { return this->worldManager; }
         ModManager &getModManager() { return this->modManager; }
-        StatisticManager &getStatisticManager() { return this->statisticManager; }
-        AchievementManager &getAchievementManager() { return this->achievementManager; }
-        WorldManager &getWorldManager() { return this->worldManager; }
 
 	protected:
 	private:
         Logger logger;
-        ModManager modManager;
         StatisticManager statisticManager;
         AchievementManager achievementManager;
         WorldManager worldManager;
+        ModManager modManager;
     };
 
 }

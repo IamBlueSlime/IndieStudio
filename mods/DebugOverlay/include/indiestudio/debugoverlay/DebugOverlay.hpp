@@ -17,8 +17,8 @@ namespace IndieStudio {
         public:
             DebugOverlay();
 
-            void onEnable() override;
-            void onDisable() override;
+            void onEnable(IGame &game) override;
+            void onDisable(IGame &game) override;
 
         protected:
         private:

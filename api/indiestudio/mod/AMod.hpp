@@ -10,6 +10,7 @@
 #include <functional>
 #include <memory>
 #include <string>
+#include "indiestudio/IGame.hpp"
 #include "indiestudio/common/ILogger.hpp"
 
 namespace IndieStudio {
@@ -26,8 +27,8 @@ namespace IndieStudio {
         };
 
         virtual ~AMod() {}
-        virtual void onEnable() = 0;
-        virtual void onDisable() = 0;
+        virtual void onEnable(IGame &game) = 0;
+        virtual void onDisable(IGame &game) = 0;
 
         void setLogger(std::unique_ptr<ILogger> &logger)
         {

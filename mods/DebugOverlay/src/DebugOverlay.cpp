@@ -14,12 +14,12 @@ namespace IndieStudio {
         DebugOverlay::DebugOverlay()
         {}
 
-        void DebugOverlay::onEnable()
+        void DebugOverlay::onEnable(IGame &game)
         {
             this->logger->info("Hello!");
         }
 
-        void DebugOverlay::onDisable()
+        void DebugOverlay::onDisable(IGame &game)
         {
             this->logger->info("Bye!");
         }
