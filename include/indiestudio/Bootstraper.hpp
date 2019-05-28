@@ -21,3 +21,4 @@ namespace IndieStudio {
 
 // TODO: remove this below
 void test();
+void intro();

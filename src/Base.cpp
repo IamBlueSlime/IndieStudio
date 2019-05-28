@@ -10,7 +10,7 @@ using namespace Ecs::Component;
 using EcsManager = Ecs::Manager<
 Component1,
 Component2,
-Component3,
+Component3
 //AnimatedMesh
 >;
 
@@ -82,7 +82,7 @@ int test()
 
 	menu(device, driver, scenemg);
 
-	
+
 
 	irr::scene::IAnimatedMeshSceneNode* node =
 		scenemg->addAnimatedMeshSceneNode(scenemg->getMesh("asset/maps/gwendal_cube.obj"));

@@ -41,6 +41,7 @@ set(INDIE_SRC
     ${INDIE_SRC_DIR}/utils/CRCUtils.cpp
     # TODO: remove this below
     ${INDIE_SRC_DIR}/Base.cpp
+    ${INDIE_SRC_DIR}/Insomnie.cpp
 )
 set(INDIE_REQUIRED_LIBRARIES ${Irrlicht_LIBRARIES} sfml-audio stdc++fs pthread)
 
