@@ -20,4 +20,15 @@ namespace IndieStudio {
         // TODO: Fire achievement register event
     }
 
+    irr::IrrlichtDevice *Game::getDevice(irr::video::E_DRIVER_TYPE type, int width, int height)
+    {
+        static irr::IrrlichtDevice *device = 0;
+
+        if (!device) {
+            device = irr::createDevice(type, irr::core::dimension2d<irr::u32>(width, height));
+            device->setWindowCaption(L"Indie Studio");
+        }
+        return device;
+    }
+
 }

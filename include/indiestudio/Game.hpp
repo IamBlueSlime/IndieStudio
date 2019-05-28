@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <irrlicht/irrlicht.h>
 #include "indiestudio/common/Logger.hpp"
 #include "indiestudio/mod/ModManager.hpp"
 #include "indiestudio/statistic/AchievementManager.hpp"
@@ -21,6 +22,7 @@ namespace IndieStudio {
 
         void start();
 
+        static irr::IrrlichtDevice *getDevice(irr::video::E_DRIVER_TYPE type = irr::video::EDT_OPENGL,int width = 1280, int height = 960);
         ModManager &getModManager() { return this->modManager; }
         StatisticManager &getStatisticManager() { return this->statisticManager; }
         AchievementManager &getAchievementManager() { return this->achievementManager; }

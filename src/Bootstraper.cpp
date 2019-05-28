@@ -18,8 +18,6 @@ namespace IndieStudio {
         intro();
         // Game game;
         // game.start();
-
-
         return 0;
     }
 
