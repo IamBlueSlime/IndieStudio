@@ -72,7 +72,20 @@ namespace std {
 
         std::size_t operator()([[gnu::unused]] const Ecs::Event::EventData &event) const
         {
-            return static_cast<std::size_t>(std::exp(0) - 1.0);
+            switch (event.type) {
+                case Ecs::Event::EventType::GUI_EVENT: return (hash<int>()(static_cast<int>(event.type))) ^ (hash<int>()(static_cast<int>(event.guiEvent.EventType) << 1)) >> 1;
+                    break;
+                case Ecs::Event::EventType::KEYBOARD_EVENT: return (hash<int>()(static_cast<int>(event.type))) ^ (hash<int>()(static_cast<int>(event.keyInput.Key) << 1)) >> 1;
+                    break;
+                case Ecs::Event::EventType::MOUSE_EVENT: return (hash<int>()(static_cast<int>(event.type))) ^ (hash<int>()(static_cast<int>(event.mouseInput.Event) << 1)) >> 1;
+                    break;
+                case Ecs::Event::EventType::CUSTOM_EVENT_1: return (hash<int>()(static_cast<int>(event.type))) ^ (hash<bool>()(event.custom_event_1 << 1)) >> 1;
+                    break;
+                default:
+                    std::cout << "hash not implemented on this Ecs::Event::EventData : aborting" << std::endl;
+                    assert(false);
+                    return 0;
+            }
         }
     };
 }
