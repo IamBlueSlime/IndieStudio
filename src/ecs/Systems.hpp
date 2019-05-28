@@ -24,7 +24,6 @@ namespace Ecs::System {
             manager.template forEntitiesWith<Component1>(
                 [&manager](auto &data, [[gnu::unused]] auto id) {
                     auto &comp1 = manager.template getComponent<Component1>(data);
-                    std::cout << comp1.x << "x " << comp1.y << "y" << std::endl;
                     comp1.x += 1;
                     comp1.y += 1;
                 }

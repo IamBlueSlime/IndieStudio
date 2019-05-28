@@ -10,13 +10,13 @@
 
 #include <cmath>
 #include <unordered_map>
-#include <mutex>
 #include <iostream>
 #include <cassert>
-#include <thread>
 
 #include <irrlicht/irrlicht.h>
 #include <irrlicht/IEventReceiver.h>
+
+#include "indiestudio/Game.hpp"
 
 namespace Ecs {
     namespace Event {
@@ -111,7 +111,6 @@ namespace Ecs {
             }
 
             void push_event(const EventData &event) {
-                std::unique_lock<std::mutex> lock;
                 if (this->event_queue_switch) {
                     this->event_queue1[event] = true;
                 } else {
@@ -123,10 +122,6 @@ namespace Ecs {
             std::unordered_map<EventData, bool> event_queue1;
             std::unordered_map<EventData, bool> event_queue2;
             bool event_queue_switch;
-            //TODO no need of mutex is the device is in the juel's singleton
-            std::mutex mutex;
-            irr::IrrlichtDevice *device = irr::createDevice(irr::video::EDT_OPENGL, irr::core::dimension2d<irr::u32>(1280, 960));;
-            std::thread thread;
         };
 
         class IrrlichEventReceiver : public irr::IEventReceiver {
@@ -153,13 +148,7 @@ namespace Ecs {
         };
 
         inline EventManager::EventManager() {
-            device->setEventReceiver(new IrrlichEventReceiver(*this));
-            //TODO: utiliser le vrai device
-            this->thread = std::thread([this]() {
-                while (true) {
-                    this->device->run();
-                }
-            });
+            IndieStudio::Game::getDevice()->setEventReceiver(new IrrlichEventReceiver(*this));
         }
     }
 }

@@ -16,7 +16,6 @@ using EcsManager = Ecs::Manager<
 Component1,
 Component2,
 Component3
-//AnimatedMesh
 >;
 
 class MyClass : public irr::IEventReceiver {
