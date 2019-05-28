@@ -29,7 +29,7 @@ System1<EcsManager>
 
 int main(int ac, char **av)
 {
-//    return IndieStudio::Bootstraper::start(ac, av);
+   return IndieStudio::Bootstraper::start(ac, av);
     // Creating a new manager
     auto manager = EcsManager();
 
