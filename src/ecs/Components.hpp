@@ -141,6 +141,13 @@ namespace Ecs::Component {
         int id;
     };
 
+    struct Drawable {
+
+    };
+
+    // struct AnimatedMesh : irr::scene::IAnimatedMeshSceneNode {
+    // };
+
     template<typename ManagerType>
     struct EventCallbacks {
 

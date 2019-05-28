@@ -8,13 +8,14 @@
 #include <iostream>
 #include <experimental/filesystem>
 #include <sstream>
+#include "indiestudio/Game.hpp"
 #include "indiestudio/mod/ModManager.hpp"
 
 namespace IndieStudio {
 
     namespace stdfs = std::experimental::filesystem;
 
-    ModManager::ModManager() : logger("modmanager")
+    ModManager::ModManager(Game &game) : game(game), logger("modmanager")
     {}
 
     void ModManager::reload(const std::string &path)
@@ -39,7 +40,7 @@ namespace IndieStudio {
     void ModManager::flush()
     {
         for (auto it = this->mods.begin(); it != this->mods.end(); ++it)
-            it->second->onDisable();
+            it->second->onDisable(this->game);
         
         this->mods.clear();
 
@@ -86,7 +87,7 @@ namespace IndieStudio {
         mods.insert(std::make_pair(descriptor, UAMod(mod)));
 
         logger.debug("Enabling mod '" + descriptor->name + "'.");
-        mod->onEnable();
+        mod->onEnable(this->game);
         logger.debug("Enabled mod '" + descriptor->name + "'.");
 
         logger.info("Loaded mod '" + descriptor->name + "' (" +

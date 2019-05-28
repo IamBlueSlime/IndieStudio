@@ -17,9 +17,11 @@
 
 namespace IndieStudio {
 
+    class Game;
+
     class ModManager {
     public:
-        ModManager();
+        ModManager(Game &game);
 
         using UAMod = std::unique_ptr<AMod>;
 
@@ -33,6 +35,7 @@ namespace IndieStudio {
 
     protected:
     private:
+        Game &game;
         Logger logger;
         std::vector<LibraryWrapper> modsLibraries;
         std::unordered_map<AMod::Descriptor *, UAMod> mods;

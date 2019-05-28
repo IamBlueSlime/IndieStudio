@@ -2,9 +2,27 @@
 #include <iostream>
 #include <string>
 #include "indiestudio/utils/UniqueIrrPtr.hpp"
+#include "ecs/Ecs.hpp"
+#include "indiestudio/world/MapPattern.hpp"
+#include "indiestudio/world/BasicWorldGenerator.hpp"
+#include "indiestudio/Game.hpp"
+#include "indiestudio/SceneManager.hpp"
+
+using namespace IndieStudio;
+using namespace Ecs::Component;
+
+// Components registers in the manager
+using EcsManager = Ecs::Manager<
+Component1,
+Component2,
+Component3
+//AnimatedMesh
+>;
 
 class MyClass : public irr::IEventReceiver {
     bool OnEvent(const irr::SEvent& event) override {
+		(void)event;
+		std::cout << "Event" << std::endl;
         // push dans notre event queue
         return true;
     }
@@ -18,6 +36,14 @@ void menu(irr::IrrlichtDevice *device, irr::video::IVideoDriver* driver, irr::sc
 	(void) driver;
 	(void) scenemg;
 }
+
+// int map_maker(EcsManager manager, irr::scene::ISceneManager* scenemg, irr::IrrlichtDevice *device) {
+//     auto &block = manager.addEntity();
+
+//     AnimatedMesh node(scenemg->getMesh("asset/maps/gwendal_cube.obj"));
+
+//     manager.setComponent(block, node);
+// }
 
 int test()
 {
@@ -41,27 +67,35 @@ int test()
 	std::string sky = "1";
 	// std::cin >> sky;
 
-	int width = 1280;
-	int height = 960;
 	// create window (EDT_OPENGL= force irrlicth to use openGL, dimension2d<T> window x y)
 
 	// IndieStudio::uniqueIrr_ptr<irr::IrrlichtDevice> device(
-		irr::IrrlichtDevice *device =  irr::createDevice(irr::video::EDT_OPENGL, irr::core::dimension2d<irr::u32>(width, height));
+	irr::IrrlichtDevice *device = IndieStudio::Game::getDevice();
+
+	SceneManager manager;
+
+	std::optional<SceneManager::Scene> scene = manager.createScene("test");
+	if (scene == std::nullopt) {
+		std::cout << "manager" << std::endl;
+		return 1;
+	}
 
 	// if create window failed
 	if (device == 0)
 		return 1;
 
-	// Set window name
-    device->setWindowCaption(L"Indie Studio!");
-
 	// get video driver (manage scene background and draw loop)
 	irr::video::IVideoDriver* driver = device->getVideoDriver();
 
 	// get scene Manager (manage camera, object like model 3d and animation)
-	irr::scene::ISceneManager* scenemg = device->getSceneManager();
+	// irr::scene::ISceneManager* scenemg = device->getSceneManager();
+	irr::scene::ISceneManager* scenemg = scene.value().scene;
 
 	menu(device, driver, scenemg);
+
+	BasicWorldGenerator gen;
+	MapPattern pattern(19, 13);
+	gen.generate(pattern);
 
 	irr::scene::IAnimatedMeshSceneNode* node =
 		scenemg->addAnimatedMeshSceneNode(scenemg->getMesh("asset/maps/gwendal_cube.obj"));
@@ -77,21 +111,39 @@ int test()
 		selector = scenemg->createOctreeTriangleSelector(node->getMesh(), node, 128);
 		node->setTriangleSelector(selector);
 		selector->drop();
-		for (int i = 0; i < 13; ++i)
-			for (int j = 0; j < 19; ++j) {
-				if (!i && !j)
-					continue;
-				irr::scene::ISceneNode* tmp = node->clone();
-				tmp->setPosition(irr::core::vector3df(node->getPosition().X + node->getScale().X * j, node->getScale().Y, node->getPosition().Z + node->getScale().Z * i));
-				if ((i % 2 == 0 && j % 2 == 0) || (i % 2 != 0 && j % 2 != 0))
-					tmp->setMaterialTexture(0, driver->getTexture("asset/maps/grass.png"));
-				if (i == 0 || i == 12 || j == 0 || j == 18) {
-					tmp->setPosition(irr::core::vector3df(node->getPosition().X + node->getScale().X * j, 2 * node->getScale().X, node->getPosition().Z + node->getScale().Z * i));
-					tmp->setMaterialTexture(0, driver->getTexture("asset/maps/my_wall.jpg"));
-				}
+
+		pattern.forEach([&](int y, int x, char c) {
+			irr::scene::ISceneNode* tmp = node->clone();
+
+			tmp->setPosition(irr::core::vector3df(
+				node->getPosition().X + node->getScale().X * x,
+				node->getScale().Y * (c != MapPattern::EMPTY_TILE ? 1 : 0),
+				node->getPosition().Z + node->getScale().Z * y
+			));
+
+			if (c == MapPattern::EMPTY_TILE) {
+				tmp->setMaterialTexture(0, driver->getTexture("asset/maps/grass.png"));
+			} else if (c == MapPattern::BORDER_WALL_TILE || c == MapPattern::INNER_WALL_TILE) {
+				tmp->setMaterialTexture(0, driver->getTexture("asset/maps/my_wall.jpg"));
+			} else if (c == MapPattern::BREAKABLE_BLOCK_TILE) {
+				tmp->setMaterialTexture(0, driver->getTexture("asset/maps/cubre.jpg"));
 			}
-		node->setPosition(irr::core::vector3df(node->getPosition().X, 2 * node->getScale().X, node->getPosition().Z));
-		node->setMaterialTexture(0, driver->getTexture("asset/maps/my_wall.jpg"));
+		});
+		// for (int i = 0; i < 13; ++i)
+		// 	for (int j = 0; j < 19; ++j) {
+		// 		if (!i && !j)
+		// 			continue;
+		// 		irr::scene::ISceneNode* tmp = node->clone();
+		// 		tmp->setPosition(irr::core::vector3df(node->getPosition().X + node->getScale().X * j, node->getScale().Y, node->getPosition().Z + node->getScale().Z * i));
+		// 		if ((i % 2 == 0 && j % 2 == 0) || (i % 2 != 0 && j % 2 != 0))
+		// 			tmp->setMaterialTexture(0, driver->getTexture("asset/maps/grass.png"));
+		// 		if (i == 0 || i == 12 || j == 0 || j == 18) {
+		// 			tmp->setPosition(irr::core::vector3df(node->getPosition().X + node->getScale().X * j, 2 * node->getScale().X, node->getPosition().Z + node->getScale().Z * i));
+		// 			tmp->setMaterialTexture(0, driver->getTexture("asset/maps/my_wall.jpg"));
+		// 		}
+		// 	}
+		// node->setPosition(irr::core::vector3df(node->getPosition().X, 2 * node->getScale().X, node->getPosition().Z));
+		// node->setMaterialTexture(0, driver->getTexture("asset/maps/my_wall.jpg"));
 	}
 
 	irr::scene::ITriangleSelector* ninja = 0;
@@ -179,7 +231,8 @@ int test()
 			// draw all object
 
 			// draw camera first
-			scenemg->drawAll();
+			// scenemg->drawAll();
+			manager.draw();
 
 			// draw minimap on top of camera
 			// display method
@@ -191,6 +244,7 @@ int test()
 			device->yield();
 		}
 	}
+	device->drop();
 
 	return 0;
 }
