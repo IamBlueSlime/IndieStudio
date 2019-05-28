@@ -92,67 +92,71 @@ int test()
 
 	menu(device, driver, scenemg);
 
+	int f = 1;
+	int h = 13 * f;
+	int w = 19 * f;
+
 	BasicWorldGenerator gen;
-	MapPattern pattern(19, 13);
+	MapPattern pattern(w, h);
 	gen.generate(pattern);
 
 
-	irr::scene::IAnimatedMeshSceneNode* cube =
+	irr::scene::IAnimatedMeshSceneNode* node =
 		scenemg->addAnimatedMeshSceneNode(scenemg->getMesh("asset/maps/gwendal_cube.obj"));
 
-	cube->setMaterialFlag(irr::video::EMF_NORMALIZE_NORMALS, true);
-	scenemg->getMeshManipulator()->makePlanarTextureMapping(cube->getMesh(), 0.004F);
+	node->setMaterialFlag(irr::video::EMF_NORMALIZE_NORMALS, true);
+	scenemg->getMeshManipulator()->makePlanarTextureMapping(node->getMesh(), 0.004F);
 
 	irr::scene::ITriangleSelector* selector = 0;
 
-	// place map with cube
-	if (cube) {
-		cube->setMaterialTexture(0, driver->getTexture("asset/maps/clean_grass.png"));
-		cube->setMaterialFlag(irr::video::EMF_LIGHTING, false);
-		cube->setScale(irr::core::vector3df(20.f,20.f,20.f));
-		cube->setPosition(irr::core::vector3df(0, -20 + cube->getScale().X, 0));
-		selector = scenemg->createOctreeTriangleSelector(cube->getMesh(), cube, 128);
-		cube->setTriangleSelector(selector);
-		selector->drop();
+	irr::scene::ILightSceneNode*  pLight = device->getSceneManager()->addLightSceneNode();
+	irr::video::SLight & l = pLight->getLightData();
+	l.Type = irr::video::ELT_POINT;
 
-		pattern.forEach([&](int y, int x, char c) {
-			irr::scene::ISceneNode* tmp = cube->clone();
+	float pd = 12.;
+	l.DiffuseColor = irr::video::SColorf(pd, pd, pd ,0.0);
+
+	irr::scene::ISceneNode* pNode = device->getSceneManager()->addEmptySceneNode();
+	pLight->setPosition(irr::core::vector3df(20 * 20, 20 * 20, 20 * -10)); //default is (1,1,0) for directional lights
+	pLight->setParent(pNode);
+
+	scenemg->setShadowColor(irr::video::SColor(150, 0, 0, 0));
+
+	float s = 20;
+
+	// place map with node
+	if (node) {
+		node->setMaterialTexture(0, driver->getTexture("tmp/textures/block_ground_1.png"));
+		node->setMaterialFlag(irr::video::EMF_LIGHTING, false);
+		node->setScale(irr::core::vector3df(s, s, s));
+		node->setPosition(irr::core::vector3df(0.5, 0, 0.5));
+		// node->addShadowVolumeSceneNode();
+		// selector = scenemg->createOctreeTriangleSelector(node->getMesh(), node, 128);
+		// node->setTriangleSelector(selector);
+		// selector->drop();
+
+		pattern.forEach([&](int x, int y, int z, char c) {
+			if (c == MapPattern::EMPTY_TILE)
+				return;
+
+			irr::scene::ISceneNode* tmp = node->clone();
 
 			tmp->setPosition(irr::core::vector3df(
-				cube->getPosition().X + cube->getScale().X * x,
-				cube->getScale().Y * (c != MapPattern::EMPTY_TILE ? 1 : 0),
-				cube->getPosition().Z + cube->getScale().Z * y
+				node->getPosition().X + node->getScale().X * x,
+				node->getScale().Y * (y == 1 ? 1 : 0),
+				node->getPosition().Z + node->getScale().Z * z
 			));
 
-			if (c == MapPattern::EMPTY_TILE) {
-				tmp->setMaterialTexture(0, driver->getTexture("asset/maps/grass.png"));
-				tmp->getMaterial(0).SpecularColor.set(0, 0, 0, 0);
+			if (c == MapPattern::GROUND_FIRST_TILE) {
+				tmp->setMaterialTexture(0, driver->getTexture("tmp/textures/block_ground_1.png"));
+			} else if (c == MapPattern::GROUND_SECOND_TILE) {
+				tmp->setMaterialTexture(0, driver->getTexture("tmp/textures/block_ground_2.png"));
 			} else if (c == MapPattern::BORDER_WALL_TILE || c == MapPattern::INNER_WALL_TILE) {
-				tmp->setMaterialTexture(0, driver->getTexture("asset/maps/my_wall.jpg"));
-				tmp->getMaterial(0).SpecularColor.set(0, 0, 0, 0);
+				tmp->setMaterialTexture(0, driver->getTexture("tmp/textures/block_wall.png"));
 			} else if (c == MapPattern::BREAKABLE_BLOCK_TILE) {
-				tmp->setMaterialTexture(0, driver->getTexture("asset/maps/cubre.jpg"));
-				tmp->getMaterial(0).SpecularColor.set(0, 0, 0, 0);
+				tmp->setMaterialTexture(0, driver->getTexture("tmp/textures/block_brick.png"));
 			}
 		});
-
-		cube->addShadowVolumeSceneNode();
-		scenemg->setShadowColor();
-		// for (int i = 0; i < 13; ++i)
-		// 	for (int j = 0; j < 19; ++j) {
-		// 		if (!i && !j)
-		// 			continue;
-		// 		irr::scene::ISceneNode* tmp = cube->clone();
-		// 		tmp->setPosition(irr::core::vector3df(node->getPosition().X + node->getScale().X * j, node->getScale().Y, node->getPosition().Z + node->getScale().Z * i));
-		// 		if ((i % 2 == 0 && j % 2 == 0) || (i % 2 != 0 && j % 2 != 0))
-		// 			tmp->setMaterialTexture(0, driver->getTexture("asset/maps/grass.png"));
-		// 		if (i == 0 || i == 12 || j == 0 || j == 18) {
-		// 			tmp->setPosition(irr::core::vector3df(node->getPosition().X + node->getScale().X * j, 2 * node->getScale().X, node->getPosition().Z + node->getScale().Z * i));
-		// 			tmp->setMaterialTexture(0, driver->getTexture("asset/maps/my_wall.jpg"));
-		// 		}
-		// 	}
-		// node->setPosition(irr::core::vector3df(node->getPosition().X, 2 * node->getScale().X, node->getPosition().Z));
-		// node->setMaterialTexture(0, driver->getTexture("asset/maps/my_wall.jpg"));
 	}
 
 
@@ -165,148 +169,25 @@ int test()
 	if (anms) {
 		anms->setMaterialTexture(0, driver->getTexture("asset/models/Character/BlackBombermanTextures.png"));
 		anms->setMaterialFlag(irr::video::EMF_LIGHTING, false);
-		anms->setScale(irr::core::vector3df(20.f,20.f,20.f));
+		anms->setScale(irr::core::vector3df(s, s, s));
 		anms->setAnimationSpeed(10);
-		anms->setPosition(irr::core::vector3df(anms->getScale().X, cube->getPosition().Y, anms->getScale().Z));
+		anms->setPosition(irr::core::vector3df(anms->getScale().X, node->getPosition().Y, anms->getScale().Z));
 		ninja = scenemg->createTriangleSelector(anms);
 		anms->setTriangleSelector(ninja);
 		ninja->drop();
 	}
 
-	irr::scene::ISceneNode *node = scenemg->addLightSceneNode(0, irr::core::vector3df(0,0,0),
-		irr::video::SColorf(1.0f, 0.6f, 0.7f, 1.0f), 800.0f);
-	irr::scene::ISceneNodeAnimator* anim = 0;
-	anim = scenemg->createFlyCircleAnimator (irr::core::vector3df(0,150,0),250.0f);
-	node->addAnimator(anim);
-	anim->drop();
-
-	// attach billboard to light
-
-	node = scenemg->addBillboardSceneNode(node, irr::core::dimension2d<irr::f32>(50, 50));
-	node->setMaterialFlag(irr::video::EMF_LIGHTING, false);
-	node->setMaterialType(irr::video::EMT_TRANSPARENT_ADD_COLOR);
-	node->setMaterialTexture(0, driver->getTexture("asset/particlewhite.bmp"));
-
-	// create a particle system
-
-	// irr::scene::IParticleSystemSceneNode* ps =
-	// 	scenemg->addParticleSystemSceneNode(false);
-
-	// irr::scene::IParticleEmitter* em = ps->createBoxEmitter(
-	// 	irr::core::aabbox3d<irr::f32>(-7,0,-7,7,1,7), // emitter size
-	// 	irr::core::vector3df(0.0f,0.06f,0.0f),   // initial direction
-	// 	80,100,                             // emit rate
-	// 	irr::video::SColor(0,255,255,255),       // darkest color
-	// 	irr::video::SColor(0,255,255,255),       // brightest color
-	// 	800,2000,0,                         // min and max age, angle
-	// 	irr::core::dimension2df(10.f,10.f),         // min size
-	// 	irr::core::dimension2df(20.f,20.f));        // max size
-
-	// ps->setEmitter(em); // this grabs the emitter
-	// em->drop(); // so we can drop it here without deleting it
-
-	// irr::scene::IParticleAffector* paf = ps->createFadeOutParticleAffector();
-
-	// ps->addAffector(paf); // same goes for the affector
-	// paf->drop();
-
-	// ps->setPosition(irr::core::vector3df(-70,60,40));
-	// ps->setScale(irr::core::vector3df(2,2,2));
-	// ps->setMaterialFlag(irr::video::EMF_LIGHTING, false);
-	// ps->setMaterialFlag(irr::video::EMF_ZWRITE_ENABLE, false);
-	// ps->setMaterialTexture(0, driver->getTexture("asset/fire.bmp"));
-	// ps->setMaterialType(irr::video::EMT_TRANSPARENT_ADD_COLOR);
-
-	/*
-	Next we add a volumetric light node, which adds a glowing fake area light to
-	the scene. Like with the billboards and particle systems we also assign a
-	texture for the desired effect, though this time we'll use a texture animator
-	to create the illusion of a magical glowing area effect.
-	*/
-	irr::scene::IVolumeLightSceneNode * n = scenemg->addVolumeLightSceneNode(0, -1,
-				32,                              // Subdivisions on U axis
-				32,                              // Subdivisions on V axis
-				irr::video::SColor(0, 255, 255, 255), // foot color
-				irr::video::SColor(0, 0, 0, 0));      // tail color
-
-	if (n)
-	{
-		n->setScale(irr::core::vector3df(56.0f, 56.0f, 56.0f));
-		n->setPosition(irr::core::vector3df(-120,50,40));
-
-		// load textures for animation
-		irr::core::array<irr::video::ITexture*> textures;
-		for (irr::s32 g=7; g > 0; --g)
-		{
-			irr::core::stringc tmp;
-			tmp = "asset/portal";
-			tmp += g;
-			tmp += ".bmp";
-			irr::video::ITexture* t = driver->getTexture( tmp.c_str() );
-			textures.push_back(t);
-		}
-
-		// create texture animator
-		irr::scene::ISceneNodeAnimator* glow = scenemg->createTextureAnimator(textures, 150);
-		n->addAnimator(glow);
-
-		// drop the animator because it was created with a create() function
-		glow->drop();
-	}
-
-
-
+	anms->clone()->setPosition(irr::core::vector3df(anms->getScale().X * (w - 2), node->getPosition().Y, anms->getScale().Z));
+	anms->clone()->setPosition(irr::core::vector3df(anms->getScale().X, node->getPosition().Y, anms->getScale().Z * (h - 2)));
+	anms->clone()->setPosition(irr::core::vector3df(anms->getScale().X * (w - 2), node->getPosition().Y, anms->getScale().Z * (h - 2)));
 
 	// get texture
-	irr::video::ITexture *text = driver->getTexture((sky == "1") ? "asset/skybox.jpg" : "asset/skydome.jpg");
+	// irr::video::ITexture *text = driver->getTexture((sky == "1") ? "asset/skybox.jpg" : "asset/skydome.jpg");
+	// scenemg->addSkyBoxSceneNode(text, text, text, text, text, text);
 
-	if (sky == "1") {
-		// thats a skybox so (param= top, bottom, left, right, front, back)
-		scenemg->addSkyBoxSceneNode(text, text, text, text, text, text);
-	} else if (sky == "2") {
-		// same but skydome
-		scenemg->addSkyDomeSceneNode(text);
-	} else {
-		return 0;
-	}
-
-	irr::scene::ICameraSceneNode *camera;
-
-	if (cam == "2") {
-		/*
-		static camera that does not react to user input (param = parent, position, camera direction)
-		if parent move, the cam will also move
-		*/
-		camera = scenemg->addCameraSceneNode(0, irr::core::vector3df(184, 330, -42), irr::core::vector3df(185, 50, 110));
-		camera->setFarValue(10000);
-		// camera->setRotation(irr::core::vector3df(0, 0, 0));
-	} else if (cam == "2") {
-		// camera style that move like a basic fps (T manage by keyboard & R manage by mouse)
-
-		irr::SKeyMap keyMap[5];
-		keyMap[0].Action = irr::EKA_MOVE_FORWARD;
-		keyMap[0].KeyCode = irr::KEY_UP;
-		keyMap[1].Action = irr::EKA_MOVE_BACKWARD;
-		keyMap[1].KeyCode = irr::KEY_DOWN;
-		keyMap[2].Action = irr::EKA_STRAFE_LEFT;
-		keyMap[2].KeyCode = irr::KEY_LEFT;
-		keyMap[3].Action = irr::EKA_STRAFE_RIGHT;
-		keyMap[3].KeyCode = irr::KEY_RIGHT;
-		keyMap[4].Action = irr::EKA_JUMP_UP;
-		keyMap[4].KeyCode = irr::KEY_SPACE;
-
-
-		camera = scenemg->addCameraSceneNodeFPS(0, 100.0f, .3f, -1, keyMap, 5, false, 5.f);
-		camera->setPosition(irr::core::vector3df(50,50,-60));
-
-		// remove cursor from screen
-		device->getCursorControl()->setVisible(false);
-	} else if (cam == "3") {
-		// camera style that move like a map editor (T & R manage by mouse)
-		camera = scenemg->addCameraSceneNodeMaya();
-	} else {
-		return 0;
-	}
+	irr::scene::ICameraSceneNode *camera = scenemg->addCameraSceneNode(0,
+		irr::core::vector3df(s * (w / 2), s * (w / 1.5), s * 3),
+		irr::core::vector3df(s * (w / 2), 1, s * (h / 2)));
 
 	if (selector) {
 		irr::scene::ISceneNodeAnimator* anim = scenemg->createCollisionResponseAnimator(
@@ -322,13 +203,19 @@ int test()
 		if (device->isWindowActive()) {
 
 			// draw scene background
-			driver->beginScene(true, true, irr::video::SColor(255,200,200,200), irr::video::SExposedVideoData());
+			driver->beginScene(true, true, irr::video::SColor(255,255,255,255), irr::video::SExposedVideoData());
 
 			// draw all object
 
 			// draw camera first
-			// scenemg->drawAll();
-			manager.draw();
+			scenemg->drawAll();
+			int ll = 1000;
+			driver->setTransform(irr::video::ETS_WORLD, irr::core::IdentityMatrix);
+			driver->draw3DLine(irr::core::vector3df(0, 0, 0), irr::core::vector3df(ll, 0, 0), irr::video::SColor(255, 255, 0, 0));
+			driver->setTransform(irr::video::ETS_WORLD, irr::core::IdentityMatrix);
+			driver->draw3DLine(irr::core::vector3df(0, 0, 0), irr::core::vector3df(0, ll, 0), irr::video::SColor(255, 0, 255, 0));
+			driver->setTransform(irr::video::ETS_WORLD, irr::core::IdentityMatrix);
+			driver->draw3DLine(irr::core::vector3df(0, 0, 0), irr::core::vector3df(0, 0, ll), irr::video::SColor(255, 0, 0, 255));
 
 			// draw minimap on top of camera
 			// display method
