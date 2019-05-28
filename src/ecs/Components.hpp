@@ -46,7 +46,16 @@ namespace Ecs::Component {
         LifeTime(int _lifeTime = std::time(nullptr))
         :
         lifeTime(_lifeTime) {}
+
         int lifeTime;
+    };
+
+    struct ExplosionLifeTime {
+        ExplosionLifeTime(int _explosionLifeTime = std::time(nullptr))
+        :
+        explosionLifeTime(_explosionLifeTime) {}
+
+        int explosionLifeTime;
     };
 
     struct IsExploding {

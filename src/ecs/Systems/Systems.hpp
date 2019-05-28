@@ -10,7 +10,10 @@
 
 #include "../Components.hpp"
 #include "../BaseSystem.hpp"
+
 #include "./applyExplosionSystem.hpp"
+#include "./explosionDurationSystem.hpp"
+#include "./setupExplosionSystem.hpp"
 #include "./EventSystem.hpp"
 
 #include <unistd.h>
