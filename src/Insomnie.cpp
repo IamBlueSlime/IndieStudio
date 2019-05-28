@@ -22,8 +22,8 @@ public:
     EventReceiver(irr::IrrlichtDevice *device, bool *stop) { this->device = device; this->stop = stop; };
 
     bool OnEvent(const irr::SEvent& event) override {
-        std::cout << "Event" << std::endl;
-        if (event.EventType == irr::EET_KEY_INPUT_EVENT)
+        // std::cout << "Event" << std::endl;
+        if (event.EventType == irr::EET_KEY_INPUT_EVENT) {
             if (event.KeyInput.Key == irr::KEY_KEY_P && event.KeyInput.PressedDown) {
                 std::cout << "P is pressed" << std::endl;
                 std::cout << device->getSceneManager()->getSceneNodeFromId(42) << std::endl;
@@ -53,6 +53,11 @@ public:
                 }
                 return true;
             }
+            if (event.KeyInput.Key == irr::KEY_ESCAPE && event.KeyInput.PressedDown) {
+                device->closeDevice();
+                return true;
+            }
+        }
         if (event.EventType == irr::EET_GUI_EVENT) {
             if (event.GUIEvent.EventType == irr::gui::EGET_BUTTON_CLICKED && event.GUIEvent.Caller->getID() == BUTTON_ID_PLAY) {
                 *stop = true;
@@ -278,10 +283,6 @@ void da_vinci_code(irr::IrrlichtDevice *device, irr::scene::ISceneManager* smgr)
     	{
     		driver->beginScene(true, true, 0);
 
-            std::cout << "X: " << camera->getAbsolutePosition().X << std::endl;
-            std::cout << "Y: " << camera->getAbsolutePosition().Y << std::endl;
-            std::cout << "Z: " << camera->getAbsolutePosition().Z << std::endl;
-
     		smgr->drawAll();
 
     		driver->endScene();
@@ -353,6 +354,6 @@ void intro()
 	}
 
     if (device->run())
-        da_vinci_code(device, scenemg);
+        da_vinci_code(device, scenemg->createNewSceneManager());
 
 }
