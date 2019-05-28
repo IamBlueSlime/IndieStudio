@@ -104,8 +104,33 @@ int test()
 	irr::scene::IAnimatedMeshSceneNode* node =
 		scenemg->addAnimatedMeshSceneNode(scenemg->getMesh("asset/maps/gwendal_cube.obj"));
 
+
+
+	/* WAVES */
+
+    irr::scene::IAnimatedMesh* mesh = node->getMesh();
+	mesh = scenemg->addHillPlaneMesh( "myHill",
+		irr::core::dimension2d<irr::f32>(20,20),
+		irr::core::dimension2d<irr::u32>(40,40), 0, 0,
+		irr::core::dimension2d<irr::f32>(0,0),
+		irr::core::dimension2d<irr::f32>(10,10));
+
+	irr::scene::ISceneNode* node2 = 0;
+	node2 = scenemg->addWaterSurfaceSceneNode(mesh->getMesh(0), 3.0f, 300.0f, 30.0f);
+	node2->setPosition(irr::core::vector3df(0,7,0));
+
+	node2->setMaterialTexture(0, driver->getTexture("asset/stones.jpg"));
+	node2->setMaterialTexture(1, driver->getTexture("asset/water.jpg"));
+
+	node2->setMaterialType(irr::video::EMT_REFLECTION_2_LAYER);
+
+
+
+
+
+
 	node->setMaterialFlag(irr::video::EMF_NORMALIZE_NORMALS, true);
-	scenemg->getMeshManipulator()->makePlanarTextureMapping(node->getMesh(), 0.004F);
+//	scenemg->getMeshManipulator()->makePlanarTextureMapping(node->getMesh(), 0.004F);
 
 	irr::scene::ITriangleSelector* selector = 0;
 
