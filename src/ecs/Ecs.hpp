@@ -47,7 +47,7 @@ namespace Ecs {
         template<typename... components_searched>
         void forEntitiesWith(const std::function<void (EntityType&, std::size_t id)> func) {
             const auto mask = generateMask<components_searched...>();
-            for (auto entity : this->entities) {
+            for (auto &entity : this->entities) {
                 if ((entity.second.component_signature & mask) == mask) {
                     func(entity.second, entity.first);
                 }
@@ -58,6 +58,7 @@ namespace Ecs {
         void run([[gnu::unused]] Systems<SystemTypes...> tmp) {
             auto systems = SystemsImpl<typeof(*this), EventSystem<typeof(*this)>, SystemTypes...>(*this);
             while (true) {
+                std::cout << this->id_seed << std::endl;
                 systems.process();
                 this->event_manager.clear_event_queue();
             }

@@ -24,6 +24,7 @@ using namespace Ecs::System;
 
 // Systems used to run the manager
 using EcsSystems = Systems<
+System1<EcsManager>
 >;
 
 int main(int ac, char **av)
