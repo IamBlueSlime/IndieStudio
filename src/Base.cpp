@@ -7,6 +7,7 @@
 #include "indiestudio/world/BasicWorldGenerator.hpp"
 #include "indiestudio/Game.hpp"
 #include "indiestudio/SceneManager.hpp"
+#include <cmath>
 
 using namespace IndieStudio;
 using namespace Ecs::Component;
@@ -43,6 +44,24 @@ void menu(irr::IrrlichtDevice *device, irr::video::IVideoDriver* driver, irr::sc
 
 //     manager.setComponent(block, node);
 // }
+
+static void prep_travelling(irr::IrrlichtDevice *device, irr::scene::ISceneManager *scenemg)
+{
+	irr::core::array<irr::core::vector3df> points;
+    irr::scene::ICameraSceneNode *cam = scenemg->getActiveCamera();
+    irr::core::vector3df pos(cam->getAbsolutePosition());
+
+	for (int y = 250; y >= 0; y -= 10) {
+		points.push_back(irr::core::vector3df(pos.X, -y, pos.Z - sqrt(abs(pow(y, 2) - pow(250, 2)))));
+	}
+	cam->setPosition(irr::core::vector3df(pos.X, -300, pos.Z - 250));
+
+	points.push_back(pos);
+	irr::scene::ISceneNodeAnimator* sa = scenemg->createFollowSplineAnimator(device->getTimer()->getTime(), points, 3, 0.5F, false);
+	cam->addAnimator(sa);
+	sa->drop();
+
+}
 
 int test()
 {
@@ -104,9 +123,34 @@ int test()
 	irr::scene::IAnimatedMeshSceneNode* node =
 		scenemg->addAnimatedMeshSceneNode(scenemg->getMesh("asset/maps/gwendal_cube.obj"));
 
-		node->addShadowVolumeSceneNode();
-		node->setMaterialFlag(irr::video::EMF_NORMALIZE_NORMALS, true);
 
+
+	/* WAVES */
+
+    irr::scene::IAnimatedMesh* mesh = node->getMesh();
+	mesh = scenemg->addHillPlaneMesh( "myHill",
+		irr::core::dimension2d<irr::f32>(20,20),
+		irr::core::dimension2d<irr::u32>(40,40), 0, 0,
+		irr::core::dimension2d<irr::f32>(0,0),
+		irr::core::dimension2d<irr::f32>(10,10));
+
+	irr::scene::ISceneNode* node2 = 0;
+	node2 = scenemg->addWaterSurfaceSceneNode(mesh->getMesh(0), 1.0f, 500.0f, 10.0f);
+	node2->setPosition(irr::core::vector3df(75,7,0));
+
+	node2->setMaterialTexture(0, driver->getTexture("asset/stones.jpg"));
+	node2->setMaterialTexture(1, driver->getTexture("asset/water.jpg"));
+
+	node2->setMaterialType(irr::video::EMT_REFLECTION_2_LAYER);
+
+
+
+    scenemg->addSkyDomeSceneNode(driver->getTexture("asset/sky-skydome.jpg"));
+
+
+
+	node->setMaterialFlag(irr::video::EMF_NORMALIZE_NORMALS, true);
+//	scenemg->getMeshManipulator()->makePlanarTextureMapping(node->getMesh(), 0.004F);
 
 	irr::scene::ITriangleSelector* selector = 0;
 
@@ -167,8 +211,8 @@ int test()
 	// load 3d model animated
 	irr::scene::IAnimatedMeshSceneNode* anms =
 		scenemg->addAnimatedMeshSceneNode(scenemg->getMesh("asset/models/Character/Bomberman.MD3"));
-		anms->addShadowVolumeSceneNode();
-		anms->setMaterialFlag(irr::video::EMF_NORMALIZE_NORMALS, true);
+		// anms->addShadowVolumeSceneNode();
+		// anms->setMaterialFlag(irr::video::EMF_NORMALIZE_NORMALS, true);
 
 	if (anms) {
 		anms->setMaterialTexture(0, driver->getTexture("asset/models/Character/BlackBombermanTextures.png"));
@@ -186,30 +230,19 @@ int test()
 	anms->clone()->setPosition(irr::core::vector3df(anms->getScale().X, node->getPosition().Y, anms->getScale().Z * (h - 2)));
 	anms->clone()->setPosition(irr::core::vector3df(anms->getScale().X * (w - 2), node->getPosition().Y, anms->getScale().Z * (h - 2)));
 
-	// get texture
-	// irr::video::ITexture *text = driver->getTexture((sky == "1") ? "asset/skybox.jpg" : "asset/skydome.jpg");
-	// scenemg->addSkyBoxSceneNode(text, text, text, text, text, text);
-
 	irr::scene::ICameraSceneNode *camera = scenemg->addCameraSceneNode(0,
 		irr::core::vector3df(s * (w / 2), s * (w / 1.5), s * 3),
 		irr::core::vector3df(s * (w / 2), 1, s * (h / 2)));
 	camera->setFarValue(10000);
 
-	if (selector) {
-		irr::scene::ISceneNodeAnimator* anim = scenemg->createCollisionResponseAnimator(
-			selector, camera, irr::core::vector3df(30,50,30),
-			irr::core::vector3df(0,-10,0), irr::core::vector3df(0,30,0));
-		selector->drop(); // As soon as we're done with the selector, drop it.
-		// camera->addAnimator(anim);
-		anim->drop();
-	}
+	// prep_travelling(device, scenemg);
 
-// MARABOUTERI START
+// SHADOW START
 
 	irr::scene::ISceneNode* snode = 0;
 
 	snode = scenemg->addLightSceneNode(0, irr::core::vector3df(355,100, 50),
-		irr::video::SColorf(1.0f, 1.0f, 1.0f, 1.0f), 100000.0f);
+		irr::video::SColorf(1.0f, 1.0f, 1.0f, 1.0f), 1000.0f);
 	irr::scene::ISceneNodeAnimator* anim = 0;
 	// anim = scenemg->createFlyCircleAnimator (irr::core::vector3df(0,50,0),250.0f);
 	// snode->addAnimator(anim);
@@ -220,8 +253,12 @@ int test()
 	snode->setMaterialType(irr::video::EMT_TRANSPARENT_ADD_COLOR);
 	snode->setMaterialTexture(0, driver->getTexture("asset/particlewhite.bmp"));
 
-// MARABOUTERI END
+	snode = scenemg->addLightSceneNode(0, irr::core::vector3df(0,-50, 0),
+		irr::video::SColorf(1.0f, 1.0f, 1.0f, 1.0f), 1000.0f);
 
+// SHADOW END
+
+	prep_travelling(device, scenemg);
 
 	// game loop
 	while (device->run()) {
@@ -231,6 +268,10 @@ int test()
 			driver->beginScene(true, true, irr::video::SColor(255,255,255,255), irr::video::SExposedVideoData());
 
 			// draw all object
+
+			// std::cout << "X: " << camera->getAbsolutePosition().X << std::endl;
+			// std::cout << "Y: " << camera->getAbsolutePosition().Y << std::endl;
+			// std::cout << "Z: " << camera->getAbsolutePosition().Z << std::endl;
 
 			// draw camera first
 			scenemg->drawAll();
