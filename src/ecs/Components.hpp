@@ -125,12 +125,55 @@ namespace Ecs::Component {
         int direction;
     };
 
-    struct Texture {
-        Texture(std::string _texture = "")
-        :
-        texture(_texture) {}
+    struct Scale {
+        Scale(float _scale = 1.0f) {scale = {_scale, _scale, _scale}; }
 
-        std::string texture;
+        irr::core::vector3df scale;
+    };
+
+    struct MaterialTexture {
+        MaterialTexture(int _layer = 0, std::string _path = "")
+        :
+        layer(_layer), path(_path) {}
+
+        int layer;
+        std::string path;
+    };
+
+    struct MaterialFlag {
+        MaterialFlag(irr::video::E_MATERIAL_FLAG _flag = irr::video::EMF_LIGHTING, bool _present = false)
+        :
+        flag(_flag), present(_present) {}
+
+        irr::video::E_MATERIAL_FLAG flag;
+        bool present;
+    };
+
+    struct TriangleSelector {
+        TriangleSelector(irr::scene::ITriangleSelector *_selector = nullptr)
+        :
+        selector(_selector) {}
+
+        irr::scene::ITriangleSelector *selector;
+    };
+
+    struct MeshPath {
+        MeshPath(std::string _meshPath = "assets/models/cube.obj")
+        :
+        meshPath(_meshPath) {}
+
+        std::string meshPath;
+    };
+
+    struct NodeCreate {
+    };
+
+    struct Node {
+        Node(irr::scene::IAnimatedMeshSceneNode *_node = nullptr)
+        :
+        node(_node) {}
+
+        irr::scene::IAnimatedMeshSceneNode *node;
     };
 
     struct ID {
