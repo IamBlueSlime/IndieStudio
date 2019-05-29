@@ -40,7 +40,7 @@ void menu(irr::IrrlichtDevice *device, irr::video::IVideoDriver* driver, irr::sc
 // int map_maker(EcsManager manager, irr::scene::ISceneManager* scenemg, irr::IrrlichtDevice *device) {
 //     auto &block = manager.addEntity();
 
-//     AnimatedMesh node(scenemg->getMesh("asset/maps/gwendal_cube.obj"));
+//     AnimatedMesh node(scenemg->getMesh("asset_deprecated/maps/gwendal_cube.obj"));
 
 //     manager.setComponent(block, node);
 // }
@@ -51,7 +51,7 @@ static void prep_travelling(irr::IrrlichtDevice *device, irr::scene::ISceneManag
     irr::scene::ICameraSceneNode *cam = scenemg->getActiveCamera();
     irr::core::vector3df pos(cam->getAbsolutePosition());
 
-	for (int y = 250; y >= 0; y -= 10) {
+	for (int y = 250; y >= 0; y -= 15) {
 		points.push_back(irr::core::vector3df(pos.X, -y, pos.Z - sqrt(abs(pow(y, 2) - pow(250, 2)))));
 	}
 	cam->setPosition(irr::core::vector3df(pos.X, -300, pos.Z - 250));
@@ -121,7 +121,7 @@ int test()
 
 
 	irr::scene::IAnimatedMeshSceneNode* node =
-		scenemg->addAnimatedMeshSceneNode(scenemg->getMesh("asset/maps/gwendal_cube.obj"));
+		scenemg->addAnimatedMeshSceneNode(scenemg->getMesh("assets/models/cube.obj"));
 
 
 
@@ -136,16 +136,16 @@ int test()
 
 	irr::scene::ISceneNode* node2 = 0;
 	node2 = scenemg->addWaterSurfaceSceneNode(mesh->getMesh(0), 1.0f, 500.0f, 10.0f);
-	node2->setPosition(irr::core::vector3df(75,7,0));
+	node2->setPosition(irr::core::vector3df(150,7,20));
 
-	node2->setMaterialTexture(0, driver->getTexture("asset/stones.jpg"));
-	node2->setMaterialTexture(1, driver->getTexture("asset/water.jpg"));
+	node2->setMaterialTexture(0, driver->getTexture("assets/textures/water_stones.jpg"));
+	node2->setMaterialTexture(1, driver->getTexture("assets/textures/water.jpg"));
 
 	node2->setMaterialType(irr::video::EMT_REFLECTION_2_LAYER);
 
 
 
-    scenemg->addSkyDomeSceneNode(driver->getTexture("asset/sky-skydome.jpg"));
+    scenemg->addSkyDomeSceneNode(driver->getTexture("asset_deprecated/sky-skydome.jpg"));
 
 
 
@@ -174,7 +174,7 @@ int test()
 		node->setMaterialTexture(0, driver->getTexture("tmp/textures/block_ground_1.png"));
 		node->setMaterialFlag(irr::video::EMF_LIGHTING, true);
 		node->setScale(irr::core::vector3df(s, s, s));
-		node->setPosition(irr::core::vector3df(0.5, 0, 0.5));
+		node->setPosition(irr::core::vector3df(0.5, 50, 0.5));
 		// node->addShadowVolumeSceneNode();
 		// selector = scenemg->createOctreeTriangleSelector(node->getMesh(), node, 128);
 		// node->setTriangleSelector(selector);
@@ -188,18 +188,18 @@ int test()
 
 			tmp->setPosition(irr::core::vector3df(
 				node->getPosition().X + node->getScale().X * x,
-				node->getScale().Y * (y == 1 ? 1 : 0),
+				node->getPosition().Y + node->getScale().Y * (y == 1 ? 1 : 0),
 				node->getPosition().Z + node->getScale().Z * z
 			));
 
 			if (c == MapPattern::GROUND_FIRST_TILE) {
-				tmp->setMaterialTexture(0, driver->getTexture("tmp/textures/block_ground_1.png"));
+				tmp->setMaterialTexture(0, driver->getTexture("assets/textures/block_ground_1.png"));
 			} else if (c == MapPattern::GROUND_SECOND_TILE) {
-				tmp->setMaterialTexture(0, driver->getTexture("tmp/textures/block_ground_2.png"));
+				tmp->setMaterialTexture(0, driver->getTexture("assets/textures/block_ground_2.png"));
 			} else if (c == MapPattern::BORDER_WALL_TILE || c == MapPattern::INNER_WALL_TILE) {
-				tmp->setMaterialTexture(0, driver->getTexture("tmp/textures/block_wall.png"));
+				tmp->setMaterialTexture(0, driver->getTexture("assets/textures/block_wall.png"));
 			} else if (c == MapPattern::BREAKABLE_BLOCK_TILE) {
-				tmp->setMaterialTexture(0, driver->getTexture("tmp/textures/block_brick.png"));
+				tmp->setMaterialTexture(0, driver->getTexture("assets/textures/block_brick.png"));
 			}
 		});
 	}
@@ -210,12 +210,11 @@ int test()
 
 	// load 3d model animated
 	irr::scene::IAnimatedMeshSceneNode* anms =
-		scenemg->addAnimatedMeshSceneNode(scenemg->getMesh("asset/models/Character/Bomberman.MD3"));
+		scenemg->addAnimatedMeshSceneNode(scenemg->getMesh("assets/models/player.md3"));
+	if (anms) {
 		// anms->addShadowVolumeSceneNode();
 		// anms->setMaterialFlag(irr::video::EMF_NORMALIZE_NORMALS, true);
-
-	if (anms) {
-		anms->setMaterialTexture(0, driver->getTexture("asset/models/Character/BlackBombermanTextures.png"));
+		anms->setMaterialTexture(0, driver->getTexture("assets/textures/player_black.png"));
 		anms->setMaterialFlag(irr::video::EMF_LIGHTING, false);
 		anms->setScale(irr::core::vector3df(s, s, s));
 		anms->setAnimationSpeed(10);
@@ -231,9 +230,9 @@ int test()
 	anms->clone()->setPosition(irr::core::vector3df(anms->getScale().X * (w - 2), node->getPosition().Y, anms->getScale().Z * (h - 2)));
 
 	irr::scene::ICameraSceneNode *camera = scenemg->addCameraSceneNode(0,
-		irr::core::vector3df(s * (w / 2), s * (w / 1.5), s * 3),
-		irr::core::vector3df(s * (w / 2), 1, s * (h / 2)));
-	camera->setFarValue(10000);
+		irr::core::vector3df(s * (w / 2), 50 + s * (w / 1.5), s * 3),
+		irr::core::vector3df(s * (w / 2), 50, s * (h / 2)));
+		camera->setFarValue(10000);
 
 	// prep_travelling(device, scenemg);
 
@@ -242,7 +241,7 @@ int test()
 	irr::scene::ISceneNode* snode = 0;
 
 	snode = scenemg->addLightSceneNode(0, irr::core::vector3df(355,100, 50),
-		irr::video::SColorf(1.0f, 1.0f, 1.0f, 1.0f), 1000.0f);
+		irr::video::SColorf(1.0f, 1.0f, 1.0f, 1.0f), 5000.0f);
 	irr::scene::ISceneNodeAnimator* anim = 0;
 	// anim = scenemg->createFlyCircleAnimator (irr::core::vector3df(0,50,0),250.0f);
 	// snode->addAnimator(anim);
@@ -251,10 +250,10 @@ int test()
 	snode = scenemg->addBillboardSceneNode(snode, irr::core::dimension2d<irr::f32>(50, 50));
 	snode->setMaterialFlag(irr::video::EMF_LIGHTING, false);
 	snode->setMaterialType(irr::video::EMT_TRANSPARENT_ADD_COLOR);
-	snode->setMaterialTexture(0, driver->getTexture("asset/particlewhite.bmp"));
+	snode->setMaterialTexture(0, driver->getTexture("asset_deprecated/particlewhite.bmp"));
 
 	snode = scenemg->addLightSceneNode(0, irr::core::vector3df(0,-50, 0),
-		irr::video::SColorf(1.0f, 1.0f, 1.0f, 1.0f), 1000.0f);
+		irr::video::SColorf(1.0f, 1.0f, 1.0f, 1.0f), 5000.0f);
 
 // SHADOW END
 
