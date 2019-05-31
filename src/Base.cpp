@@ -26,15 +26,12 @@ typedef struct {
 
 class MyClass : public irr::IEventReceiver {
 public:
-	MyClass(irr::scene::IAnimatedMeshSceneNode *player) { this->player = player; }
-	bool OnEvent(const irr::SEvent& event) override
+	MyClass(info_t *player) { this->player = player; }
+    bool OnEvent(const irr::SEvent& event) override
 	{
 		if (event.EventType == irr::EET_KEY_INPUT_EVENT) {
 			if (event.KeyInput.Key >= irr::KEY_LEFT && event.KeyInput.Key <= irr::KEY_DOWN) {
-				move(event.KeyInput.Key);
-				return true;
-			} else if (event.KeyInput.PressedDown == false) {
-				player->setFrameLoop(27, 76);
+				keyUpdate(event.KeyInput.Key, event.KeyInput.PressedDown);
 				return true;
 			}
 		}
@@ -44,23 +41,14 @@ private:
 	void keyUpdate(irr::EKEY_CODE key, bool state)
 	{
 		if (key == irr::KEY_LEFT) {
-			pos.X -= dist;
-			player->setRotation(irr::core::vector3df(0, 90, 0));
-			player->setFrameLoop(0, 27);
+			player->left = state;
 		} else if (key == irr::KEY_RIGHT) {
-			pos.X += dist;
-			player->setRotation(irr::core::vector3df(0, 270, 0));
-			player->setFrameLoop(0, 27);
+			player->right = state;
 		} else if (key == irr::KEY_UP) {
-			pos.Z += dist;
-			player->setRotation(irr::core::vector3df(0, 180, 0));
-			player->setFrameLoop(0, 27);
+			player->up = state;
 		} else if (key == irr::KEY_DOWN) {
-			pos.Z -= dist;
-			player->setRotation(irr::core::vector3df(0, 0, 0));
-			player->setFrameLoop(0, 27);
+			player->down = state;
 		}
-		player->setPosition(pos);
 	}
 	info_t *player;
 };
