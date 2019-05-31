@@ -17,45 +17,40 @@
 */
 
 
+typedef struct {
+	bool up = false;
+	bool down = false;
+	bool left = false;
+	bool right = false;
+} info_t;
+
 class MyClass : public irr::IEventReceiver {
 public:
-	MyClass(irr::scene::IAnimatedMeshSceneNode *player) { this->player = player; }
+	MyClass(info_t *player) { this->player = player; }
     bool OnEvent(const irr::SEvent& event) override
 	{
-	if (event.EventType == irr::EET_KEY_INPUT_EVENT) {
-		if (event.KeyInput.Key >= irr::KEY_LEFT && event.KeyInput.Key <= irr::KEY_DOWN) {
-			move(event.KeyInput.Key);
-			return true;
+		if (event.EventType == irr::EET_KEY_INPUT_EVENT) {
+			if (event.KeyInput.Key >= irr::KEY_LEFT && event.KeyInput.Key <= irr::KEY_DOWN) {
+				keyUpdate(event.KeyInput.Key, event.KeyInput.PressedDown);
+				return true;
+			}
 		}
-		return false;
+	    return false;
 	}
-		(void)event;
-        return false;
-    }
 private:
-	void move(irr::EKEY_CODE key)
+	void keyUpdate(irr::EKEY_CODE key, bool state)
 	{
-		irr::core::vector3df pos(player->getAbsolutePosition());
-		float dist = 4;
 		if (key == irr::KEY_LEFT) {
-			pos.X -= dist;
-			player->setRotation(irr::core::vector3df(0, 90, 0));
+			player->left = state;
+		} else if (key == irr::KEY_RIGHT) {
+			player->right = state;
+		} else if (key == irr::KEY_UP) {
+			player->up = state;
+		} else if (key == irr::KEY_DOWN) {
+			player->down = state;
 		}
-		if (key == irr::KEY_RIGHT) {
-			pos.X += dist;
-			player->setRotation(irr::core::vector3df(0, 270, 0));
-		}
-		if (key == irr::KEY_UP) {
-			pos.Z += dist;
-			player->setRotation(irr::core::vector3df(0, 180, 0));
-		}
-		if (key == irr::KEY_DOWN) {
-			pos.Z -= dist;
-			player->setRotation(irr::core::vector3df(0, 0, 0));
-		}
-		player->setPosition(pos);
 	}
-	irr::scene::IAnimatedMeshSceneNode *player;
+	info_t *player;
 };
 
 static void prep_travelling(irr::IrrlichtDevice *device, irr::scene::ISceneManager *scenemg)
@@ -184,6 +179,37 @@ void draw3d_Markline(irr::video::IVideoDriver *driver, int lineLong)
 	driver->draw3DLine(irr::core::vector3df(0, 0, 0), irr::core::vector3df(0, 0, lineLong), irr::video::SColor(255, 0, 0, 255));
 }
 
+void move(irr::scene::ISceneNode *player, info_t *key)
+{
+	irr::core::vector3df pos(player->getAbsolutePosition());
+	int dist = 1;
+	bool moved = false;
+
+	if (key->up) {
+		moved = true;
+		pos.Z += dist;
+		player->setRotation(irr::core::vector3df(0, 180, 0));
+	}
+	if (key->down) {
+		moved = true;
+		pos.Z -= dist;
+		player->setRotation(irr::core::vector3df(0, 0, 0));
+	}
+	if (key->left) {
+		moved = true;
+		pos.X -= dist;
+		player->setRotation(irr::core::vector3df(0, 90, 0));
+	}
+	if (key->right) {
+		moved = true;
+		pos.X += dist;
+		player->setRotation(irr::core::vector3df(0, 270, 0));
+	}
+	if (!moved)
+		return;
+	player->setPosition(pos);
+}
+
 int game()
 {
 	irr::IrrlichtDevice *device = IndieStudio::Game::getDevice();
@@ -210,14 +236,16 @@ int game()
 	map_generator(scenemg, driver, node, f, h, w, s);
 	players_initialisation(scenemg, driver, node, h, w, s);
 	shadows_init(scenemg, driver);
-	// prep_travelling(device, scenemg);
-	MyClass event((irr::scene::IAnimatedMeshSceneNode *)scenemg->getSceneNodeFromId(42));
+	prep_travelling(device, scenemg);
+	info_t movePlayer1;
+	MyClass event(&movePlayer1);
 	device->setEventReceiver(&event);
 
 
 	// game loop
 	while (device->run()) {
 		if (device->isWindowActive()) {
+			move(scenemg->getSceneNodeFromId(42), &movePlayer1);
 			driver->beginScene(true, true, irr::video::SColor(255,255,255,255), irr::video::SExposedVideoData());
 			draw3d_Markline(driver, 1000);
 			manager.draw();
