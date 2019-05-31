@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <memory>
 #include <functional>
 #include <unordered_map>
 #include <string>
@@ -17,12 +18,15 @@ namespace IndieStudio {
 	class SceneManager {
 	public:
 		static const std::string MAIN_MENU_ID;
+		static const std::string PLAY_ID;
 
 		struct Scene
 		{
-			explicit Scene(irr::scene::ISceneManager *scene = 0, irr::gui::IGUITab *gui = 0);
+			explicit Scene(SceneManager *manager = 0, irr::scene::ISceneManager *scene = 0,
+				irr::gui::IGUITab *gui = 0);
 			Scene(const Scene &other);
 			Scene &operator=(const Scene &other);
+			SceneManager *manager;
 			irr::scene::ISceneManager *scene;
 			irr::gui::IGUITab *gui;
 			std::function<bool(const irr::SEvent &)> onEvent =

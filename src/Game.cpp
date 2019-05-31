@@ -19,11 +19,12 @@ namespace IndieStudio {
         this->worldManager.init();
         this->modManager.reload();
         this->sceneManager.init();
-        this->logger.info("Done initialization.");
 
-        irr::IrrlichtDevice *device = getDevice(irr::video::EDT_OPENGL, 1280, 720);
+        irr::IrrlichtDevice *device = getDevice();
         irr::video::IVideoDriver *driver = device->getVideoDriver();
         bool stop = false;
+
+        this->logger.info("Starting main loop...");
 
         while (device->run() && !stop) {
             if (!device->isWindowActive()) {

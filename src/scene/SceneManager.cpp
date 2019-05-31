@@ -13,6 +13,7 @@
 namespace IndieStudio {
 
     const std::string SceneManager::MAIN_MENU_ID = "main_menu";
+    const std::string SceneManager::PLAY_ID = "play";
 
     SceneManager::SceneManager()
         : eventReceiver(std::make_unique<EventReceiver>(*this))
@@ -24,20 +25,24 @@ namespace IndieStudio {
         this->guiRoot = device->getGUIEnvironment();
     }
 
-    SceneManager::Scene::Scene(irr::scene::ISceneManager *scene, irr::gui::IGUITab *gui)
+    SceneManager::Scene::Scene(SceneManager *manager, irr::scene::ISceneManager *scene,
+        irr::gui::IGUITab *gui)
     {
+        this->manager = manager;
         this->scene = scene;
         this->gui = gui;
     }
 
     SceneManager::Scene::Scene(const SceneManager::Scene &other)
     {
+        this->manager = other.manager;
         this->scene = other.scene;
         this->gui = other.gui;
     }
 
     SceneManager::Scene &SceneManager::Scene::operator=(const SceneManager::Scene &other)
     {
+        this->manager = other.manager;
         this->gui = other.gui;
         this->scene = other.scene;
         return *this;
@@ -52,7 +57,7 @@ namespace IndieStudio {
     SceneManager::Scene &SceneManager::createScene(const std::string &key)
     {
         irr::core::dimension2du screenSize = IndieStudio::Game::getDevice()->getVideoDriver()->getScreenSize();
-        this->container[key] = Scene(this->sceneRoot->createNewSceneManager(), this->guiRoot->addTab(irr::core::recti(0, 0, screenSize.Width, screenSize.Height)));
+        this->container[key] = Scene(this, this->sceneRoot->createNewSceneManager(), this->guiRoot->addTab(irr::core::recti(0, 0, screenSize.Width, screenSize.Height)));
         if (this->container.find(key) == this->container.end())
             throw std::runtime_error("Failed to create scene");
         this->active = key;
@@ -73,13 +78,11 @@ namespace IndieStudio {
 
     bool SceneManager::draw()
     {
-        Scene scene;
-
         if (this->active == "none")
             return false;
         if (this->container.find(this->active) == this->container.end())
             return false;
-        scene = this->container[this->active];
+        Scene &scene = this->container[this->active];
         if (!scene.gui && !scene.scene)
             return false;
         if (scene.scene)
