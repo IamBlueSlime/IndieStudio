@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <string>
 #include "indiestudio/scene/SceneManager.hpp"
 
 namespace IndieStudio {
@@ -17,6 +18,9 @@ namespace IndieStudio {
     
     protected:
     private:
+        static void setupCharacterExplosion(SceneManager::Scene &scene);
+        static void setupTravelling(SceneManager::Scene &scene);
+        static bool onEvent(SceneManager::Scene &scene, const irr::SEvent &event);
     };
 
 }

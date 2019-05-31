@@ -5,13 +5,20 @@
 ** SceneManager
 */
 
+#include <iostream>
+#include "indiestudio/Game.hpp"
+#include "indiestudio/scene/MainMenuScene.hpp"
 #include "indiestudio/scene/SceneManager.hpp"
 
 namespace IndieStudio {
 
+    const std::string SceneManager::MAIN_MENU_ID = "main_menu";
+
     SceneManager::SceneManager()
+        : eventReceiver(std::make_unique<EventReceiver>(*this))
     {
         irr::IrrlichtDevice *device = IndieStudio::Game::getDevice();
+        device->setEventReceiver(this->eventReceiver.get());
 
         this->sceneRoot = device->getSceneManager();
         this->guiRoot = device->getGUIEnvironment();
@@ -36,6 +43,11 @@ namespace IndieStudio {
         return *this;
     }
 
+    void SceneManager::init()
+    {
+        MainMenuScene::initialize(this->createScene(MAIN_MENU_ID));
+        this->setActiveScene(MAIN_MENU_ID);
+    }
 
     SceneManager::Scene &SceneManager::createScene(const std::string &key)
     {
@@ -74,6 +86,17 @@ namespace IndieStudio {
         if (scene.gui)
             scene.gui->draw();
         return true;
+    }
+
+    SceneManager::EventReceiver::EventReceiver(SceneManager &manager)
+        : manager(manager)
+    {}
+
+    bool SceneManager::EventReceiver::OnEvent(const irr::SEvent &event)
+    {
+        if (this->manager.getActive() == "none")
+            return false;
+        return this->manager.getContainer().find(this->manager.getActive())->second.onEvent(event);
     }
 
 }

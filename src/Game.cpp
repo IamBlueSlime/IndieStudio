@@ -18,7 +18,23 @@ namespace IndieStudio {
         this->statisticManager.load();
         this->worldManager.init();
         this->modManager.reload();
+        this->sceneManager.init();
         this->logger.info("Done initialization.");
+
+        irr::IrrlichtDevice *device = getDevice(irr::video::EDT_OPENGL, 1280, 720);
+        irr::video::IVideoDriver *driver = device->getVideoDriver();
+        bool stop = false;
+
+        while (device->run() && !stop) {
+            if (!device->isWindowActive()) {
+                device->yield();
+                continue;
+            }
+
+            driver->beginScene(true, true, irr::video::SColor(255, 255, 255, 255));
+            this->sceneManager.draw();
+            driver->endScene();
+        }
     }
 
     irr::IrrlichtDevice *Game::getDevice(irr::video::E_DRIVER_TYPE type, int width, int height)
