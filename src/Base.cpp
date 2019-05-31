@@ -22,6 +22,7 @@ typedef struct {
 	bool down = false;
 	bool left = false;
 	bool right = false;
+	bool space = false;
 } info_t;
 
 class MyClass : public irr::IEventReceiver {
@@ -30,7 +31,7 @@ public:
     bool OnEvent(const irr::SEvent& event) override
 	{
 		if (event.EventType == irr::EET_KEY_INPUT_EVENT) {
-			if (event.KeyInput.Key >= irr::KEY_LEFT && event.KeyInput.Key <= irr::KEY_DOWN) {
+			if (event.KeyInput.Key >= irr::KEY_LEFT && event.KeyInput.Key <= irr::KEY_DOWN || event.KeyInput.Key == irr::KEY_SPACE) {
 				keyUpdate(event.KeyInput.Key, event.KeyInput.PressedDown);
 				return true;
 			}
@@ -48,6 +49,8 @@ private:
 			player->up = state;
 		} else if (key == irr::KEY_DOWN) {
 			player->down = state;
+		} else if (key == irr::KEY_SPACE) {
+			player->space = state;
 		}
 	}
 	info_t *player;
@@ -179,7 +182,7 @@ void draw3d_Markline(irr::video::IVideoDriver *driver, int lineLong)
 	driver->draw3DLine(irr::core::vector3df(0, 0, 0), irr::core::vector3df(0, 0, lineLong), irr::video::SColor(255, 0, 0, 255));
 }
 
-void move(irr::scene::ISceneNode *player, info_t *key)
+void move(irr::scene::ISceneNode *player, info_t *key, irr::scene::ISceneManager* scenemg, irr::video::IVideoDriver* driver, float s)
 {
 	irr::core::vector3df pos(player->getAbsolutePosition());
 	int dist = 1;
@@ -204,6 +207,26 @@ void move(irr::scene::ISceneNode *player, info_t *key)
 		moved = true;
 		pos.X += dist;
 		player->setRotation(irr::core::vector3df(0, 270, 0));
+	}
+	if (key->space) {
+		irr::scene::IAnimatedMeshSceneNode* bomb = scenemg->addAnimatedMeshSceneNode(scenemg->getMesh("assets/models/bomb.obj"), 0, 42);
+		if (bomb) {
+			int x, z = 0;
+			if ((int) player->getPosition().X % (int) s > s / 2) {
+				x = player->getPosition().X + s - ((int) player->getPosition().X % (int) s);
+			} else {
+				x = player->getPosition().X - ((int) player->getPosition().X % (int) s);
+			}
+			if ((int) player->getPosition().Z % (int) s > s / 2) {
+				z = player->getPosition().Z + s - ((int) player->getPosition().Z % (int) s);
+			} else {
+				z = player->getPosition().Z - ((int) player->getPosition().Z % (int) s);
+			}
+			bomb->setMaterialTexture(0, driver->getTexture("assets/textures/bomb.png"));
+			bomb->setMaterialFlag(irr::video::EMF_LIGHTING, false);
+			bomb->setScale(irr::core::vector3df(s / 7, s / 7, s / 7));
+			bomb->setPosition(irr::core::vector3df(x, player->getPosition().Y, z));
+		}
 	}
 	if (!moved) {
 		if (reinterpret_cast<irr::scene::IAnimatedMeshSceneNode *>(player)->getFrameNr() == 76 ||
@@ -233,7 +256,7 @@ int game()
 	int w = 19 * f;
 	float s = 20;
 	irr::scene::ICameraSceneNode *camera = scenemg->addCameraSceneNode(0,
-		irr::core::vector3df(s * (w / 2), 50 + s * (w / 1.5), s * 3),
+		irr::core::vector3df(s * (w / 2), 50 + s * (w /* / 1.5 */), s * 3),
 		irr::core::vector3df(s * (w / 2), 50, s * (h / 2)));
 		camera->setFarValue(10000);
 	map_generator(scenemg, driver, node, f, h, w, s);
@@ -248,7 +271,7 @@ int game()
 	// game loop
 	while (device->run()) {
 		if (device->isWindowActive()) {
-			move(scenemg->getSceneNodeFromId(42), &movePlayer1);
+			move(scenemg->getSceneNodeFromId(42), &movePlayer1, scenemg, driver, s);
 			driver->beginScene(true, true, irr::video::SColor(255,255,255,255), irr::video::SExposedVideoData());
 			draw3d_Markline(driver, 1000);
 			manager.draw();
