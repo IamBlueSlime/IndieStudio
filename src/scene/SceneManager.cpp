@@ -17,7 +17,7 @@ namespace IndieStudio {
         this->guiRoot = device->getGUIEnvironment();
     }
 
-    SceneManager::Scene::Scene(irr::scene::ISceneManager *scene, irr::gui::IGUIEnvironment *gui)
+    SceneManager::Scene::Scene(irr::scene::ISceneManager *scene, irr::gui::IGUIElement *gui)
     {
         this->scene = scene;
         this->gui = gui;
@@ -39,7 +39,7 @@ namespace IndieStudio {
 
     SceneManager::Scene &SceneManager::createScene(const std::string &key)
     {
-        this->container[key] = Scene(this->sceneRoot->createNewSceneManager(), 0);
+        this->container[key] = Scene(this->sceneRoot->createNewSceneManager(), this->guiRoot->addGUIElement(key.c_str()));
         if (this->container.find(key) == this->container.end())
             throw std::runtime_error("Failed to create scene");
         this->active = key;
@@ -72,7 +72,7 @@ namespace IndieStudio {
         if (scene.scene)
             scene.scene->drawAll();
         if (scene.gui)
-            scene.gui->drawAll();
+            scene.gui->draw();
         return true;
     }
 

@@ -6,7 +6,7 @@
 #include "indiestudio/world/MapPattern.hpp"
 #include "indiestudio/world/BasicWorldGenerator.hpp"
 #include "indiestudio/Game.hpp"
-#include "indiestudio/SceneManager.hpp"
+#include "indiestudio/scene/SceneManager.hpp"
 #include <cmath>
 
 /*
@@ -221,14 +221,11 @@ int game()
 	irr::IrrlichtDevice *device = IndieStudio::Game::getDevice();
 	if (device == 0)
 		return 1;
-	SceneManager manager;
-	std::optional<SceneManager::Scene> scene = manager.createScene("test");
-	if (scene == std::nullopt) {
-		std::cout << "manager Failed" << std::endl;
-		return 1;
-	}
+	IndieStudio::SceneManager manager;
+	IndieStudio::SceneManager::Scene scene = manager.createScene("test");
+
 	irr::video::IVideoDriver* driver = device->getVideoDriver();
-	irr::scene::ISceneManager* scenemg = scene.value().scene;
+	irr::scene::ISceneManager* scenemg = scene.scene;
 	irr::scene::IAnimatedMeshSceneNode* node = scenemg->addAnimatedMeshSceneNode(scenemg->getMesh("assets/models/cube.obj"));
 
 	int f = 1;
