@@ -127,10 +127,6 @@ void prep_travelling(irr::IrrlichtDevice *device, irr::scene::ISceneManager *sce
 	sa->drop();
 }
 
-// X: 180
-// Y: 253.333
-// Z: 60
-
 void da_vinci_code(irr::IrrlichtDevice *device, irr::scene::ISceneManager* scenemg)
 {
 	irr::video::IVideoDriver* driver = device->getVideoDriver();

@@ -9,20 +9,54 @@
 #include "indiestudio/SceneManager.hpp"
 #include <cmath>
 
-class MyClass : public irr::IEventReceiver {
-    bool OnEvent(const irr::SEvent& event) override {
-		(void)event;
-		std::cout << "Event" << std::endl;
-        return true;
-    }
-};
+/*
+	bomberman anim speed = 30
+	frame loop = 0, 27 walk
+	frame loop = 27, 76 idle
+	set loop node = true
+*/
 
-void menu(irr::IrrlichtDevice *device, irr::video::IVideoDriver* driver, irr::scene::ISceneManager* scenemg)
-{
-	(void) device;
-	(void) driver;
-	(void) scenemg;
-}
+
+class MyClass : public irr::IEventReceiver {
+public:
+	MyClass(irr::scene::IAnimatedMeshSceneNode *player) { this->player = player; }
+    bool OnEvent(const irr::SEvent& event) override
+	{
+	if (event.EventType == irr::EET_KEY_INPUT_EVENT) {
+		if (event.KeyInput.Key >= irr::KEY_LEFT && event.KeyInput.Key <= irr::KEY_DOWN) {
+			move(event.KeyInput.Key);
+			return true;
+		}
+		return false;
+	}
+		(void)event;
+        return false;
+    }
+private:
+	void move(irr::EKEY_CODE key)
+	{
+		irr::core::vector3df pos(player->getAbsolutePosition());
+		float dist = 4;
+		if (key == irr::KEY_LEFT) {
+			pos.X -= dist;
+			player->setRotation(irr::core::vector3df(0, 90, 0));
+		}
+		if (key == irr::KEY_RIGHT) {
+			pos.X += dist;
+			player->setRotation(irr::core::vector3df(0, 270, 0));
+		}
+		if (key == irr::KEY_UP) {
+			pos.Z += dist;
+			player->setRotation(irr::core::vector3df(0, 180, 0));
+		}
+		if (key == irr::KEY_DOWN) {
+			pos.Z -= dist;
+			player->setRotation(irr::core::vector3df(0, 0, 0));
+		}
+		player->setPosition(pos);
+	}
+	irr::scene::IAnimatedMeshSceneNode *player;
+};
 
 static void prep_travelling(irr::IrrlichtDevice *device, irr::scene::ISceneManager *scenemg)
 {
@@ -41,7 +75,8 @@ static void prep_travelling(irr::IrrlichtDevice *device, irr::scene::ISceneManag
 	sa->drop();
 }
 
-void water_maker(irr::scene::ISceneManager* scenemg, irr::video::IVideoDriver* driver, irr::scene::IAnimatedMeshSceneNode* node) {
+void water_maker(irr::scene::ISceneManager* scenemg, irr::video::IVideoDriver* driver, irr::scene::IAnimatedMeshSceneNode* node)
+{
 	irr::scene::IAnimatedMesh* mesh = node->getMesh();
 	mesh = scenemg->addHillPlaneMesh( "myHill",
 		irr::core::dimension2d<irr::f32>(20,20),
@@ -54,12 +89,15 @@ void water_maker(irr::scene::ISceneManager* scenemg, irr::video::IVideoDriver* d
 	node2->setMaterialTexture(0, driver->getTexture("assets/textures/water_stones.jpg"));
 	node2->setMaterialTexture(1, driver->getTexture("assets/textures/water.jpg"));
 	node2->setMaterialType(irr::video::EMT_REFLECTION_2_LAYER);
-	scenemg->addSkyDomeSceneNode(driver->getTexture("asset_deprecated/sky-skydome.jpg"));
+	scenemg->addSkyDomeSceneNode(driver->getTexture("assets/textures/skydome.jpg"));
 	node->setMaterialFlag(irr::video::EMF_NORMALIZE_NORMALS, true);
 	scenemg->setShadowColor(irr::video::SColor(150, 0, 0, 0));
 }
 
-void map_generator(irr::scene::ISceneManager* scenemg, irr::video::IVideoDriver* driver, irr::scene::IAnimatedMeshSceneNode* node, int f, int h, int w, float s) {
+void map_generator(irr::scene::ISceneManager* scenemg, irr::video::IVideoDriver* driver, irr::scene::IAnimatedMeshSceneNode* node, int f, int h, int w, float s)
+{
+	(void)f;
+
 	IndieStudio::BasicWorldGenerator gen;
 	IndieStudio::MapPattern pattern(w, h);
 
@@ -68,11 +106,11 @@ void map_generator(irr::scene::ISceneManager* scenemg, irr::video::IVideoDriver*
 	irr::scene::ITriangleSelector* selector = 0;
 
 	if (node) {
-		node->setMaterialTexture(0, driver->getTexture("tmp/textures/block_ground_1.png"));
+		node->setMaterialTexture(0, driver->getTexture("assets/textures/block_ground_1.png"));
 		node->setMaterialFlag(irr::video::EMF_LIGHTING, true);
 		node->setScale(irr::core::vector3df(s, s, s));
 		node->setPosition(irr::core::vector3df(0.5, 50, 0.5));
-		node->addShadowVolumeSceneNode();
+		// node->addShadowVolumeSceneNode();
 		selector = scenemg->createOctreeTriangleSelector(node->getMesh(), node, 128);
 		node->setTriangleSelector(selector);
 		selector->drop();
@@ -102,56 +140,66 @@ void map_generator(irr::scene::ISceneManager* scenemg, irr::video::IVideoDriver*
 	}
 }
 
-void players_initialisation(irr::scene::ISceneManager* scenemg, irr::video::IVideoDriver* driver, irr::scene::IAnimatedMeshSceneNode* node, int h, int w, float s) {
+void players_initialisation(irr::scene::ISceneManager* scenemg, irr::video::IVideoDriver* driver, irr::scene::IAnimatedMeshSceneNode* node, int h, int w, float s)
+{
 	irr::scene::ITriangleSelector* ninja = 0;
 
-	irr::scene::IAnimatedMeshSceneNode* anms = scenemg->addAnimatedMeshSceneNode(scenemg->getMesh("assets/models/player.md3"));
+	irr::scene::IAnimatedMeshSceneNode* anms = scenemg->addAnimatedMeshSceneNode(scenemg->getMesh("assets/models/player.md3"), 0, 42);
 	if (anms) {
 		anms->setMaterialTexture(0, driver->getTexture("assets/textures/player_black.png"));
 		anms->setMaterialFlag(irr::video::EMF_LIGHTING, false);
 		anms->setScale(irr::core::vector3df(s, s, s));
-		anms->setAnimationSpeed(10);
+		anms->setAnimationSpeed(20);
 		anms->setPosition(irr::core::vector3df(anms->getScale().X, node->getPosition().Y, anms->getScale().Z));
 		ninja = scenemg->createTriangleSelector(anms);
 		anms->setTriangleSelector(ninja);
 		ninja->drop();
 	}
+	std::cout << "animated: " << anms << std::endl;
+	std::cout << "node: " << scenemg->getSceneNodeFromId(42) << std::endl;
 	anms->clone()->setPosition(irr::core::vector3df(anms->getScale().X * (w - 2), node->getPosition().Y, anms->getScale().Z));
 	anms->clone()->setPosition(irr::core::vector3df(anms->getScale().X, node->getPosition().Y, anms->getScale().Z * (h - 2)));
 	anms->clone()->setPosition(irr::core::vector3df(anms->getScale().X * (w - 2), node->getPosition().Y, anms->getScale().Z * (h - 2)));
 }
 
-void shadows_init(irr::scene::ISceneManager* scenemg, irr::video::IVideoDriver* driver) {
+void shadows_init(irr::scene::ISceneManager* scenemg, irr::video::IVideoDriver* driver)
+{
 	irr::scene::ISceneNode* snode = 0;
-	snode = scenemg->addLightSceneNode(0, irr::core::vector3df(355,100, 50),
+	snode = scenemg->addLightSceneNode(0, irr::core::vector3df(355,250, 50),
 		irr::video::SColorf(1.0f, 1.0f, 1.0f, 1.0f), 5000.0f);
-	irr::scene::ISceneNodeAnimator* anim = 0;
 	snode = scenemg->addBillboardSceneNode(snode, irr::core::dimension2d<irr::f32>(50, 50));
 	snode->setMaterialFlag(irr::video::EMF_LIGHTING, false);
 	snode->setMaterialType(irr::video::EMT_TRANSPARENT_ADD_COLOR);
-	snode->setMaterialTexture(0, driver->getTexture("asset_deprecated/particlewhite.bmp"));
+	snode->setMaterialTexture(0, driver->getTexture("assets/textures/particlewhite.bmp"));
 	snode = scenemg->addLightSceneNode(0, irr::core::vector3df(0,-50, 0),
 		irr::video::SColorf(1.0f, 1.0f, 1.0f, 1.0f), 5000.0f);
 }
 
+void draw3d_Markline(irr::video::IVideoDriver *driver, int lineLong)
+{
+	driver->setTransform(irr::video::ETS_WORLD, irr::core::IdentityMatrix);
+	driver->draw3DLine(irr::core::vector3df(0, 0, 0), irr::core::vector3df(lineLong, 0, 0), irr::video::SColor(255, 255, 0, 0));
+	driver->setTransform(irr::video::ETS_WORLD, irr::core::IdentityMatrix);
+	driver->draw3DLine(irr::core::vector3df(0, 0, 0), irr::core::vector3df(0, lineLong, 0), irr::video::SColor(255, 0, 255, 0));
+	driver->setTransform(irr::video::ETS_WORLD, irr::core::IdentityMatrix);
+	driver->draw3DLine(irr::core::vector3df(0, 0, 0), irr::core::vector3df(0, 0, lineLong), irr::video::SColor(255, 0, 0, 255));
+}
+
 int game()
 {
-	std::string cam = "2";
-	std::string sky = "1";
 	irr::IrrlichtDevice *device = IndieStudio::Game::getDevice();
+	if (device == 0)
+		return 1;
 	SceneManager manager;
 	std::optional<SceneManager::Scene> scene = manager.createScene("test");
 	if (scene == std::nullopt) {
-		std::cout << "manager" << std::endl;
+		std::cout << "manager Failed" << std::endl;
 		return 1;
 	}
-	if (device == 0)
-		return 1;
 	irr::video::IVideoDriver* driver = device->getVideoDriver();
 	irr::scene::ISceneManager* scenemg = scene.value().scene;
-	menu(device, driver, scenemg);
 	irr::scene::IAnimatedMeshSceneNode* node = scenemg->addAnimatedMeshSceneNode(scenemg->getMesh("assets/models/cube.obj"));
-	
+
 	int f = 1;
 	int h = 13 * f;
 	int w = 19 * f;
@@ -163,22 +211,19 @@ int game()
 	map_generator(scenemg, driver, node, f, h, w, s);
 	players_initialisation(scenemg, driver, node, h, w, s);
 	shadows_init(scenemg, driver);
-	prep_travelling(device, scenemg);
+	// prep_travelling(device, scenemg);
+	MyClass event((irr::scene::IAnimatedMeshSceneNode *)scenemg->getSceneNodeFromId(42));
+	device->setEventReceiver(&event);
+
+
 	// game loop
 	while (device->run()) {
 		if (device->isWindowActive()) {
 			driver->beginScene(true, true, irr::video::SColor(255,255,255,255), irr::video::SExposedVideoData());
-			scenemg->drawAll();
-			int ll = 1000;
-			driver->setTransform(irr::video::ETS_WORLD, irr::core::IdentityMatrix);
-			driver->draw3DLine(irr::core::vector3df(0, 0, 0), irr::core::vector3df(ll, 0, 0), irr::video::SColor(255, 255, 0, 0));
-			driver->setTransform(irr::video::ETS_WORLD, irr::core::IdentityMatrix);
-			driver->draw3DLine(irr::core::vector3df(0, 0, 0), irr::core::vector3df(0, ll, 0), irr::video::SColor(255, 0, 255, 0));
-			driver->setTransform(irr::video::ETS_WORLD, irr::core::IdentityMatrix);
-			driver->draw3DLine(irr::core::vector3df(0, 0, 0), irr::core::vector3df(0, 0, ll), irr::video::SColor(255, 0, 0, 255));
+			draw3d_Markline(driver, 1000);
+			manager.draw();
 			driver->endScene();
 		} else {
-			// best feature! just render nothing so that bring down processor usage by irrlicht
 			device->yield();
 		}
 	}
