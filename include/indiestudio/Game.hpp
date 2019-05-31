@@ -11,6 +11,7 @@
 #include "indiestudio/IGame.hpp"
 #include "indiestudio/common/Logger.hpp"
 #include "indiestudio/mod/ModManager.hpp"
+#include "indiestudio/scene/SceneManager.hpp"
 #include "indiestudio/statistic/AchievementManager.hpp"
 #include "indiestudio/statistic/StatisticManager.hpp"
 #include "indiestudio/world/WorldManager.hpp"
@@ -28,6 +29,7 @@ namespace IndieStudio {
         IAchievementManager &getAchievementManager() override { return this->achievementManager; }
         IWorldManager &getWorldManager() override { return this->worldManager; }
         ModManager &getModManager() { return this->modManager; }
+        SceneManager &getSceneManager() { return this->sceneManager; }
 
 	protected:
 	private:
@@ -36,6 +38,7 @@ namespace IndieStudio {
         AchievementManager achievementManager;
         WorldManager worldManager;
         ModManager modManager;
+        SceneManager sceneManager;
     };
 
 }

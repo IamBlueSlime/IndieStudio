@@ -27,7 +27,6 @@ set(INDIE_SRC_DIR ${CMAKE_SOURCE_DIR}/src)
 set(INDIE_SRC
     ${INDIE_SRC_DIR}/Bootstraper.cpp
     ${INDIE_SRC_DIR}/Game.cpp
-    ${INDIE_SRC_DIR}/SceneManager.cpp
     ${INDIE_SRC_DIR}/common/Configuration.cpp
     ${INDIE_SRC_DIR}/common/Logger.cpp
     ${INDIE_SRC_DIR}/common/Registry.cpp
@@ -35,6 +34,8 @@ set(INDIE_SRC
     ${INDIE_SRC_DIR}/ecs/UUID.cpp
     ${INDIE_SRC_DIR}/mod/LibraryWrapper.cpp
     ${INDIE_SRC_DIR}/mod/ModManager.cpp
+    ${INDIE_SRC_DIR}/scene/MainMenuScene.cpp
+    ${INDIE_SRC_DIR}/scene/SceneManager.cpp
     ${INDIE_SRC_DIR}/statistic/AchievementManager.cpp
     ${INDIE_SRC_DIR}/statistic/StatisticManager.cpp
     ${INDIE_SRC_DIR}/world/BasicWorldGenerator.cpp
@@ -42,9 +43,6 @@ set(INDIE_SRC
     ${INDIE_SRC_DIR}/world/WorldManager.cpp
     ${INDIE_SRC_DIR}/world/WorldSettings.cpp
     ${INDIE_SRC_DIR}/utils/CRCUtils.cpp
-    # TODO: remove this below
-    ${INDIE_SRC_DIR}/Base.cpp
-    ${INDIE_SRC_DIR}/Insomnie.cpp
 )
 set(INDIE_REQUIRED_LIBRARIES ${Irrlicht_LIBRARIES} sfml-audio stdc++fs pthread)
 

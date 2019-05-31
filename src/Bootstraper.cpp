@@ -14,10 +14,8 @@ namespace IndieStudio {
     {
         (void) ac;
         (void) av;
-        game();
-        // intro();
-        // Game game;
-        // game.start();
+        Game game;
+        game.start();
         return 0;
     }
 
