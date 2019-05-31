@@ -20,11 +20,11 @@ namespace IndieStudio {
 
 		struct Scene
 		{
-			explicit Scene(irr::scene::ISceneManager *scene = 0, irr::gui::IGUIElement *gui = 0);
+			explicit Scene(irr::scene::ISceneManager *scene = 0, irr::gui::IGUITab *gui = 0);
 			Scene(const Scene &other);
 			Scene &operator=(const Scene &other);
 			irr::scene::ISceneManager *scene;
-			irr::gui::IGUIElement *gui;
+			irr::gui::IGUITab *gui;
 			std::function<bool(const irr::SEvent &)> onEvent =
 				[](const irr::SEvent &) { return false; };
 		};

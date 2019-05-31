@@ -24,7 +24,7 @@ namespace IndieStudio {
         this->guiRoot = device->getGUIEnvironment();
     }
 
-    SceneManager::Scene::Scene(irr::scene::ISceneManager *scene, irr::gui::IGUIElement *gui)
+    SceneManager::Scene::Scene(irr::scene::ISceneManager *scene, irr::gui::IGUITab *gui)
     {
         this->scene = scene;
         this->gui = gui;
@@ -51,7 +51,8 @@ namespace IndieStudio {
 
     SceneManager::Scene &SceneManager::createScene(const std::string &key)
     {
-        this->container[key] = Scene(this->sceneRoot->createNewSceneManager(), this->guiRoot->addGUIElement(key.c_str()));
+        irr::core::dimension2du screenSize = IndieStudio::Game::getDevice()->getVideoDriver()->getScreenSize();
+        this->container[key] = Scene(this->sceneRoot->createNewSceneManager(), this->guiRoot->addTab(irr::core::recti(0, 0, screenSize.Width, screenSize.Height)));
         if (this->container.find(key) == this->container.end())
             throw std::runtime_error("Failed to create scene");
         this->active = key;

@@ -15,11 +15,11 @@ namespace IndieStudio {
         auto driver = scene.scene->getVideoDriver();
         auto guiEnv = scene.scene->getGUIEnvironment();
         auto guiRoot = scene.gui;
-        
+
         scene.scene->addSkyDomeSceneNode(
             driver->getTexture("assets/textures/skydome.jpg"));
-        
-        scene.scene->addCameraSceneNode(0, irr::core::vector3df(50, 0, 0));
+
+        scene.scene->addCameraSceneNode(0, irr::core::vector3df(50, 0, 0), irr::core::vector3df(0, 0, 0));
 
         guiEnv->addImage(driver->getTexture("assets/textures/title.png"),
             irr::core::position2di(350, 75), true, guiRoot);
@@ -44,27 +44,30 @@ namespace IndieStudio {
 
         anms->setMaterialFlag(irr::video::EMF_LIGHTING, false);
         anms->setMaterialTexture(0, driver->getTexture("assets/textures/player_black.png"));
+        anms->setFrameLoop(0, 27);
+        anms->setAnimationSpeed(30);
         anms->setScale(irr::core::vector3df(8.f,8.f,8.f));
         anms->setAnimationSpeed(18);
         anms->setPosition(irr::core::vector3df(0, 0, 0));
 
         for (int i = 0; i < 100; i++) {
-            int randX = rand() % 10 * (!(rand() % 2) ? 1 : -1) * rand() % 985 * 15;
-            int randY = rand() % 10 * (!(rand() % 2) ? 1 : -1) * rand() % 985 * 15;
-            int randZ = rand() % 10 * (!(rand() % 2) ? 1 : -1) * rand() % 985 * 15;
+            int randX = rand() % 10 * (!(rand() % 2) ? 1 : -1) * rand() % 100 * 15;
+            int randY = rand() % 10 * (!(rand() % 2) ? 1 : -1) * rand() % 100 * 15;
+            int randZ = rand() % 10 * (!(rand() % 2) ? 1 : -1) * rand() % 100 * 15;
 
             irr::scene::ISceneNodeAnimator *anim = scene.scene->createFlyStraightAnimator(
                 anms->getAbsolutePosition(), irr::core::vector3df(randX, randY, randZ),
-                1000000
+                15000, true, true
             );
 
-            irr::scene::ISceneNode *clone = anms->clone();
+            irr::scene::IAnimatedMeshSceneNode *clone = (irr::scene::IAnimatedMeshSceneNode *)anms->clone();
             clone->addAnimator(anim);
 
             anim = scene.scene->createRotationAnimator(
-                irr::core::vector3df(rand() % 3, rand() % 3, 1));
+                irr::core::vector3df(rand() % 3, rand() % 3, rand() % 2 + 1));
             clone->addAnimator(anim);
 
+            // clone->setFrameLoop(0, 27);
             int randTexture = rand() % 4;
 
             if (randTexture == 0)
