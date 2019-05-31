@@ -205,9 +205,15 @@ void move(irr::scene::ISceneNode *player, info_t *key)
 		pos.X += dist;
 		player->setRotation(irr::core::vector3df(0, 270, 0));
 	}
-	if (!moved)
+	if (!moved) {
+		if (reinterpret_cast<irr::scene::IAnimatedMeshSceneNode *>(player)->getFrameNr() == 76 ||
+			reinterpret_cast<irr::scene::IAnimatedMeshSceneNode *>(player)->getFrameNr() <= 27)
+			reinterpret_cast<irr::scene::IAnimatedMeshSceneNode *>(player)->setFrameLoop(27, 76);
 		return;
+	}
 	player->setPosition(pos);
+	if (reinterpret_cast<irr::scene::IAnimatedMeshSceneNode *>(player)->getFrameNr() > 27)
+		reinterpret_cast<irr::scene::IAnimatedMeshSceneNode *>(player)->setFrameLoop(0, 27);
 }
 
 int game()
@@ -236,7 +242,7 @@ int game()
 	map_generator(scenemg, driver, node, f, h, w, s);
 	players_initialisation(scenemg, driver, node, h, w, s);
 	shadows_init(scenemg, driver);
-	prep_travelling(device, scenemg);
+	//prep_travelling(device, scenemg);
 	info_t movePlayer1;
 	MyClass event(&movePlayer1);
 	device->setEventReceiver(&event);
