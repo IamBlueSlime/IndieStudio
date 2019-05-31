@@ -20,18 +20,19 @@
 class MyClass : public irr::IEventReceiver {
 public:
 	MyClass(irr::scene::IAnimatedMeshSceneNode *player) { this->player = player; }
-    bool OnEvent(const irr::SEvent& event) override
+	bool OnEvent(const irr::SEvent& event) override
 	{
-	if (event.EventType == irr::EET_KEY_INPUT_EVENT) {
-		if (event.KeyInput.Key >= irr::KEY_LEFT && event.KeyInput.Key <= irr::KEY_DOWN) {
-			move(event.KeyInput.Key);
-			return true;
+		if (event.EventType == irr::EET_KEY_INPUT_EVENT) {
+			if (event.KeyInput.Key >= irr::KEY_LEFT && event.KeyInput.Key <= irr::KEY_DOWN) {
+				move(event.KeyInput.Key);
+				return true;
+			} else if (event.KeyInput.PressedDown == false) {
+				player->setFrameLoop(27, 76);
+				return true;
+			}
 		}
 		return false;
 	}
-		(void)event;
-        return false;
-    }
 private:
 	void move(irr::EKEY_CODE key)
 	{
@@ -40,18 +41,19 @@ private:
 		if (key == irr::KEY_LEFT) {
 			pos.X -= dist;
 			player->setRotation(irr::core::vector3df(0, 90, 0));
-		}
-		if (key == irr::KEY_RIGHT) {
+			player->setFrameLoop(0, 27);
+		} else if (key == irr::KEY_RIGHT) {
 			pos.X += dist;
 			player->setRotation(irr::core::vector3df(0, 270, 0));
-		}
-		if (key == irr::KEY_UP) {
+			player->setFrameLoop(0, 27);
+		} else if (key == irr::KEY_UP) {
 			pos.Z += dist;
 			player->setRotation(irr::core::vector3df(0, 180, 0));
-		}
-		if (key == irr::KEY_DOWN) {
+			player->setFrameLoop(0, 27);
+		} else if (key == irr::KEY_DOWN) {
 			pos.Z -= dist;
 			player->setRotation(irr::core::vector3df(0, 0, 0));
+			player->setFrameLoop(0, 27);
 		}
 		player->setPosition(pos);
 	}
@@ -61,8 +63,8 @@ private:
 static void prep_travelling(irr::IrrlichtDevice *device, irr::scene::ISceneManager *scenemg)
 {
 	irr::core::array<irr::core::vector3df> points;
-    irr::scene::ICameraSceneNode *cam = scenemg->getActiveCamera();
-    irr::core::vector3df pos(cam->getAbsolutePosition());
+	irr::scene::ICameraSceneNode *cam = scenemg->getActiveCamera();
+	irr::core::vector3df pos(cam->getAbsolutePosition());
 
 	for (int y = 250; y >= 0; y -= 15) {
 		points.push_back(irr::core::vector3df(pos.X, -y, pos.Z - sqrt(abs(pow(y, 2) - pow(250, 2)))));
@@ -150,7 +152,7 @@ void players_initialisation(irr::scene::ISceneManager* scenemg, irr::video::IVid
 		anms->setMaterialFlag(irr::video::EMF_LIGHTING, false);
 		anms->setScale(irr::core::vector3df(s, s, s));
 		anms->setAnimationSpeed(30);
-		anms->setFrameLoop(0, 27);
+		anms->setFrameLoop(27, 76);
 		anms->setPosition(irr::core::vector3df(anms->getScale().X, node->getPosition().Y * magic_height, anms->getScale().Z));
 		bomberman = scenemg->createTriangleSelector(anms);
 		anms->setTriangleSelector(bomberman);
