@@ -140,26 +140,25 @@ void map_generator(irr::scene::ISceneManager* scenemg, irr::video::IVideoDriver*
 	}
 }
 
-void players_initialisation(irr::scene::ISceneManager* scenemg, irr::video::IVideoDriver* driver, irr::scene::IAnimatedMeshSceneNode* node, int h, int w, float s)
-{
-	irr::scene::ITriangleSelector* ninja = 0;
+void players_initialisation(irr::scene::ISceneManager* scenemg, irr::video::IVideoDriver* driver, irr::scene::IAnimatedMeshSceneNode* node, int h, int w, float s) {
+	irr::scene::ITriangleSelector* bomberman = 0;
+	float magic_height = 1.2;
 
 	irr::scene::IAnimatedMeshSceneNode* anms = scenemg->addAnimatedMeshSceneNode(scenemg->getMesh("assets/models/player.md3"), 0, 42);
 	if (anms) {
 		anms->setMaterialTexture(0, driver->getTexture("assets/textures/player_black.png"));
 		anms->setMaterialFlag(irr::video::EMF_LIGHTING, false);
 		anms->setScale(irr::core::vector3df(s, s, s));
-		anms->setAnimationSpeed(20);
-		anms->setPosition(irr::core::vector3df(anms->getScale().X, node->getPosition().Y, anms->getScale().Z));
-		ninja = scenemg->createTriangleSelector(anms);
-		anms->setTriangleSelector(ninja);
-		ninja->drop();
+		anms->setAnimationSpeed(30);
+		anms->setFrameLoop(0, 27);
+		anms->setPosition(irr::core::vector3df(anms->getScale().X, node->getPosition().Y * magic_height, anms->getScale().Z));
+		bomberman = scenemg->createTriangleSelector(anms);
+		anms->setTriangleSelector(bomberman);
+		bomberman->drop();
 	}
-	std::cout << "animated: " << anms << std::endl;
-	std::cout << "node: " << scenemg->getSceneNodeFromId(42) << std::endl;
-	anms->clone()->setPosition(irr::core::vector3df(anms->getScale().X * (w - 2), node->getPosition().Y, anms->getScale().Z));
-	anms->clone()->setPosition(irr::core::vector3df(anms->getScale().X, node->getPosition().Y, anms->getScale().Z * (h - 2)));
-	anms->clone()->setPosition(irr::core::vector3df(anms->getScale().X * (w - 2), node->getPosition().Y, anms->getScale().Z * (h - 2)));
+	anms->clone()->setPosition(irr::core::vector3df(anms->getScale().X * (w - 2), node->getPosition().Y * magic_height, anms->getScale().Z));
+	anms->clone()->setPosition(irr::core::vector3df(anms->getScale().X, node->getPosition().Y * magic_height, anms->getScale().Z * (h - 2)));
+	anms->clone()->setPosition(irr::core::vector3df(anms->getScale().X * (w - 2), node->getPosition().Y * magic_height, anms->getScale().Z * (h - 2)));
 }
 
 void shadows_init(irr::scene::ISceneManager* scenemg, irr::video::IVideoDriver* driver)
