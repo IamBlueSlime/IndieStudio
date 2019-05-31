@@ -20,5 +20,5 @@ namespace IndieStudio {
 }
 
 // TODO: remove this below
-void test();
+void game();
 void intro();

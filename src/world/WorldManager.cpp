@@ -23,10 +23,6 @@ namespace IndieStudio {
     void WorldManager::init()
     {
         this->registerGenerator("Basic", &this->basicWorldGenerator);
-
-        MapPattern pattern(19, 13);
-        this->basicWorldGenerator.generate(pattern);
-        std::cout << pattern;
     }
 
     World WorldManager::load(const std::string &path)
@@ -110,16 +106,6 @@ namespace IndieStudio {
         
         if (computedChecksum != header.checksum)
             throw std::logic_error("The map checksum doesn't match");
-    }
-
-    std::ostream &operator <<(std::ostream &stream, const MapPattern &pattern)
-    {
-        for (int y = 0; y < pattern.getHeight(); y += 1) {
-            for (int x = 0; x < pattern.getWidth(); x += 1)
-                stream << pattern.get(y, x);
-            stream << std::endl;
-        }
-        return stream;
     }
 
 }

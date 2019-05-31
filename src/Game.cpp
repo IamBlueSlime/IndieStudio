@@ -26,7 +26,7 @@ namespace IndieStudio {
         static irr::IrrlichtDevice *device = 0;
 
         if (!device) {
-            device = irr::createDevice(type, irr::core::dimension2d<irr::u32>(width, height));
+            device = irr::createDevice(type, irr::core::dimension2d<irr::u32>(width, height), 16, false, true);
             device->setWindowCaption(L"Indie Studio");
         }
         return device;
