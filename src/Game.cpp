@@ -23,7 +23,7 @@ namespace IndieStudio {
 
     irr::IrrlichtDevice *Game::getDevice(irr::video::E_DRIVER_TYPE type, int width, int height)
     {
-        static irr::IrrlichtDevice *device = 0;
+        static irr::IrrlichtDevice *device = nullptr;
 
         if (!device) {
             device = irr::createDevice(type, irr::core::dimension2d<irr::u32>(width, height), 16, false, true);

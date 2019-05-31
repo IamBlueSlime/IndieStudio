@@ -5,16 +5,16 @@
 ** SceneManager
 */
 
-#ifndef SCENEMANAGER_HPP_
-#define SCENEMANAGER_HPP_
+#pragma none
 
 #include <unordered_map>
 #include <string>
 #include <irrlicht/irrlicht.h>
-#include <optional>
 #include "indiestudio/Game.hpp"
 
-class SceneManager {
+namespace IndieStudio {
+
+	class SceneManager {
 	public:
 		struct Scene
 		{
@@ -28,9 +28,9 @@ class SceneManager {
 		SceneManager();
 		~SceneManager() = default;
 
-		std::optional<Scene> createScene(const std::string &key);
+		Scene &createScene(const std::string &key);
 		void setActiveScene(const std::string &key);
-		std::optional<Scene> getScene(const std::string &key);
+		Scene &getScene(const std::string &key);
 		bool draw();
 
 	protected:
@@ -39,6 +39,6 @@ class SceneManager {
 		irr::scene::ISceneManager *sceneRoot;
 		irr::gui::IGUIEnvironment *guiRoot;
 		std::unordered_map<std::string, Scene> container;
-};
+	};
 
-#endif /* !SCENEMANAGER_HPP_ */
+}
