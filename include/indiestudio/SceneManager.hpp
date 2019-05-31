@@ -18,11 +18,11 @@ class SceneManager {
 	public:
 		struct Scene
 		{
-			explicit Scene(irr::scene::ISceneManager *scene = 0, irr::gui::IGUIEnvironment *gui = 0);
+			explicit Scene(irr::scene::ISceneManager *scene = 0, irr::gui::IGUIElement *gui = 0);
 			Scene(const Scene &other);
 			Scene &operator=(const Scene &other);
 			irr::scene::ISceneManager *scene;
-			irr::gui::IGUIEnvironment *gui;
+			irr::gui::IGUIElement *gui;
 		};
 
 		SceneManager();

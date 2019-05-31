@@ -15,7 +15,7 @@ SceneManager::SceneManager()
     this->guiRoot = device->getGUIEnvironment();
 }
 
-SceneManager::Scene::Scene(irr::scene::ISceneManager *scene, irr::gui::IGUIEnvironment *gui)
+SceneManager::Scene::Scene(irr::scene::ISceneManager *scene, irr::gui::IGUIElement *gui)
 {
     this->scene = scene;
     this->gui = gui;
@@ -37,7 +37,7 @@ SceneManager::Scene &SceneManager::Scene::operator=(const SceneManager::Scene &o
 
 std::optional<SceneManager::Scene> SceneManager::createScene(const std::string &key)
 {
-    this->container[key] = Scene(this->sceneRoot->createNewSceneManager(), 0);
+    this->container[key] = Scene(this->sceneRoot->createNewSceneManager(), this->guiRoot->addGUIElement(key.c_str()));
     if (this->container.find(key) == this->container.end())
         return std::nullopt;
     this->active = key;
@@ -70,7 +70,7 @@ bool SceneManager::draw()
     if (scene.scene)
         scene.scene->drawAll();
     if (scene.gui)
-        scene.gui->drawAll();
+        scene.gui->draw();
     return true;
 }
 
