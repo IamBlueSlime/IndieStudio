@@ -15,13 +15,38 @@
 namespace IndieStudio {
 
     using PlayECS = ECS::ECSManager<
-        ECS::Component::Component1,
-        ECS::Component::Component2,
-        ECS::Component::Component3
+        ECS::Component::Position,
+        ECS::Component::Speed,
+        ECS::Component::Alive,
+        ECS::Component::Drawable,
+        ECS::Component::Movable,
+        ECS::Component::Indestructible,
+        ECS::Component::LifeTime,
+        ECS::Component::ExplosionLifeTime,
+        ECS::Component::IsExploding,
+        ECS::Component::ExplosionRange,
+        ECS::Component::BombType,
+        ECS::Component::IsPlayer,
+        ECS::Component::IsAI,
+        ECS::Component::IsBomb,
+        ECS::Component::SoundID,
+        ECS::Component::Direction,
+        ECS::Component::Scale,
+        ECS::Component::MaterialTexture,
+        ECS::Component::MaterialFlag,
+        ECS::Component::MeshPath,
+        ECS::Component::NodeCreate,
+        ECS::Component::Node,
+        ECS::Component::ID
+        // ECS::Component::EventCallbacks<PlayECS>
     >;
 
     using PlayECSSystems = ECS::Systems<
-        ECS::System::System1<PlayECS>
+        ECS::System::ApplyExplosion<PlayECS>,
+        ECS::System::EventSystem<PlayECS>,
+        ECS::System::ExplosionDuration<PlayECS>,
+        ECS::System::MovePlayer<PlayECS>,
+        ECS::System::SetupExplosion<PlayECS>
     >;
 
     class PlayScene {

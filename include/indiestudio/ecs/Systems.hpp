@@ -7,83 +7,9 @@
 
 #pragma once
 
-#include "indiestudio/ecs/Components.hpp"
-#include "indiestudio/ecs/BaseSystem.hpp"
-#include "indiestudio/ecs/Events.hpp"
-
-namespace IndieStudio::ECS::System {
-
-    using namespace ECS::Component;
-    using namespace ECS::Event;
-
-    template<typename ManagerType>
-    struct System1 : public BaseSystem<ManagerType> {
-
-        void process(ManagerType &manager) override {
-            manager.template forEntitiesWith<Component1>(
-                [&manager](auto &data, [[gnu::unused]] auto id) {
-                    auto &comp1 = manager.template getComponent<Component1>(data);
-                    comp1.x += 1;
-                    comp1.y += 1;
-                }
-            );
-        }
-
-    };
-
-    template<typename ManagerType>
-    struct System2 : public BaseSystem<ManagerType> {
-
-        void process(ManagerType &manager) override {
-            manager.template forEntitiesWith<Component1, Component3>(
-                [&manager](auto &data, [[gnu::unused]] auto id) {
-                    auto &comp1 = manager.template getComponent<Component1>(data);
-                    std::cout << comp1.x << "x " << comp1.y << "y" << std::endl;
-                }
-            );
-        }
-
-    };
-
-    template<typename ManagerType>
-    struct System3 : public BaseSystem<ManagerType> {
-
-        void process(ManagerType &manager) override {
-            manager.template forEntitiesWith<Component1, Component2, Component3>(
-                [&manager](auto &data, [[gnu::unused]] auto id) {
-                    auto &comp1 = manager.template getComponent<Component1>(data);
-                    auto &comp2 = manager.template getComponent<Component2>(data);
-                    std::cout << comp1.x << "x " << comp1.y << "y" << std::endl;
-                    std::cout << comp2.str << std::endl;
-                }
-            );
-        }
-
-    };
-
-    //TODO: thread safety omg
-    template<typename ManagerType>
-    struct EventSystem : public BaseSystem<ManagerType> {
-
-        void process(ManagerType &manager) override {
-            manager.template forEntitiesWith<EventCallbacks<ManagerType>>(
-                [&manager](auto &data, auto id) {
-                    auto &event_manager = manager.getEventManager();
-                    const auto &callbacks = manager.template getComponent<EventCallbacks<ManagerType>>(data).getCallbacks();
-
-                    for (const auto &event : event_manager.getEventQueue()) {
-                        const auto &callback = callbacks.find(event.first);
-                        if (callback != callbacks.end()) {
-                            auto funcs = callback->second;
-                            for (const auto &func : funcs) {
-                                func(event.first, id, manager);
-                            }
-                        }
-                    }
-                }
-            );
-        }
-
-    };
-
-}
+#include "indiestudio/ecs/systems/ApplyExplosionSystem.hpp"
+#include "indiestudio/ecs/systems/ExplosionDurationSystem.hpp"
+#include "indiestudio/ecs/systems/SetupExplosionSystem.hpp"
+#include "indiestudio/ecs/systems/EventSystem.hpp"
+#include "indiestudio/ecs/systems/DrawEntitiesSystem.hpp"
+#include "indiestudio/ecs/systems/MovePlayerSystem.hpp"
