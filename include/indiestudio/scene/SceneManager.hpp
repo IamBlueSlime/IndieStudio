@@ -38,6 +38,7 @@ namespace IndieStudio {
 
 		void init();
 
+		void subscribeEvent(std::function<bool(const irr::SEvent &)> onEvent);
 		Scene &createScene(const std::string &key);
 		void setActiveScene(const std::string &key);
 		Scene &getScene(const std::string &key);

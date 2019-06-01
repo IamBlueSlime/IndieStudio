@@ -21,8 +21,9 @@ namespace IndieStudio {
         auto guiEnv = scene.scene->getGUIEnvironment();
         auto guiRoot = scene.gui;
 
+        scene.scene->clear();
         irr::scene::ICameraSceneNode *camera = scene.scene->addCameraSceneNode(0,
-		    irr::core::vector3df(0, 0, 0), irr::core::vector3df(0, 0, 0), 1);
+		    irr::core::vector3df(20 * 17 / 2 - 10, 250, 0), irr::core::vector3df(20 * 17 / 2, 0, 0), 1);
 		camera->setFarValue(10000);
 
         setupWaterBackground(scene);
@@ -95,7 +96,7 @@ namespace IndieStudio {
 
         irr::scene::ISceneNode* water = scene.scene->addWaterSurfaceSceneNode(
             mesh->getMesh(0), 1.0f, 500.0f, 10.0f);
-        water->setPosition(irr::core::vector3df(150, 7, 20));
+        water->setPosition(irr::core::vector3df(150, 7, 100));
         water->setMaterialTexture(0, driver->getTexture("assets/textures/water_stones.jpg"));
         water->setMaterialTexture(1, driver->getTexture("assets/textures/water.jpg"));
         water->setMaterialType(irr::video::EMT_REFLECTION_2_LAYER);
@@ -133,7 +134,7 @@ namespace IndieStudio {
         points.push_back(pos);
 
         irr::scene::ISceneNodeAnimator* sa = scene.scene->createFollowSplineAnimator(
-            Game::getDevice()->getTimer()->getTime(), points, 3, 0.5F, false);
+            Game::getDevice()->getTimer()->getTime(), points, 5, 0.5F, false);
         cam->addAnimator(sa);
         sa->drop();
     }
@@ -157,6 +158,12 @@ namespace IndieStudio {
 
     bool PlayScene::onEvent(SceneManager::Scene &scene, const irr::SEvent &event)
     {
+        if (event.EventType == irr::EET_KEY_INPUT_EVENT) {
+            if (event.KeyInput.Key == irr::KEY_ESCAPE && event.KeyInput.PressedDown) {
+                scene.manager->setActiveScene(SceneManager::MAIN_MENU_ID);
+                return true;
+            }
+        }
         return false;
     }
 

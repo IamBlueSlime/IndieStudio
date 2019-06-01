@@ -68,8 +68,17 @@ namespace IndieStudio {
         return this->container[key];
     }
 
+    void SceneManager::subscribeEvent(std::function<bool(const irr::SEvent &)> onEvent)
+    {
+        if (this->container.find(this->active) == this->container.end())
+            throw std::runtime_error("subscribeEvent: Failed to get actve scene");
+        this->container[this->active].onEvent = onEvent;
+    }
+
     void SceneManager::setActiveScene(const std::string &key)
     {
+        if (this->container.find(key) == this->container.end())
+            throw std::runtime_error("setAFailed to create scene");
         for (auto it = this->container.begin(); it != this->container.end(); ++it)
             it->second.gui->setVisible(false);
         this->active = key;

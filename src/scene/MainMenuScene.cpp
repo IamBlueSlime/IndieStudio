@@ -7,6 +7,7 @@
 
 #include "indiestudio/Game.hpp"
 #include "indiestudio/scene/MainMenuScene.hpp"
+#include "indiestudio/scene/PlayScene.hpp"
 
 namespace IndieStudio {
 
@@ -36,7 +37,7 @@ namespace IndieStudio {
 
         guiEnv->addImage(driver->getTexture("assets/textures/title.png"),
             irr::core::position2di(350, 75), true, guiRoot);
-        
+
         irr::core::vector2di pos(515, 450);
         guiEnv->addButton(irr::core::recti(pos, {pos.X + 225, pos.Y + 50}),
             guiRoot, BUTTON_ID_PLAY, L"Play");
@@ -67,7 +68,7 @@ namespace IndieStudio {
         anms->setAnimationSpeed(30);
         anms->setScale(irr::core::vector3df(8.f,8.f,8.f));
         anms->setAnimationSpeed(18);
-        anms->setPosition(irr::core::vector3df(0, 0, 0));
+        anms->setPosition(irr::core::vector3df(0, -5, 0));
 
         for (int i = 0; i < 100; i++) {
             int randX = rand() % 10 * (!(rand() % 2) ? 1 : -1) * rand() % 100 * 15;
@@ -86,7 +87,6 @@ namespace IndieStudio {
                 irr::core::vector3df(rand() % 3, rand() % 3, rand() % 2 + 1));
             clone->addAnimator(anim);
 
-            // clone->setFrameLoop(0, 27);
             int randTexture = rand() % 4;
 
             if (randTexture == 0)
@@ -148,6 +148,7 @@ namespace IndieStudio {
         } else if (event.EventType == irr::EET_GUI_EVENT
         && event.GUIEvent.EventType == irr::gui::EGET_BUTTON_CLICKED) {
             if (event.GUIEvent.Caller->getID() == BUTTON_ID_PLAY) {
+                PlayScene::initialize(scene.manager->getScene(SceneManager::PLAY_ID));
                 scene.manager->setActiveScene(SceneManager::PLAY_ID);
                 return true;
             } else if (event.GUIEvent.Caller->getID() == BUTTON_ID_QUIT) {
