@@ -17,7 +17,6 @@ namespace IndieStudio {
 
     void PlayScene::initialize(SceneManager::Scene &scene)
     {
-        auto driver = scene.scene->getVideoDriver();
         auto guiEnv = scene.scene->getGUIEnvironment();
         auto guiRoot = scene.gui;
 
@@ -88,8 +87,6 @@ namespace IndieStudio {
 
     void PlayScene::setupWaterBackground(SceneManager::Scene &scene)
     {
-        auto driver = scene.scene->getVideoDriver();
-
         irr::scene::IAnimatedMesh* mesh = scene.scene->addHillPlaneMesh("myHill",
             irr::core::dimension2df(20, 20), irr::core::dimension2du(40, 40), 0, 0,
             irr::core::dimension2df(0, 0), irr::core::dimension2df(10, 10));
@@ -97,25 +94,23 @@ namespace IndieStudio {
         irr::scene::ISceneNode* water = scene.scene->addWaterSurfaceSceneNode(
             mesh->getMesh(0), 1.0f, 500.0f, 10.0f);
         water->setPosition(irr::core::vector3df(150, 7, 100));
-        water->setMaterialTexture(0, driver->getTexture("assets/textures/water_stones.jpg"));
-        water->setMaterialTexture(1, driver->getTexture("assets/textures/water.jpg"));
+        water->setMaterialTexture(0, scene.manager->textureManager.getTexture("assets/textures/water_stones.jpg").content);
+        water->setMaterialTexture(1, scene.manager->textureManager.getTexture("assets/textures/water.jpg").content);
         water->setMaterialType(irr::video::EMT_REFLECTION_2_LAYER);
-        scene.scene->addSkyDomeSceneNode(driver->getTexture("assets/textures/skydome.jpg"));
+        scene.scene->addSkyDomeSceneNode(scene.manager->textureManager.getTexture("assets/textures/skydome.jpg").content);
         //node->setMaterialFlag(irr::video::EMF_NORMALIZE_NORMALS, true);
         scene.scene->setShadowColor(irr::video::SColor(150, 0, 0, 0));
     }
 
     void PlayScene::setupLight(SceneManager::Scene &scene)
     {
-        auto driver = scene.scene->getVideoDriver();
-
         irr::scene::ISceneNode* light = scene.scene->addLightSceneNode(
             0, irr::core::vector3df(355, 250, 50),
 		    irr::video::SColorf(1.0f, 1.0f, 1.0f, 1.0f), 5000.0f);
         light = scene.scene->addBillboardSceneNode(light, irr::core::dimension2d<irr::f32>(50, 50));
         light->setMaterialFlag(irr::video::EMF_LIGHTING, false);
         light->setMaterialType(irr::video::EMT_TRANSPARENT_ADD_COLOR);
-        light->setMaterialTexture(0, driver->getTexture("assets/textures/particlewhite.bmp"));
+        light->setMaterialTexture(0, scene.manager->textureManager.getTexture("assets/textures/particlewhite.bmp").content);
         scene.scene->addLightSceneNode(0, irr::core::vector3df(0, -50, 0),
             irr::video::SColorf(1.0f, 1.0f, 1.0f, 1.0f), 5000.0f);
     }
@@ -144,7 +139,7 @@ namespace IndieStudio {
        	irr::scene::IAnimatedMeshSceneNode* player = scene.scene->addAnimatedMeshSceneNode(
             scene.scene->getMesh("assets/models/player.md3"), 0);
 
-        player->setMaterialTexture(0, scene.scene->getVideoDriver()->getTexture("assets/textures/player_black.png"));
+        player->setMaterialTexture(0, scene.manager->textureManager.getTexture("assets/textures/player_black.png").content);
 		player->setMaterialFlag(irr::video::EMF_LIGHTING, false);
 		player->setScale(irr::core::vector3df(SQUARED_SIZE, SQUARED_SIZE, SQUARED_SIZE));
 		player->setAnimationSpeed(30);

@@ -51,6 +51,17 @@ namespace IndieStudio {
 
     void SceneManager::init()
     {
+        textureManager.registerTexture("assets/textures/skydome.jpg");
+        textureManager.registerTexture("assets/textures/title.png");
+        textureManager.registerTexture("assets/textures/player_black.png");
+        textureManager.registerTexture("assets/textures/player_pink.png");
+        textureManager.registerTexture("assets/textures/player_red.png");
+        textureManager.registerTexture("assets/textures/player_white.png");
+
+        textureManager.registerTexture("assets/textures/water_stones.jpg");
+        textureManager.registerTexture("assets/textures/water.jpg");
+        textureManager.registerTexture("assets/textures/particlewhite.bmp");
+
         MainMenuScene::initialize(this->createScene(MAIN_MENU_ID));
         PlayScene::initialize(this->createScene(PLAY_ID));
         this->setActiveScene(MAIN_MENU_ID);

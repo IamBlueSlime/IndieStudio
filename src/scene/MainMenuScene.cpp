@@ -13,10 +13,7 @@ namespace IndieStudio {
 
     void MainMenuScene::initialize(SceneManager::Scene &scene)
     {
-        auto driver = scene.scene->getVideoDriver();
-
-        scene.scene->addSkyDomeSceneNode(
-            driver->getTexture("assets/textures/skydome.jpg"));
+        scene.scene->addSkyDomeSceneNode(scene.manager->textureManager.getTexture("assets/textures/skydome.jpg").content);
 
         scene.scene->addCameraSceneNode(0, irr::core::vector3df(50, 0, 0), irr::core::vector3df(0, 0, 0));
 
@@ -31,12 +28,11 @@ namespace IndieStudio {
 
     void MainMenuScene::setupMenu(SceneManager::Scene &scene)
     {
-        auto driver = scene.scene->getVideoDriver();
         auto guiEnv = scene.scene->getGUIEnvironment();
         auto guiRoot = scene.gui;
 
-        guiEnv->addImage(driver->getTexture("assets/textures/title.png"),
-            irr::core::position2di(350, 75), true, guiRoot);
+        guiEnv->addImage(
+            scene.manager->textureManager.getTexture("assets/textures/title.png").content, irr::core::position2di(350, 75), true, guiRoot);
 
         irr::core::vector2di pos(515, 450);
         guiEnv->addButton(irr::core::recti(pos, {pos.X + 225, pos.Y + 50}),
@@ -54,7 +50,6 @@ namespace IndieStudio {
 
     void MainMenuScene::setupCharacterExplosion(SceneManager::Scene &scene)
     {
-        auto driver = scene.scene->getVideoDriver();
 
         irr::scene::IAnimatedMeshSceneNode* anms = scene.scene->addAnimatedMeshSceneNode(
             scene.scene->getMesh("assets/models/player.md3"), 0, 42);
@@ -63,14 +58,14 @@ namespace IndieStudio {
             throw std::runtime_error("Failed to load player.md3");
 
         anms->setMaterialFlag(irr::video::EMF_LIGHTING, false);
-        anms->setMaterialTexture(0, driver->getTexture("assets/textures/player_black.png"));
+        anms->setMaterialTexture(0, scene.manager->textureManager.getTexture("assets/textures/player_black.png").content);
         anms->setFrameLoop(0, 27);
         anms->setAnimationSpeed(30);
         anms->setScale(irr::core::vector3df(8.f,8.f,8.f));
         anms->setAnimationSpeed(18);
         anms->setPosition(irr::core::vector3df(0, -5, 0));
 
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 150; i++) {
             int randX = rand() % 10 * (!(rand() % 2) ? 1 : -1) * rand() % 100 * 15;
             int randY = rand() % 10 * (!(rand() % 2) ? 1 : -1) * rand() % 100 * 15;
             int randZ = rand() % 10 * (!(rand() % 2) ? 1 : -1) * rand() % 100 * 15;
@@ -90,13 +85,13 @@ namespace IndieStudio {
             int randTexture = rand() % 4;
 
             if (randTexture == 0)
-                clone->setMaterialTexture(0, driver->getTexture("assets/textures/player_black.png"));
+                clone->setMaterialTexture(0, scene.manager->textureManager.getTexture("assets/textures/player_black.png").content);
             else if (randTexture == 1)
-                clone->setMaterialTexture(0, driver->getTexture("assets/textures/player_pink.png"));
+                clone->setMaterialTexture(0, scene.manager->textureManager.getTexture("assets/textures/player_pink.png").content);
             else if (randTexture == 2)
-                clone->setMaterialTexture(0, driver->getTexture("assets/textures/player_red.png"));
+                clone->setMaterialTexture(0, scene.manager->textureManager.getTexture("assets/textures/player_red.png").content);
             else
-                clone->setMaterialTexture(0, driver->getTexture("assets/textures/player_white.png"));
+                clone->setMaterialTexture(0, scene.manager->textureManager.getTexture("assets/textures/player_white.png").content);
         }
     }
 

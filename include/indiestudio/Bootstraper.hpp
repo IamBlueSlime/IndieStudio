@@ -18,7 +18,3 @@ namespace IndieStudio {
     };
 
 }
-
-// TODO: remove this below
-void game();
-void intro();

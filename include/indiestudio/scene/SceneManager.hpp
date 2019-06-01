@@ -12,6 +12,7 @@
 #include <unordered_map>
 #include <string>
 #include <irrlicht/irrlicht.h>
+#include "indiestudio/common/TextureManager.hpp"
 
 namespace IndieStudio {
 
@@ -48,6 +49,7 @@ namespace IndieStudio {
 		const std::unordered_map<std::string, Scene> &getContainer()
 			{ return this->container; }
 
+		TextureManager textureManager;
 	protected:
 	private:
 		class EventReceiver : public irr::IEventReceiver {
