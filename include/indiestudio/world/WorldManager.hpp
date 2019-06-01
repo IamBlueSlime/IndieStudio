@@ -25,7 +25,8 @@ namespace IndieStudio {
 
         void init();
 
-        World load(const std::string &path);
+        void create(WorldSettings &settings);
+        void load(const std::string &path);
         void save(const std::string &path, const World &world);
 
         void registerGenerator(const std::string &name,
@@ -36,11 +37,14 @@ namespace IndieStudio {
             return this->generators;
         }
 
+        World *getLoadedWorld() { return this->loadedWorld.get(); }
+
     protected:
     private:
         Logger logger;
         std::unordered_map<std::string, const IWorldGenerator *> generators;
         BasicWorldGenerator basicWorldGenerator;
+        std::unique_ptr<World> loadedWorld;
 
         static void assertValidWorld(ByteBuffer &buffer);
     };

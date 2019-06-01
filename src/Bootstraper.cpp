@@ -15,6 +15,7 @@ namespace IndieStudio {
         (void) ac;
         (void) av;
         Game game;
+        Game::INSTANCE = &game;
         game.start();
         return 0;
     }

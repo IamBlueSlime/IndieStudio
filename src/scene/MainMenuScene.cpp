@@ -13,23 +13,42 @@ namespace IndieStudio {
     void MainMenuScene::initialize(SceneManager::Scene &scene)
     {
         auto driver = scene.scene->getVideoDriver();
-        auto guiEnv = scene.scene->getGUIEnvironment();
-        auto guiRoot = scene.gui;
 
         scene.scene->addSkyDomeSceneNode(
             driver->getTexture("assets/textures/skydome.jpg"));
 
         scene.scene->addCameraSceneNode(0, irr::core::vector3df(50, 0, 0), irr::core::vector3df(0, 0, 0));
 
-        guiEnv->addImage(driver->getTexture("assets/textures/title.png"),
-            irr::core::position2di(350, 75), true, guiRoot);
-
+        setupMenu(scene);
         setupCharacterExplosion(scene);
         setupTravelling(scene);
 
         scene.onEvent = [&](const irr::SEvent &event) {
             return onEvent(scene, event);
         };
+    }
+
+    void MainMenuScene::setupMenu(SceneManager::Scene &scene)
+    {
+        auto driver = scene.scene->getVideoDriver();
+        auto guiEnv = scene.scene->getGUIEnvironment();
+        auto guiRoot = scene.gui;
+
+        guiEnv->addImage(driver->getTexture("assets/textures/title.png"),
+            irr::core::position2di(350, 75), true, guiRoot);
+        
+        irr::core::vector2di pos(515, 450);
+        guiEnv->addButton(irr::core::recti(pos, {pos.X + 225, pos.Y + 50}),
+            guiRoot, BUTTON_ID_PLAY, L"Play");
+        pos.Y += 60;
+        guiEnv->addButton(irr::core::recti(pos, {pos.X + 225, pos.Y + 50}),
+            guiRoot, BUTTON_ID_SETTING, L"Settings");
+        pos.Y += 60;
+        guiEnv->addButton(irr::core::recti(pos, {pos.X + 225, pos.Y + 50}),
+            guiRoot, BUTTON_ID_HOW_TO_PLAY, L"How to Play");
+        pos.Y += 60;
+        guiEnv->addButton(irr::core::recti(pos, {pos.X + 225, pos.Y + 50}),
+            guiRoot, BUTTON_ID_QUIT, L"Quit");
     }
 
     void MainMenuScene::setupCharacterExplosion(SceneManager::Scene &scene)
@@ -120,8 +139,18 @@ namespace IndieStudio {
 
     bool MainMenuScene::onEvent(SceneManager::Scene &scene, const irr::SEvent &event)
     {
+        (void) scene;
         if (event.EventType == irr::EET_KEY_INPUT_EVENT) {
             if (event.KeyInput.Key == irr::KEY_ESCAPE && event.KeyInput.PressedDown) {
+                Game::getDevice()->closeDevice();
+                return true;
+            }
+        } else if (event.EventType == irr::EET_GUI_EVENT
+        && event.GUIEvent.EventType == irr::gui::EGET_BUTTON_CLICKED) {
+            if (event.GUIEvent.Caller->getID() == BUTTON_ID_PLAY) {
+                scene.manager->setActiveScene(SceneManager::PLAY_ID);
+                return true;
+            } else if (event.GUIEvent.Caller->getID() == BUTTON_ID_QUIT) {
                 Game::getDevice()->closeDevice();
                 return true;
             }

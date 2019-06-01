@@ -2,15 +2,14 @@
 ** EPITECH PROJECT, 2019
 ** OOP_indie_studio_2018
 ** File description:
-** TypeList
+** ecs TypeList.hpp
 */
 
-#ifndef TYPELIST_HPP_
-#define TYPELIST_HPP_
+#pragma once
 
 #include <cassert>
 
-namespace Ecs {
+namespace IndieStudio::ECS {
 
     template<typename... Types>
     struct TypeList {
@@ -60,5 +59,3 @@ namespace Ecs {
 
     };
 }
-
-#endif /* !TYPELIST_HPP_ */

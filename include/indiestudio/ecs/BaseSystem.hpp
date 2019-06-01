@@ -2,11 +2,10 @@
 ** EPITECH PROJECT, 2019
 ** OOP_indie_studio_2018
 ** File description:
-** BaseSystem
+** ecs BaseSystem.hpp
 */
 
-#ifndef BASESYSTEM_HPP_
-#define BASESYSTEM_HPP_
+#pragma once
 
 #include <functional>
 #include <map>
@@ -14,17 +13,15 @@
 #include <iostream>
 #include <variant>
 
-#include "./TypeList.hpp"
-#include "./Entity.hpp"
+#include "indiestudio/ecs/TypeList.hpp"
+#include "indiestudio/ecs/Entity.hpp"
 
-namespace Ecs {
+namespace IndieStudio::ECS {
 
     template<typename... ComponentTypes>
     class Manager;
 
     namespace System {
-
-        using namespace Ecs::Component;
 
         template<typename ManagerType>
         struct BaseSystem {
@@ -63,5 +60,3 @@ namespace Ecs {
         };
     }
 }
-
-#endif /* !BASESYSTEM_HPP_ */

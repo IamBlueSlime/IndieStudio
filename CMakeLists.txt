@@ -35,6 +35,7 @@ set(INDIE_SRC
     ${INDIE_SRC_DIR}/mod/LibraryWrapper.cpp
     ${INDIE_SRC_DIR}/mod/ModManager.cpp
     ${INDIE_SRC_DIR}/scene/MainMenuScene.cpp
+    ${INDIE_SRC_DIR}/scene/PlayScene.cpp
     ${INDIE_SRC_DIR}/scene/SceneManager.cpp
     ${INDIE_SRC_DIR}/statistic/AchievementManager.cpp
     ${INDIE_SRC_DIR}/statistic/StatisticManager.cpp

@@ -15,6 +15,7 @@ namespace IndieStudio {
         ByteBufferUtils::writeString<unsigned short>(buffer, this->name);
         buffer << this->width;
         buffer << this->height;
+        buffer << this->players;
     }
 
     void WorldSettings::unpack(ByteBuffer &buffer)
@@ -22,6 +23,7 @@ namespace IndieStudio {
         this->name = ByteBufferUtils::readString<unsigned short>(buffer);
         buffer >> this->width;
         buffer >> this->height;
+        buffer >> this->players;
     }
 
 }
