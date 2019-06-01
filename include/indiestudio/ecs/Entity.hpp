@@ -2,11 +2,10 @@
 ** EPITECH PROJECT, 2019
 ** OOP_indie_studio_2018
 ** File description:
-** Entity
+** ecs Entity.hpp
 */
 
-#ifndef ENTITY_HPP_
-#define ENTITY_HPP_
+#pragma once
 
 #include <cstdint>
 #include <optional>
@@ -14,7 +13,7 @@
 #include <tuple>
 #include <variant>
 
-namespace Ecs {
+namespace IndieStudio::ECS {
 
     struct EmptyComponent {};
     static inline constexpr EmptyComponent empty_component = EmptyComponent();
@@ -27,5 +26,3 @@ namespace Ecs {
         std::tuple<std::optional<ComponentsTypes>...> components;
     };
 }
-
-#endif /* !ENTITY_HPP_ */

@@ -2,11 +2,10 @@
 ** EPITECH PROJECT, 2019
 ** OOP_indie_studio_2018
 ** File description:
-** Components
+** ecs Components.hpp
 */
 
-#ifndef COMPONENTS_HPP_
-#define COMPONENTS_HPP_
+#pragma once
 
 #include <string>
 #include <unordered_map>
@@ -14,11 +13,11 @@
 #include <vector>
 #include <functional>
 
-#include "./Events.hpp"
+#include "indiestudio/ecs/Events.hpp"
 
-namespace Ecs::Component {
+namespace IndieStudio::ECS::Component {
 
-    using namespace Ecs::Event;
+    using namespace IndieStudio::ECS::Event;
 
     struct Component1 {
         int x;
@@ -59,5 +58,3 @@ namespace Ecs::Component {
     };
 
 }
-
-#endif /* !COMPONENTS_HPP_ */

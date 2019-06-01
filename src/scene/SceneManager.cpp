@@ -8,6 +8,7 @@
 #include <iostream>
 #include "indiestudio/Game.hpp"
 #include "indiestudio/scene/MainMenuScene.hpp"
+#include "indiestudio/scene/PlayScene.hpp"
 #include "indiestudio/scene/SceneManager.hpp"
 
 namespace IndieStudio {
@@ -51,22 +52,28 @@ namespace IndieStudio {
     void SceneManager::init()
     {
         MainMenuScene::initialize(this->createScene(MAIN_MENU_ID));
+        PlayScene::initialize(this->createScene(PLAY_ID));
         this->setActiveScene(MAIN_MENU_ID);
     }
 
     SceneManager::Scene &SceneManager::createScene(const std::string &key)
     {
         irr::core::dimension2du screenSize = IndieStudio::Game::getDevice()->getVideoDriver()->getScreenSize();
-        this->container[key] = Scene(this, this->sceneRoot->createNewSceneManager(), this->guiRoot->addTab(irr::core::recti(0, 0, screenSize.Width, screenSize.Height)));
+        this->container[key] = Scene(this, this->sceneRoot->createNewSceneManager(),
+            this->guiRoot->addTab(irr::core::recti(0, 0, screenSize.Width, screenSize.Height),
+            0, this->container.size()));
         if (this->container.find(key) == this->container.end())
             throw std::runtime_error("Failed to create scene");
-        this->active = key;
+        this->setActiveScene(key);
         return this->container[key];
     }
 
     void SceneManager::setActiveScene(const std::string &key)
     {
+        for (auto it = this->container.begin(); it != this->container.end(); ++it)
+            it->second.gui->setVisible(false);
         this->active = key;
+        this->container[key].gui->setVisible(true);
     }
 
     SceneManager::Scene &SceneManager::getScene(const std::string &key)

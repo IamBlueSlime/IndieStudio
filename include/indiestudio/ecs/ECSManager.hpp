@@ -2,11 +2,10 @@
 ** EPITECH PROJECT, 2019
 ** OOP_indie_studio_2018
 ** File description:
-** Ecs
+** ecs ECSManager.hpp
 */
 
-#ifndef MANAGER_HPP_
-#define MANAGER_HPP_
+#pragma once
 
 #include <cstdint>
 #include <optional>
@@ -20,27 +19,27 @@
 #include <memory>
 
 #include "indiestudio/Game.hpp"
+#include "indiestudio/ecs/TypeList.hpp"
+#include "indiestudio/ecs/Entity.hpp"
+#include "indiestudio/ecs/Components.hpp"
+#include "indiestudio/ecs/Systems.hpp"
+#include "indiestudio/ecs/Events.hpp"
 
-#include "./TypeList.hpp"
-#include "./Entity.hpp"
-#include "./Components.hpp"
-#include "./Systems.hpp"
-#include "./Events.hpp"
+namespace IndieStudio::ECS {
 
-namespace Ecs {
-
-    using namespace Ecs::System;
-    using namespace Ecs::Component;
+    using namespace IndieStudio::ECS::Component;
+    using namespace IndieStudio::ECS::Event;
+    using namespace IndieStudio::ECS::System;
 
     template<typename... ComponentTypes>
-    class Manager {
+    class ECSManager {
 
-        using EntityType = Entity<EventCallbacks<Manager<ComponentTypes...>>, ComponentTypes...>;
-        using Components = TypeList<EventCallbacks<Manager<ComponentTypes...>>, ComponentTypes...>;
+        using EntityType = Entity<EventCallbacks<ECSManager<ComponentTypes...>>, ComponentTypes...>;
+        using Components = TypeList<EventCallbacks<ECSManager<ComponentTypes...>>, ComponentTypes...>;
 
     public:
-        Manager() {}
-        ~Manager() {}
+        ECSManager() {}
+        ~ECSManager() {}
 
         // Iterate only on entities owning components given as template types, and apply the given lambda
         //
@@ -86,6 +85,11 @@ namespace Ecs {
         // Delete the entity of the given ID from the manager
         void delEntity(std::size_t id) {
             this->entities.erase(id);
+        }
+
+        // Flush all the entities from the manager
+        void flushEntities() {
+            this->entities.clear();
         }
 
         // Return true is the given entity own the component, false otherwise
@@ -158,7 +162,6 @@ namespace Ecs {
 
     protected:
     private:
-
         template<typename... components_searched>
         constexpr std::bitset<Components::size> generateMask() {
             std::bitset<Components::size> mask;
@@ -173,5 +176,3 @@ namespace Ecs {
         size_t id_seed = 0;
     };
 }
-
-#endif /* !MANAGER_HPP_ */

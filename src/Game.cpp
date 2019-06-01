@@ -9,6 +9,8 @@
 
 namespace IndieStudio {
 
+    Game *Game::INSTANCE = nullptr;
+
     Game::Game() : logger("game"), achievementManager(*this), modManager(*this)
     {}
 

@@ -16,6 +16,7 @@ namespace IndieStudio {
         std::string name;
         unsigned int width = 17;
         unsigned int height = 11;
+        unsigned char players = 4;
 
         /* ISerializable implementation */
         void pack(ByteBuffer &buffer) const override;

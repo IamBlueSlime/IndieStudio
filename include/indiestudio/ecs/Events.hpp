@@ -2,11 +2,10 @@
 ** EPITECH PROJECT, 2019
 ** OOP_indie_studio_2018
 ** File description:
-** Events
+** ecs Events.hpp
 */
 
-#ifndef EVENTS_HPP_
-#define EVENTS_HPP_
+#pragma once
 
 #include <cmath>
 #include <unordered_map>
@@ -18,7 +17,8 @@
 
 #include "indiestudio/Game.hpp"
 
-namespace Ecs {
+namespace IndieStudio::ECS {
+
     namespace Event {
 
         enum class EventType {
@@ -46,7 +46,7 @@ namespace Ecs {
                         break;
                     case EventType::CUSTOM_EVENT_1: return this->custom_event_1 == other.custom_event_1;
                     default:
-                        std::cout << "operator== not implemented on this Ecs::Event::EventData : aborting" << std::endl;
+                        std::cout << "operator== not implemented on this ECS::Event::EventData : aborting" << std::endl;
                         assert(false);
                         return false;
                 }
@@ -63,26 +63,27 @@ namespace Ecs {
             };
         };
     }
+
 }
 
 namespace std {
 
     template<>
-    struct hash<Ecs::Event::EventData> {
+    struct hash<IndieStudio::ECS::Event::EventData> {
 
-        std::size_t operator()([[gnu::unused]] const Ecs::Event::EventData &event) const
+        std::size_t operator()([[gnu::unused]] const IndieStudio::ECS::Event::EventData &event) const
         {
             switch (event.type) {
-                case Ecs::Event::EventType::GUI_EVENT: return (hash<int>()(static_cast<int>(event.type))) ^ (hash<int>()(static_cast<int>(event.guiEvent.EventType) << 1)) >> 1;
+                case IndieStudio::ECS::Event::EventType::GUI_EVENT: return (hash<int>()(static_cast<int>(event.type))) ^ (hash<int>()(static_cast<int>(event.guiEvent.EventType) << 1)) >> 1;
                     break;
-                case Ecs::Event::EventType::KEYBOARD_EVENT: return (hash<int>()(static_cast<int>(event.type))) ^ (hash<int>()(static_cast<int>(event.keyInput.Key) << 1)) >> 1;
+                case IndieStudio::ECS::Event::EventType::KEYBOARD_EVENT: return (hash<int>()(static_cast<int>(event.type))) ^ (hash<int>()(static_cast<int>(event.keyInput.Key) << 1)) >> 1;
                     break;
-                case Ecs::Event::EventType::MOUSE_EVENT: return (hash<int>()(static_cast<int>(event.type))) ^ (hash<int>()(static_cast<int>(event.mouseInput.Event) << 1)) >> 1;
+                case IndieStudio::ECS::Event::EventType::MOUSE_EVENT: return (hash<int>()(static_cast<int>(event.type))) ^ (hash<int>()(static_cast<int>(event.mouseInput.Event) << 1)) >> 1;
                     break;
-                case Ecs::Event::EventType::CUSTOM_EVENT_1: return (hash<int>()(static_cast<int>(event.type))) ^ (hash<bool>()(event.custom_event_1 << 1)) >> 1;
+                case IndieStudio::ECS::Event::EventType::CUSTOM_EVENT_1: return (hash<int>()(static_cast<int>(event.type))) ^ (hash<bool>()(event.custom_event_1 << 1)) >> 1;
                     break;
                 default:
-                    std::cout << "hash not implemented on this Ecs::Event::EventData <<: aborting" << std::endl;
+                    std::cout << "hash not implemented on this ECS::Event::EventData <<: aborting" << std::endl;
                     assert(false);
                     return 0;
             }
@@ -90,7 +91,8 @@ namespace std {
     };
 }
 
-namespace Ecs {
+namespace IndieStudio::ECS {
+
     namespace Event {
 
         class EventManager {
@@ -152,5 +154,3 @@ namespace Ecs {
         }
     }
 }
-
-#endif /* !EVENTS_HPP_ */

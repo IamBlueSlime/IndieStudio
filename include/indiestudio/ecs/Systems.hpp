@@ -2,20 +2,19 @@
 ** EPITECH PROJECT, 2019
 ** OOP_indie_studio_2018
 ** File description:
-** System
+** ecs Systems.hpp
 */
 
-#ifndef SYSTEMS_HPP_
-#define SYSTEMS_HPP_
+#pragma once
 
-#include "./Components.hpp"
-#include "./BaseSystem.hpp"
-#include "./Events.hpp"
+#include "indiestudio/ecs/Components.hpp"
+#include "indiestudio/ecs/BaseSystem.hpp"
+#include "indiestudio/ecs/Events.hpp"
 
-namespace Ecs::System {
+namespace IndieStudio::ECS::System {
 
-    using namespace Ecs::Component;
-    using namespace Ecs::Event;
+    using namespace ECS::Component;
+    using namespace ECS::Event;
 
     template<typename ManagerType>
     struct System1 : public BaseSystem<ManagerType> {
@@ -87,7 +86,4 @@ namespace Ecs::System {
 
     };
 
-
 }
-
-#endif /* !SYSTEMS_HPP */

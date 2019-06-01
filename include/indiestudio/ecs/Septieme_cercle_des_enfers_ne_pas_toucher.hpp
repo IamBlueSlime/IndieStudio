@@ -8,7 +8,7 @@
 #ifndef SEPTIEME_CERCLE_DES_ENFERS_NE_PAS_TOUCHER_HPP_
 #define SEPTIEME_CERCLE_DES_ENFERS_NE_PAS_TOUCHER_HPP_
 
-namespace Ecs {
+namespace ECS {
 
     template<typename... components_types>
     class Tuple {
