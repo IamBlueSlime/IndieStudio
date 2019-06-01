@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include "indiestudio/common/ISoundManager.hpp"
 #include "indiestudio/statistic/IAchievementManager.hpp"
 #include "indiestudio/statistic/IStatisticManager.hpp"
 #include "indiestudio/world/IWorldManager.hpp"
@@ -18,6 +19,7 @@ namespace IndieStudio {
 		virtual ~IGame() = default;
         virtual IStatisticManager &getStatisticManager() = 0;
         virtual IAchievementManager &getAchievementManager() = 0;
+        virtual ISoundManager &getSoundManager() = 0;
         virtual IWorldManager &getWorldManager() = 0;
     };
 

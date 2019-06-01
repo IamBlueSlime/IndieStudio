@@ -29,7 +29,7 @@ set(INDIE_SRC
     ${INDIE_SRC_DIR}/Game.cpp
     ${INDIE_SRC_DIR}/common/Configuration.cpp
     ${INDIE_SRC_DIR}/common/Logger.cpp
-    ${INDIE_SRC_DIR}/common/Registry.cpp
+    ${INDIE_SRC_DIR}/common/SoundManager.cpp
     ${INDIE_SRC_DIR}/ecs/Signature.cpp
     ${INDIE_SRC_DIR}/ecs/UUID.cpp
     ${INDIE_SRC_DIR}/mod/LibraryWrapper.cpp

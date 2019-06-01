@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <sstream>
 #include <unordered_map>
 
 namespace IndieStudio {
@@ -14,19 +15,64 @@ namespace IndieStudio {
     template<typename K, typename V>
     class Registry {
     public:
-        Registry() = default;
-        ~Registry() = default;
+        void add(K key, V value, bool overrideExisting = false)
+        {
+            if (this->has(key)) {
+                if (!overrideExisting) {
+                    std::stringstream ss;
+                    ss << key;
 
-        void add(K key, V value, bool overrideExisting = false);
-        bool removeKey(K key);
-        bool removeValue(V &value);
-        const V &get(K key) const;
+                    throw new std::runtime_error("Tried to register an object with an existing key (" + ss.str() + ")");
+                }
 
-        bool has(K key) const;
+                this->removeKey(key);
+            }
+
+            this->container.insert(std::make_pair(key, value));
+        }
+
+        bool removeKey(K key)
+        {
+            if (this->has(key)) {
+                this->container.erase(key);
+                return true;
+            }
+
+            return false;
+        }
+
+        bool removeValue(V &value)
+        {
+            for (auto it = this->container.begin(); it != this->container.end(); ++it) {
+                if (&it.second == &value) {
+                    this->removeKey(it.first);
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        V &get(K key)
+        {
+            if (!this->has(key)) {
+                std::stringstream ss;
+                ss << key;
+
+                throw new std::runtime_error("Tried to get an unknown key (" + ss.str() + ")");
+            }
+
+            return this->container[key];
+        }
+
+        bool has(K key) const
+        {
+            return this->container.find(key) != this->container.end();
+        }
 
     protected:
     private:
-        std::unordered_map<K, V> internal;
+        std::unordered_map<K, V> container;
     };
 
     template<typename V>
@@ -35,7 +81,7 @@ namespace IndieStudio {
         IncrementalRegistry() = default;
         ~IncrementalRegistry() = default;
 
-        void add(V value, bool overrideExisting = false)
+        void add(V value, bool overrideExisting = false) override
         {
             this->add(this->counter++, value, overrideExisting);
         }

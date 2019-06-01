@@ -18,8 +18,9 @@ namespace IndieStudio {
     {
         this->logger.info("Starting game...");
         this->statisticManager.load();
+        this->soundManager.init();
         this->worldManager.init();
-        this->modManager.reload();
+        this->modManager.init();
         this->sceneManager.init();
 
         irr::IrrlichtDevice *device = getDevice();

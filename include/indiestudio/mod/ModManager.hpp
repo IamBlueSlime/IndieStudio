@@ -25,7 +25,7 @@ namespace IndieStudio {
 
         using UAMod = std::unique_ptr<AMod>;
 
-        void reload(const std::string &path = "mods");
+        void init();
         void flush();
 
         const std::unordered_map<AMod::Descriptor *, UAMod> &getMods() const

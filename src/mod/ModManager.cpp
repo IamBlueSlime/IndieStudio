@@ -18,10 +18,11 @@ namespace IndieStudio {
     ModManager::ModManager(Game &game) : game(game), logger("modmanager")
     {}
 
-    void ModManager::reload(const std::string &path)
+    void ModManager::init()
     {
         this->flush();
 
+        std::string path = "mods";
         logger.info("Searching for mods in the '" + path + "' folder...");
 
         if (stdfs::is_directory(path)) {
