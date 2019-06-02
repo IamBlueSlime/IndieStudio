@@ -15,14 +15,16 @@ namespace IndieStudio {
         ByteBufferUtils::writeString<unsigned short>(buffer, this->name);
         buffer << this->width;
         buffer << this->height;
+        ByteBufferUtils::writeString<unsigned short>(buffer, this->worldGenerator);
         buffer << this->players;
     }
 
     void WorldSettings::unpack(ByteBuffer &buffer)
     {
-        this->name = ByteBufferUtils::readString<unsigned short>(buffer);
+        this->name = ByteBufferUtils::readString(buffer);
         buffer >> this->width;
         buffer >> this->height;
+        this->worldGenerator = ByteBufferUtils::readString(buffer);
         buffer >> this->players;
     }
 

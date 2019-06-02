@@ -36,13 +36,13 @@ namespace IndieStudio {
 
         irr::core::vector2di pos(515, 450);
         guiEnv->addButton(irr::core::recti(pos, {pos.X + 225, pos.Y + 50}),
-            guiRoot, BUTTON_ID_PLAY, L"Play");
+            guiRoot, BUTTON_ID_PLAY_NEW, L"New Game");
+        pos.Y += 60;
+        guiEnv->addButton(irr::core::recti(pos, {pos.X + 225, pos.Y + 50}),
+            guiRoot, BUTTON_ID_PLAY_LOAD, L"Load Game");
         pos.Y += 60;
         guiEnv->addButton(irr::core::recti(pos, {pos.X + 225, pos.Y + 50}),
             guiRoot, BUTTON_ID_SETTING, L"Settings");
-        pos.Y += 60;
-        guiEnv->addButton(irr::core::recti(pos, {pos.X + 225, pos.Y + 50}),
-            guiRoot, BUTTON_ID_HOW_TO_PLAY, L"How to Play");
         pos.Y += 60;
         guiEnv->addButton(irr::core::recti(pos, {pos.X + 225, pos.Y + 50}),
             guiRoot, BUTTON_ID_QUIT, L"Quit");
@@ -142,9 +142,8 @@ namespace IndieStudio {
             }
         } else if (event.EventType == irr::EET_GUI_EVENT
         && event.GUIEvent.EventType == irr::gui::EGET_BUTTON_CLICKED) {
-            if (event.GUIEvent.Caller->getID() == BUTTON_ID_PLAY) {
-                PlayScene::initialize(scene.manager->getScene(SceneManager::PLAY_ID));
-                scene.manager->setActiveScene(SceneManager::PLAY_ID);
+            if (event.GUIEvent.Caller->getID() == BUTTON_ID_PLAY_NEW) {
+                scene.manager->setActiveScene(SceneManager::NEW_GAME_ID);
                 return true;
             } else if (event.GUIEvent.Caller->getID() == BUTTON_ID_QUIT) {
                 Game::getDevice()->closeDevice();

@@ -13,16 +13,20 @@ namespace IndieStudio {
     const int PlayScene::SQUARED_SIZE = 20;
     const float PlayScene::FLOOR_Y = 50.0f;
 
-    PlayECS PlayScene::ECS_INSTANCE = PlayECS();
-
     void PlayScene::initialize(SceneManager::Scene &scene)
     {
         auto guiEnv = scene.scene->getGUIEnvironment();
         auto guiRoot = scene.gui;
 
         scene.scene->clear();
-        irr::scene::ICameraSceneNode *camera = scene.scene->addCameraSceneNode(0,
-		    irr::core::vector3df(20 * 17 / 2 - 10, 250, 0), irr::core::vector3df(20 * 17 / 2, 0, 0), 1);
+
+        WorldSettings &settings = static_cast<WorldManager &>(
+            Game::INSTANCE->getWorldManager()).getLoadedWorld()->getSettings();
+        irr::scene::ICameraSceneNode *camera = scene.scene->addCameraSceneNode(0);
+        camera->setPosition(irr::core::vector3df(
+            SQUARED_SIZE * (settings.width / 2), 50 + SQUARED_SIZE * settings.width, SQUARED_SIZE * 3));
+        camera->setTarget(irr::core::vector3df(
+            SQUARED_SIZE * (settings.width / 2), 50, SQUARED_SIZE * (settings.height / 2)));
 		camera->setFarValue(10000);
 
         setupWaterBackground(scene);
@@ -32,57 +36,6 @@ namespace IndieStudio {
         scene.onEvent = [&](const irr::SEvent &event) {
             return onEvent(scene, event);
         };
-
-        // TODO: Remove me
-        MapPattern pattern(17, 11);
-        BasicWorldGenerator gen;
-        gen.generate(pattern);
-        WorldSettings settings;
-        createWorldFromSettings(scene, settings, pattern);
-    }
-
-    void PlayScene::createWorldFromSettings(SceneManager::Scene &scene,
-        const WorldSettings &settings, const MapPattern &pattern)
-    {
-        ECS_INSTANCE.flushEntities();
-
-        int w = settings.width;
-        int h = settings.height;
-
-        irr::scene::ICameraSceneNode *camera =
-            static_cast<irr::scene::ICameraSceneNode *>(scene.scene->getSceneNodeFromId(1));
-        camera->setPosition(irr::core::vector3df(SQUARED_SIZE * (w / 2), 50 + SQUARED_SIZE * w, SQUARED_SIZE * 3));
-        camera->setTarget(irr::core::vector3df(SQUARED_SIZE * (w / 2), 50, SQUARED_SIZE * (h / 2)));
-
-        pattern.forEach([&](int x, int y, int z, char c) {
-            auto &entity = ECS_INSTANCE.addEntity();
-            // Add components to the entity
-        });
-
-        irr::core::vector3df playerPositions[4] = {
-            irr::core::vector3df(SQUARED_SIZE, FLOOR_Y * 1.2, SQUARED_SIZE),
-            irr::core::vector3df(SQUARED_SIZE * (w - 2), FLOOR_Y * 1.2, SQUARED_SIZE),
-            irr::core::vector3df(SQUARED_SIZE, FLOOR_Y * 1.2, SQUARED_SIZE * (h - 2)),
-            irr::core::vector3df(SQUARED_SIZE * (w - 2), FLOOR_Y * 1.2, SQUARED_SIZE * (h - 2))
-        };
-
-        for (int i = 0; i < settings.players; i += 1)
-            createPlayer(scene, playerPositions[i]);
-    }
-
-    void PlayScene::createWorldFromDump(SceneManager::Scene &scene, World *world)
-    {
-        ECS_INSTANCE.flushEntities();
-
-        int w = world->getSettings().width;
-        int h = world->getSettings().height;
-
-        irr::scene::ICameraSceneNode *camera =
-            static_cast<irr::scene::ICameraSceneNode *>(scene.scene->getSceneNodeFromId(1));
-        camera->setPosition(irr::core::vector3df(SQUARED_SIZE * (w / 2), 50 + SQUARED_SIZE * w, SQUARED_SIZE * 3));
-        camera->setTarget(irr::core::vector3df(SQUARED_SIZE * (w / 2), 50, SQUARED_SIZE * (h / 2)));
-
-        // Load entities from the dump
     }
 
     void PlayScene::setupWaterBackground(SceneManager::Scene &scene)
@@ -134,23 +87,6 @@ namespace IndieStudio {
         sa->drop();
     }
 
-    void PlayScene::createPlayer(SceneManager::Scene &scene, irr::core::vector3df position)
-    {
-       	irr::scene::IAnimatedMeshSceneNode* player = scene.scene->addAnimatedMeshSceneNode(
-            scene.scene->getMesh("assets/models/player.md3"), 0);
-
-        player->setMaterialTexture(0, scene.manager->textureManager.getTexture("assets/textures/player_black.png").content);
-		player->setMaterialFlag(irr::video::EMF_LIGHTING, false);
-		player->setScale(irr::core::vector3df(SQUARED_SIZE, SQUARED_SIZE, SQUARED_SIZE));
-		player->setAnimationSpeed(30);
-		player->setFrameLoop(27, 76);
-		player->setPosition(position);
-
-        auto triangleSelector = scene.scene->createTriangleSelector(player);
-		player->setTriangleSelector(triangleSelector);
-        triangleSelector->drop();
-    }
-
     bool PlayScene::onEvent(SceneManager::Scene &scene, const irr::SEvent &event)
     {
         if (event.EventType == irr::EET_KEY_INPUT_EVENT) {
@@ -159,6 +95,22 @@ namespace IndieStudio {
                 return true;
             }
         }
+
+        World *world = static_cast<WorldManager &>(
+            Game::INSTANCE->getWorldManager()).getLoadedWorld();
+
+        ECS::Event::EventData data;
+        switch (event.EventType) {
+            case irr::EEVENT_TYPE::EET_KEY_INPUT_EVENT:
+                data.type = ECS::Event::EventType::KEYBOARD_EVENT;
+                data.keyInput = event.KeyInput;
+                world->forwardEvent(data);
+                return true;
+
+            default:
+                break;
+        }
+
         return false;
     }
 

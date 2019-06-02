@@ -25,14 +25,13 @@ namespace IndieStudio {
 
         void init();
 
-        void create(WorldSettings &settings);
-        void load(const std::string &path);
+        World *create(WorldSettings &settings);
+        World *load(const std::string &path);
         void save(const std::string &path, const World &world);
 
-        void registerGenerator(const std::string &name,
-            const IWorldGenerator *generator) override;
+        void registerGenerator(const std::string &name, IWorldGenerator *generator) override;
 
-        const std::unordered_map<std::string, const IWorldGenerator *> &getGenerators() const
+        const std::unordered_map<std::string, IWorldGenerator *> &getGenerators() const
         {
             return this->generators;
         }
@@ -42,7 +41,7 @@ namespace IndieStudio {
     protected:
     private:
         Logger logger;
-        std::unordered_map<std::string, const IWorldGenerator *> generators;
+        std::unordered_map<std::string, IWorldGenerator *> generators;
         BasicWorldGenerator basicWorldGenerator;
         std::unique_ptr<World> loadedWorld;
 

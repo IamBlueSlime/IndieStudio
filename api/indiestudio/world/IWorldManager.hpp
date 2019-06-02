@@ -16,7 +16,7 @@ namespace IndieStudio {
 	public:
 		virtual ~IWorldManager() = default;
         virtual void registerGenerator(const std::string &name,
-            const IWorldGenerator *generator) = 0;
+            IWorldGenerator *generator) = 0;
     };
 
 }

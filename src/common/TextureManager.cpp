@@ -10,7 +10,7 @@
 
 namespace IndieStudio {
 
-    TextureManager::TextureManager() : logger("Texturemanager")
+    TextureManager::TextureManager() : logger("texturemanager")
     {}
 
     void TextureManager::registerTexture(std::string id)
@@ -19,7 +19,7 @@ namespace IndieStudio {
         Texture.content = Game::getDevice()->getVideoDriver()->getTexture(id.c_str());
 
         if (!Texture.content)
-            throw std::runtime_error("Failed to load the Texture " + id);
+            throw std::runtime_error("Failed to load the texture " + id);
 
         this->registerTexture(id, Texture);
     }
@@ -28,13 +28,13 @@ namespace IndieStudio {
         bool overrideExisting)
     {
         this->registry.add(id, std::move(Texture), overrideExisting);
-        this->logger.info("Registered Texture '" + id + "'.");
+        this->logger.debug("Registered texture '" + id + "'.");
     }
 
     TextureManager::Texture &TextureManager::getTexture(const std::string &id)
     {
         if (!this->registry.has(id))
-            throw std::runtime_error("Failed to find Texture with id " + id);
+            throw std::runtime_error("Failed to find texture with id " + id);
 
         return this->registry.get(id);
     }

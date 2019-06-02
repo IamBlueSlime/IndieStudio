@@ -18,7 +18,6 @@
 #include <variant>
 #include <memory>
 
-#include "indiestudio/Game.hpp"
 #include "indiestudio/ecs/TypeList.hpp"
 #include "indiestudio/ecs/Entity.hpp"
 #include "indiestudio/ecs/Components.hpp"
@@ -57,12 +56,12 @@ namespace IndieStudio::ECS {
 
         template<typename... SystemTypes>
         void run([[gnu::unused]] Systems<SystemTypes...> tmp) {
-            auto systems = SystemsImpl<typeof(*this), EventSystem<typeof(*this)>, SystemTypes...>(*this);
+            auto systems = SystemsImpl<typeof(*this), EventSystem<typeof(*this)>, SystemTypes...>();
+
             while (true) {
                 systems.process();
-                IndieStudio::Game::getDevice()->run();
                 this->event_manager.clear_event_queue();
-            }
+            }                
         }
 
         EventManager &getEventManager() {
@@ -95,7 +94,7 @@ namespace IndieStudio::ECS {
         // Return true is the given entity own the component, false otherwise
         template <typename T>
         bool hasComponent(EntityType &entity) {
-            return (std::get<std::optional<T>>(entity.components)).has_value();
+            return std::get<std::optional<T>>(entity.components).has_value();
         }
 
         // Return true is the entity matching the given ID own the component, false otherwise
@@ -109,7 +108,7 @@ namespace IndieStudio::ECS {
         // Will raise error if the component is missing (meaning this function should only be called from systems)
         template <typename T>
         T &getComponent(EntityType &entity) {
-            return (std::get<std::optional<T>>(entity.components)).value();
+            return std::get<std::optional<T>>(entity.components).value();
         }
 
         // Return the component of the templated type from entity matching the given ID

@@ -32,7 +32,7 @@ namespace IndieStudio {
         bool overrideExisting)
     {
         this->registry.add(id, std::move(sound), overrideExisting);
-        this->logger.info("Registered sound '" + id + "'.");
+        this->logger.debug("Registered sound '" + id + "'.");
     }
 
     SoundManager::Sound &SoundManager::getSound(const std::string &id)

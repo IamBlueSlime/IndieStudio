@@ -7,9 +7,9 @@
 
 #pragma once
 
-#include "indiestudio/Game.hpp"
-#include "indiestudio/ecs/Components.hpp"
-#include "indiestudio/ecs/BaseSystem.hpp"
+// #include "indiestudio/Game.hpp"
+// #include "indiestudio/ecs/Components.hpp"
+// #include "indiestudio/ecs/BaseSystem.hpp"
 
 namespace IndieStudio::ECS::System {
 

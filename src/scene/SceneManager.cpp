@@ -8,12 +8,16 @@
 #include <iostream>
 #include "indiestudio/Game.hpp"
 #include "indiestudio/scene/MainMenuScene.hpp"
+#include "indiestudio/scene/NewGameScene.hpp"
 #include "indiestudio/scene/PlayScene.hpp"
 #include "indiestudio/scene/SceneManager.hpp"
 
 namespace IndieStudio {
 
     const std::string SceneManager::MAIN_MENU_ID = "main_menu";
+    const std::string SceneManager::NEW_GAME_ID = "new_game";
+    const std::string SceneManager::LOAD_GAME_ID = "load_game";
+    const std::string SceneManager::SETTINGS_ID = "settings";
     const std::string SceneManager::PLAY_ID = "play";
 
     SceneManager::SceneManager()
@@ -57,13 +61,13 @@ namespace IndieStudio {
         textureManager.registerTexture("assets/textures/player_pink.png");
         textureManager.registerTexture("assets/textures/player_red.png");
         textureManager.registerTexture("assets/textures/player_white.png");
-
         textureManager.registerTexture("assets/textures/water_stones.jpg");
         textureManager.registerTexture("assets/textures/water.jpg");
         textureManager.registerTexture("assets/textures/particlewhite.bmp");
 
         MainMenuScene::initialize(this->createScene(MAIN_MENU_ID));
-        PlayScene::initialize(this->createScene(PLAY_ID));
+        NewGameScene::initialize(this->createScene(NEW_GAME_ID));
+        this->createScene(PLAY_ID);
         this->setActiveScene(MAIN_MENU_ID);
     }
 

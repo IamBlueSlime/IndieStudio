@@ -25,13 +25,14 @@ namespace IndieStudio {
         this->registerGenerator("Basic", &this->basicWorldGenerator);
     }
 
-    void WorldManager::create(WorldSettings &settings)
+    World *WorldManager::create(WorldSettings &settings)
     {
         logger.info("Creating world...");
         this->loadedWorld = std::make_unique<World>(settings);
+        return this->loadedWorld.get();
     }
 
-    void WorldManager::load(const std::string &path)
+    World *WorldManager::load(const std::string &path)
     {
         logger.info("Loading world file '" + path + "'...");
         std::ifstream file(path, std::ios::binary | std::ios::ate);
@@ -55,6 +56,7 @@ namespace IndieStudio {
         logger.info("Loaded world '" + world->getSettings().name + "'.");
 
         this->loadedWorld = std::move(world);
+        return this->loadedWorld.get();
     }
 
     void WorldManager::save(const std::string &path, const World &world)
@@ -79,7 +81,7 @@ namespace IndieStudio {
     }
 
     void WorldManager::registerGenerator(const std::string &name,
-        const IWorldGenerator *generator)
+        IWorldGenerator *generator)
     {
         this->generators.insert(std::make_pair(name, generator));
         this->logger.info("Registered world generator '" + name + "'.");

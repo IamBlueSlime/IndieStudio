@@ -19,6 +19,9 @@ namespace IndieStudio {
 	class SceneManager {
 	public:
 		static const std::string MAIN_MENU_ID;
+		static const std::string NEW_GAME_ID;
+		static const std::string LOAD_GAME_ID;
+		static const std::string SETTINGS_ID;
 		static const std::string PLAY_ID;
 
 		struct Scene

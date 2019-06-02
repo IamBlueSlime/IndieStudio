@@ -18,7 +18,7 @@
 
 namespace IndieStudio::ECS::Component {
 
-    using namespace ECS::Event;
+    using namespace IndieStudio::ECS::Event;
 
     struct Position {
         float x;
@@ -176,7 +176,7 @@ namespace IndieStudio::ECS::Component {
     };
 
     struct ID {
-        ID(int _id)
+        ID(int _id = 0)
         :
         id(_id) {}
 

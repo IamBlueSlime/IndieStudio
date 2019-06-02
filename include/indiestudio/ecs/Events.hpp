@@ -15,54 +15,49 @@
 #include <irrlicht/irrlicht.h>
 #include <irrlicht/IEventReceiver.h>
 
-#include "indiestudio/Game.hpp"
+namespace IndieStudio::ECS::Event {
 
-namespace IndieStudio::ECS {
+    enum class EventType {
+        GUI_EVENT,
+        JOYSTICK_EVENT,
+        KEYBOARD_EVENT,
+        MOUSE_EVENT,
+        CUSTOM_EVENT_1
+    };
 
-    namespace Event {
+    struct EventData {
 
-        enum class EventType {
-            GUI_EVENT,
-            JOYSTICK_EVENT,
-            KEYBOARD_EVENT,
-            MOUSE_EVENT,
-            CUSTOM_EVENT_1
-        };
+        bool operator==(const EventData &other) const {
 
-        struct EventData {
-
-            bool operator==(const EventData &other) const {
-
-                if (other.type != this->type) {
-                    return false;
-                }
-
-                switch (this->type) {
-                    case EventType::GUI_EVENT: return this->guiEvent.EventType == other.guiEvent.EventType;
-                        break;
-                    case EventType::KEYBOARD_EVENT: return this->keyInput.Key == other.keyInput.Key;
-                        break;
-                    case EventType::MOUSE_EVENT: return this->mouseInput.Event == other.mouseInput.Event;
-                        break;
-                    case EventType::CUSTOM_EVENT_1: return this->custom_event_1 == other.custom_event_1;
-                    default:
-                        std::cout << "operator== not implemented on this ECS::Event::EventData : aborting" << std::endl;
-                        assert(false);
-                        return false;
-                }
+            if (other.type != this->type) {
+                return false;
             }
 
-            EventType type;
+            switch (this->type) {
+                case EventType::GUI_EVENT: return this->guiEvent.EventType == other.guiEvent.EventType;
+                    break;
+                case EventType::KEYBOARD_EVENT: return this->keyInput.Key == other.keyInput.Key;
+                    break;
+                case EventType::MOUSE_EVENT: return this->mouseInput.Event == other.mouseInput.Event;
+                    break;
+                case EventType::CUSTOM_EVENT_1: return this->custom_event_1 == other.custom_event_1;
+                default:
+                    std::cout << "operator== not implemented on this ECS::Event::EventData : aborting" << std::endl;
+                    assert(false);
+                    return false;
+            }
+        }
 
-            union {
-                struct irr::SEvent::SGUIEvent guiEvent;
-                struct irr::SEvent::SJoystickEvent joystickEvent;
-                struct irr::SEvent::SKeyInput keyInput;
-                struct irr::SEvent::SMouseInput mouseInput;
-                bool custom_event_1;
-            };
+        EventType type;
+
+        union {
+            struct irr::SEvent::SGUIEvent guiEvent;
+            struct irr::SEvent::SJoystickEvent joystickEvent;
+            struct irr::SEvent::SKeyInput keyInput;
+            struct irr::SEvent::SMouseInput mouseInput;
+            bool custom_event_1;
         };
-    }
+    };
 
 }
 
@@ -91,66 +86,58 @@ namespace std {
     };
 }
 
-namespace IndieStudio::ECS {
+namespace IndieStudio::ECS::Event {
 
-    namespace Event {
-
-        class EventManager {
-        public:
-            EventManager();
-
-            std::unordered_map<EventData, bool> &getEventQueue() {
-                if (this->event_queue_switch) {
-                    return this->event_queue2;
-                } else {
-                    return this->event_queue1;
-                }
+    class EventManager {
+    public:
+        std::unordered_map<EventData, bool> &getEventQueue() {
+            if (this->event_queue_switch) {
+                return this->event_queue2;
+            } else {
+                return this->event_queue1;
             }
-
-            void clear_event_queue(void) {
-                this->getEventQueue().clear();
-                this->event_queue_switch = !this->event_queue_switch;
-            }
-
-            void push_event(const EventData &event) {
-                if (this->event_queue_switch) {
-                    this->event_queue1[event] = true;
-                } else {
-                    this->event_queue2[event] = true;
-                }
-            }
-
-        private:
-            std::unordered_map<EventData, bool> event_queue1;
-            std::unordered_map<EventData, bool> event_queue2;
-            bool event_queue_switch;
-        };
-
-        class IrrlichEventReceiver : public irr::IEventReceiver {
-        public:
-            IrrlichEventReceiver(EventManager &event_manager_)
-            :
-            event_manager(event_manager_) {}
-
-            bool OnEvent(const irr::SEvent& event) override {
-                EventData data;
-                switch (event.EventType) {
-                    case irr::EEVENT_TYPE::EET_KEY_INPUT_EVENT:
-                        data.type = EventType::KEYBOARD_EVENT;
-                        data.keyInput = event.KeyInput;
-                        this->event_manager.push_event(data);
-                        break;
-                    default: break;
-                }
-                return true;
-            }
-
-        private:
-            EventManager &event_manager;
-        };
-
-        inline EventManager::EventManager() {
-            IndieStudio::Game::getDevice()->setEventReceiver(new IrrlichEventReceiver(*this));
         }
-    }
+
+        void clear_event_queue(void) {
+            this->getEventQueue().clear();
+            this->event_queue_switch = !this->event_queue_switch;
+        }
+
+        void push_event(const EventData &event) {
+            if (this->event_queue_switch) {
+                this->event_queue1[event] = true;
+            } else {
+                this->event_queue2[event] = true;
+            }
+        }
+
+    private:
+        std::unordered_map<EventData, bool> event_queue1;
+        std::unordered_map<EventData, bool> event_queue2;
+        bool event_queue_switch;
+    };
+
+    // class IrrlichEventReceiver : public irr::IEventReceiver {
+    // public:
+    //     IrrlichEventReceiver(EventManager &event_manager_)
+    //     :
+    //     event_manager(event_manager_) {}
+
+    //     bool OnEvent(const irr::SEvent& event) override {
+    //         EventData data;
+    //         switch (event.EventType) {
+    //             case irr::EEVENT_TYPE::EET_KEY_INPUT_EVENT:
+    //                 data.type = EventType::KEYBOARD_EVENT;
+    //                 data.keyInput = event.KeyInput;
+    //                 this->event_manager.push_event(data);
+    //                 break;
+    //             default: break;
+    //         }
+    //         return true;
+    //     }
+
+    // private:
+    //     EventManager &event_manager;
+    // };
+
 }
