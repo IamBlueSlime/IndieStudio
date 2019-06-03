@@ -7,6 +7,7 @@
 
 #include "Components.hpp"
 #include "indiestudio/Game.hpp"
+#include "indiestudio/Singleton.hpp"
 #include "BaseSystem.hpp"
 
 using namespace IndieStudio::ECS::Component;
@@ -21,7 +22,7 @@ namespace Ecs {
         {
             manager.template forEntitiesWith<NodeCreate, MeshPath>(
             [&manager](auto &data, [[gnu::unused]] std::size_t id) {
-                auto scenemg = IndieStudio::Game::getDevice()->getSceneManager();
+                auto scenemg = IndieStudio::Singleton::getDevice()->getSceneManager();
                 auto &mesh = manager.template getComponent<MeshPath>(data);
                 auto node = scenemg->addAnimatedMeshSceneNode(scenemg->getMesh(mesh.meshPath.c_str()));
 
@@ -35,7 +36,7 @@ namespace Ecs {
         {
             manager.template forEntitiesWith<Node, Position, Scale, MaterialTexture, MaterialFlag>(
             [&manager](auto &data, [[gnu::unused]] std::size_t id) {
-                auto driver = IndieStudio::Game::getDevice()->getVideoDriver();
+                auto driver = IndieStudio::Singleton::getDevice()->getVideoDriver();
                 auto &node = manager.template getComponent<Node>(data);
                 auto &position = manager.template getComponent<Position>(data);
                 auto &scale = manager.template getComponent<Scale>(data);

@@ -7,6 +7,8 @@
 
 #include "indiestudio/common/MeshManager.hpp"
 #include "indiestudio/Game.hpp"
+#include "indiestudio/Singleton.hpp"
+
 
 namespace IndieStudio {
 
@@ -16,7 +18,7 @@ namespace IndieStudio {
     void MeshManager::registerMesh(std::string id)
     {
         Mesh Mesh;
-        Mesh.content = Game::getDevice()->getSceneManager()->getMesh(id.c_str());
+        Mesh.content = Singleton::getDevice()->getSceneManager()->getMesh(id.c_str());
 
         if (!Mesh.content)
             throw std::runtime_error("Failed to load the Mesh " + id);

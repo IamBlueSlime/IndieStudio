@@ -11,6 +11,7 @@
 #include "indiestudio/scene/NewGameScene.hpp"
 #include "indiestudio/scene/PlayScene.hpp"
 #include "indiestudio/scene/SceneManager.hpp"
+#include "indiestudio/Singleton.hpp"
 
 namespace IndieStudio {
 
@@ -23,7 +24,7 @@ namespace IndieStudio {
     SceneManager::SceneManager()
         : eventReceiver(std::make_unique<EventReceiver>(*this))
     {
-        irr::IrrlichtDevice *device = IndieStudio::Game::getDevice();
+        irr::IrrlichtDevice *device = IndieStudio::Singleton::getDevice();
         device->setEventReceiver(this->eventReceiver.get());
 
         this->sceneRoot = device->getSceneManager();
@@ -76,7 +77,7 @@ namespace IndieStudio {
 
     SceneManager::Scene &SceneManager::createScene(const std::string &key)
     {
-        irr::core::dimension2du screenSize = IndieStudio::Game::getDevice()->getVideoDriver()->getScreenSize();
+        irr::core::dimension2du screenSize = IndieStudio::Singleton::getDevice()->getVideoDriver()->getScreenSize();
         this->container[key] = Scene(this, this->sceneRoot->createNewSceneManager(),
             this->guiRoot->addTab(irr::core::recti(0, 0, screenSize.Width, screenSize.Height),
             0, this->container.size()));

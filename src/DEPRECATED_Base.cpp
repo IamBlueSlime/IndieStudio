@@ -241,7 +241,7 @@ void move(irr::scene::ISceneNode *player, info_t *key, irr::scene::ISceneManager
 
 // int game()
 // {
-// 	irr::IrrlichtDevice *device = IndieStudio::Game::getDevice();
+// 	irr::IrrlichtDevice *device = IndieStudio::::getDevice();
 // 	if (device == 0)
 // 		return 1;
 // 	IndieStudio::SceneManager manager;

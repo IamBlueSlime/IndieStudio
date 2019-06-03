@@ -10,6 +10,7 @@
 #include "indiestudio/world/MapPattern.hpp"
 #include "indiestudio/world/World.hpp"
 #include "indiestudio/world/WorldManager.hpp"
+#include "indiestudio/Singleton.hpp"
 
 namespace IndieStudio {
 
@@ -36,7 +37,7 @@ namespace IndieStudio {
             throw std::runtime_error(
                 "Failed to find the world generator " + this->settings.worldGenerator);
 
-        auto driver = IndieStudio::Game::getDevice()->getVideoDriver();
+        auto driver = IndieStudio::Singleton::getDevice()->getVideoDriver();
         //TODO : get the right scene to draw inside
         auto scenemg = this->scene.scene;
         irr::scene::IAnimatedMeshSceneNode* node = scenemg->addAnimatedMeshSceneNode(scenemg->getMesh("assets/models/cube.obj"));
@@ -79,7 +80,7 @@ namespace IndieStudio {
         auto systems = WorldECSSystems(this->ecs);
 
         while (Game::INSTANCE->getSceneManager().getActive() == SceneManager::PLAY_ID
-        && Game::getDevice()->run()) {
+        && Singleton::getDevice()->run()) {
             sceneManager->getVideoDriver()->beginScene(true, true);
             systems.process();
             this->ecs.getEventManager().clear_event_queue();

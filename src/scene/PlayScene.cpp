@@ -7,6 +7,7 @@
 
 #include "indiestudio/Game.hpp"
 #include "indiestudio/scene/PlayScene.hpp"
+#include "indiestudio/Singleton.hpp"
 
 namespace IndieStudio {
 
@@ -78,7 +79,7 @@ namespace IndieStudio {
         points.push_back(pos);
 
         irr::scene::ISceneNodeAnimator* sa = scene.scene->createFollowSplineAnimator(
-            Game::getDevice()->getTimer()->getTime(), points, 5, 0.5F, false);
+            Singleton::getDevice()->getTimer()->getTime(), points, 5, 0.5F, false);
         cam->addAnimator(sa);
         sa->drop();
     }

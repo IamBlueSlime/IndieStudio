@@ -6,6 +6,7 @@
 */
 
 #include "indiestudio/Game.hpp"
+#include "indiestudio/Singleton.hpp"
 
 namespace IndieStudio {
 
@@ -23,7 +24,7 @@ namespace IndieStudio {
         this->modManager.init();
         this->sceneManager.init();
 
-        irr::IrrlichtDevice *device = getDevice();
+        irr::IrrlichtDevice *device = Singleton::getDevice();
         irr::video::IVideoDriver *driver = device->getVideoDriver();
         bool stop = false;
 
@@ -39,18 +40,6 @@ namespace IndieStudio {
             this->sceneManager.draw();
             driver->endScene();
         }
-    }
-
-    irr::IrrlichtDevice *Game::getDevice(irr::video::E_DRIVER_TYPE type, int width, int height)
-    {
-        static irr::IrrlichtDevice *device = nullptr;
-
-        if (!device) {
-            device = irr::createDevice(type, irr::core::dimension2d<irr::u32>(width, height), 16, false, true);
-            device->setWindowCaption(L"Indie Studio");
-            device->getLogger()->setLogLevel(irr::ELL_NONE);
-        }
-        return device;
     }
 
 }
