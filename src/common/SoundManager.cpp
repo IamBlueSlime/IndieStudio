@@ -14,7 +14,7 @@ namespace IndieStudio {
 
     void SoundManager::init()
     {
-
+        this->registerSound("assets/sounds/shooting_stars.ogg");
     }
 
     void SoundManager::registerSound(std::string id)

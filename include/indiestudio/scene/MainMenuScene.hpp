@@ -7,12 +7,15 @@
 
 #pragma once
 
+#include <SFML/Audio.hpp>
 #include "indiestudio/scene/SceneManager.hpp"
 
 namespace IndieStudio {
 
     class MainMenuScene {
     public:
+        static sf::Sound BACKGROUND_MUSIC;
+
         static void initialize(SceneManager::Scene &scene);
     
     protected:

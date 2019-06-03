@@ -17,7 +17,15 @@ namespace IndieStudio {
     
     protected:
     private:
+        static WorldSettings settings;
+
         static void setupMenu(SceneManager::Scene &scene);
+        static void setupPlayer(SceneManager::Scene &scene, irr::core::vector2di origin,
+            int idx);
+
+        static void updateKeyboardButtons(SceneManager::Scene &scene);
+        static bool isValidKeyboardKey(irr::EKEY_CODE code);
+
         static bool onEvent(SceneManager::Scene &scene, const irr::SEvent &event);
 
         enum {

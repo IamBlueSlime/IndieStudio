@@ -12,8 +12,16 @@
 
 namespace IndieStudio {
 
+    sf::Sound MainMenuScene::BACKGROUND_MUSIC = sf::Sound();
+
     void MainMenuScene::initialize(SceneManager::Scene &scene)
     {
+        SoundManager &soundManager = static_cast<SoundManager &>(
+            Game::INSTANCE->getSoundManager());
+        BACKGROUND_MUSIC.setBuffer(soundManager.getSound("assets/sounds/shooting_stars.ogg").buffer);
+        BACKGROUND_MUSIC.play();
+        BACKGROUND_MUSIC.setPlayingOffset(sf::seconds(21));
+
         scene.scene->addSkyDomeSceneNode(scene.manager->textureManager.getTexture("assets/textures/skydome.jpg").content);
 
         scene.scene->addCameraSceneNode(0, irr::core::vector3df(50, 0, 0), irr::core::vector3df(0, 0, 0));

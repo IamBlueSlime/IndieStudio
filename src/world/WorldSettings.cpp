@@ -16,7 +16,18 @@ namespace IndieStudio {
         buffer << this->width;
         buffer << this->height;
         ByteBufferUtils::writeString<unsigned short>(buffer, this->worldGenerator);
-        buffer << this->players;
+        
+        for (int i = 0; i < 4; i += 1) {
+            buffer << this->players[i].controlType;
+
+            if (this->players[i].controlType == Player::ControlType::KEYBOARD) {
+                buffer << this->players[i].keyboardUp;
+                buffer << this->players[i].keyboardLeft;
+                buffer << this->players[i].keyboardDown;
+                buffer << this->players[i].keyboardRight;
+                buffer << this->players[i].keyboardDrop;
+            }
+        }
     }
 
     void WorldSettings::unpack(ByteBuffer &buffer)
@@ -25,7 +36,18 @@ namespace IndieStudio {
         buffer >> this->width;
         buffer >> this->height;
         this->worldGenerator = ByteBufferUtils::readString(buffer);
-        buffer >> this->players;
+
+        for (int i = 0; i < 4; i += 1) {
+            buffer >> this->players[i].controlType;
+
+            if (this->players[i].controlType == Player::ControlType::KEYBOARD) {
+                buffer >> this->players[i].keyboardUp;
+                buffer >> this->players[i].keyboardLeft;
+                buffer >> this->players[i].keyboardDown;
+                buffer >> this->players[i].keyboardRight;
+                buffer >> this->players[i].keyboardDrop;
+            }
+        }
     }
 
 }
