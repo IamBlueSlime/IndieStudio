@@ -13,10 +13,13 @@
 
 namespace IndieStudio {
 
-    World::World(WorldSettings settings) : settings(settings)
+    World::World(WorldSettings settings)
+        : settings(settings),
+        scene(Game::INSTANCE->getSceneManager().getScene(SceneManager::PLAY_ID))
     {}
 
-    World::World() : World(WorldSettings())
+    World::World() : World(WorldSettings()),
+        scene(Game::INSTANCE->getSceneManager().getScene(SceneManager::PLAY_ID))
     {}
 
     void World::create(WorldManager &manager)

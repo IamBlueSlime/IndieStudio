@@ -80,6 +80,7 @@ namespace IndieStudio {
     private:
         WorldSettings settings;
         WorldECS ecs;
+        SceneManager::Scene &scene;
     };
 
 }
