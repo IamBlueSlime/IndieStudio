@@ -65,6 +65,9 @@ namespace IndieStudio {
         textureManager.registerTexture("assets/textures/water.jpg");
         textureManager.registerTexture("assets/textures/particlewhite.bmp");
 
+        meshManager.registerMesh("assets/models/cube.obj");
+        meshManager.registerMesh("assets/models/player.md3");
+
         MainMenuScene::initialize(this->createScene(MAIN_MENU_ID));
         NewGameScene::initialize(this->createScene(NEW_GAME_ID));
         this->createScene(PLAY_ID);
