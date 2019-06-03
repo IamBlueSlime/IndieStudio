@@ -97,7 +97,7 @@ namespace IndieStudio {
     void SceneManager::setActiveScene(const std::string &key)
     {
         if (this->container.find(key) == this->container.end())
-            throw std::runtime_error("setAFailed to create scene");
+            throw std::runtime_error("setActiveScene: Failed to create scene");
         for (auto it = this->container.begin(); it != this->container.end(); ++it)
             it->second.gui->setVisible(false);
         this->active = key;
