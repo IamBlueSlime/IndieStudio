@@ -53,7 +53,11 @@ if (UNIX)
     set(INDIE_REQUIRED_LIBRARIES ${INDIE_REQUIRED_LIBRARIES} dl)
 endif ()
 
-add_compile_options(-Wall -Wextra)
+add_compile_options(-Wall)
+
+if (UNIX)
+    add_compile_options(-Wextra)
+endif ()
 
 if (CMAKE_BUILD_TYPE EQUAL "Debug")
     add_compile_options(-g3)
