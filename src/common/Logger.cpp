@@ -21,7 +21,7 @@ namespace IndieStudio {
 
         std::transform(
             envKey.begin(), envKey.end(), envKey.begin(), [](unsigned char c) {
-                return std::toupper(c);
+                return toupper(c);
             }
         );
 

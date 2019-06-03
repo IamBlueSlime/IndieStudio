@@ -26,7 +26,7 @@ namespace IndieStudio {
                 auto &mesh = manager.template getComponent<MeshPath>(data);
                 auto node = scenemg->addAnimatedMeshSceneNode(scenemg->getMesh(mesh.meshPath.c_str()));
 
-        	    manager.template setComponent(data, Node(node));
+        	    manager.setComponent(data, Node(node));
                 manager.template unsetComponent<NodeCreate>(data);
             });
         }

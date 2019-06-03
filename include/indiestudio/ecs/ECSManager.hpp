@@ -165,7 +165,7 @@ namespace IndieStudio::ECS {
         constexpr std::bitset<Components::size> generateMask() {
             std::bitset<Components::size> mask;
             TypeList<components_searched...>::forEach([&mask](auto component, [[gnu::unused]] int idx) {
-                mask[Components::template getIndex<typeof(component)>()] = true;
+                mask[Components::template getIndex<decltype(component)>()] = true;
             });
             return mask;
         }

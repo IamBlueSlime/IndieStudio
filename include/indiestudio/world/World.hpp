@@ -7,11 +7,12 @@
 
 #pragma once
 
-#include <irrlicht/irrlicht.h>
+#include <irrlicht.h>
 #include "indiestudio/common/ISerializable.hpp"
 #include "indiestudio/ecs/ECSManager.hpp"
 #include "indiestudio/scene/SceneManager.hpp"
 #include "indiestudio/world/WorldSettings.hpp"
+#include "indiestudio/utils/Packed.hpp"
 
 namespace IndieStudio {
 
@@ -55,12 +56,14 @@ namespace IndieStudio {
 
     class World : public ISerializable {
     public:
+        PACKED(
         struct FileHeader {
             unsigned char magic[4];
             unsigned char formatVersion;
             unsigned long size;
             unsigned int checksum;
-        } __attribute__((packed));
+        };
+        )
 
         World(WorldSettings settings);
         World();

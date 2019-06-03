@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <irrlicht/irrlicht.h>
+#include <irrlicht.h>
 #include "indiestudio/IGame.hpp"
 #include "indiestudio/common/Logger.hpp"
 #include "indiestudio/common/SoundManager.hpp"

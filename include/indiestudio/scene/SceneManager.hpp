@@ -11,7 +11,7 @@
 #include <functional>
 #include <unordered_map>
 #include <string>
-#include <irrlicht/irrlicht.h>
+#include <irrlicht.h>
 #include "indiestudio/common/TextureManager.hpp"
 #include "indiestudio/common/MeshManager.hpp"
 

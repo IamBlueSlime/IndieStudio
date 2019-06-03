@@ -37,7 +37,7 @@ namespace IndieStudio {
             return;
 
 #ifdef WIN32
-        FreeLibrary(this->handle);
+        FreeLibrary(static_cast<HMODULE>(this->handle));
 #else
         dlclose(this->handle);
 #endif

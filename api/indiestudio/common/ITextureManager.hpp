@@ -8,7 +8,7 @@
 #pragma once
 
 #include <string>
-#include <irrlicht/irrlicht.h>
+#include <irrlicht.h>
 
 namespace IndieStudio {
 
