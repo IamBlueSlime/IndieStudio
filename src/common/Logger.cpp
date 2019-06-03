@@ -30,6 +30,9 @@ namespace IndieStudio {
 
         const char *envValue = std::getenv(envKey.c_str());
 
+        if (envValue == nullptr)
+            envValue = std::getenv("LOGGER_ALL");
+
         if (envValue != nullptr) {
             std::string envValueStr(envValue);
 

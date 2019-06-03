@@ -21,6 +21,7 @@ namespace IndieStudio {
         BACKGROUND_MUSIC.setBuffer(soundManager.getSound("assets/sounds/shooting_stars.ogg").buffer);
         BACKGROUND_MUSIC.play();
         BACKGROUND_MUSIC.setPlayingOffset(sf::seconds(21));
+        BACKGROUND_MUSIC.setLoop(true);
 
         scene.scene->addSkyDomeSceneNode(scene.manager->textureManager.getTexture("assets/textures/skydome.jpg").content);
 
