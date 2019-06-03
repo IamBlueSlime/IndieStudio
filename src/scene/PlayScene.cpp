@@ -7,6 +7,7 @@
 
 #include "indiestudio/Game.hpp"
 #include "indiestudio/scene/PlayScene.hpp"
+#include "indiestudio/Singleton.hpp"
 
 namespace IndieStudio {
 
@@ -20,11 +21,9 @@ namespace IndieStudio {
 
         WorldSettings &settings = static_cast<WorldManager &>(
             Game::INSTANCE->getWorldManager()).getLoadedWorld()->getSettings();
-        irr::scene::ICameraSceneNode *camera = scene.scene->addCameraSceneNode(0);
-        camera->setPosition(irr::core::vector3df(
-            SQUARED_SIZE * (settings.width / 2), 50 + SQUARED_SIZE * settings.width, SQUARED_SIZE * 3));
-        camera->setTarget(irr::core::vector3df(
-            SQUARED_SIZE * (settings.width / 2), 50, SQUARED_SIZE * (settings.height / 2)));
+        irr::scene::ICameraSceneNode *camera = scene.scene->addCameraSceneNode(0,
+            irr::core::vector3df(SQUARED_SIZE * (settings.width / 2), 50 + SQUARED_SIZE * settings.width - 125, SQUARED_SIZE * 3),
+            irr::core::vector3df(SQUARED_SIZE * (settings.width / 2), 50, SQUARED_SIZE * (settings.height / 2)));
 		camera->setFarValue(10000);
 
         setupWaterBackground(scene);
@@ -72,15 +71,21 @@ namespace IndieStudio {
         irr::core::vector3df pos(cam->getAbsolutePosition());
         irr::core::array<irr::core::vector3df> points;
 
-        for (int y = 250; y >= 0; y -= 15)
-            points.push_back(irr::core::vector3df(pos.X, -y, pos.Z -
-                std::sqrt(std::abs(std::pow(y, 2) - std::pow(250, 2)))));
+        int x, y, z = 0;
+        y = 450;
+        points.push_back(irr::core::vector3df(pos.X + y, pos.Y + y, pos.Z + y));
+        points.push_back(irr::core::vector3df(pos.X, pos.Y, pos.Z));
 
-        cam->setPosition(irr::core::vector3df(pos.X, -300, pos.Z - 250));
-        points.push_back(pos);
+        // for (y = 450; y >= 0; y -= 15) {
+        //     points.push_back(irr::core::vector3df(pos.X + y, pos.Y + y, pos.Z + y));
+        //     // points.push_back(irr::core::vector3df(pos.X, -y, pos.Z - std::sqrt(std::abs(std::pow(y, 2) - std::pow(250, 2)))));
+        // }
+
+        // cam->setPosition(irr::core::vector3df(pos.X, -300, pos.Z - 250));
+        // points.push_back(pos);
 
         irr::scene::ISceneNodeAnimator* sa = scene.scene->createFollowSplineAnimator(
-            Game::getDevice()->getTimer()->getTime(), points, 5, 0.5F, false);
+            Singleton::getDevice()->getTimer()->getTime(), points, 0.3F, 0.5F, false);
         cam->addAnimator(sa);
         sa->drop();
     }

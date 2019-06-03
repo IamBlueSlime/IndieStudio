@@ -11,6 +11,7 @@
 #include "indiestudio/scene/NewGameScene.hpp"
 #include "indiestudio/scene/PlayScene.hpp"
 #include "indiestudio/scene/SceneManager.hpp"
+#include "indiestudio/Singleton.hpp"
 
 namespace IndieStudio {
 
@@ -23,7 +24,7 @@ namespace IndieStudio {
     SceneManager::SceneManager()
         : eventReceiver(std::make_unique<EventReceiver>(*this))
     {
-        irr::IrrlichtDevice *device = IndieStudio::Game::getDevice();
+        irr::IrrlichtDevice *device = IndieStudio::Singleton::getDevice();
         device->setEventReceiver(this->eventReceiver.get());
 
         this->sceneRoot = device->getSceneManager();
@@ -65,6 +66,9 @@ namespace IndieStudio {
         textureManager.registerTexture("assets/textures/water.jpg");
         textureManager.registerTexture("assets/textures/particlewhite.bmp");
 
+        meshManager.registerMesh("assets/models/cube.obj");
+        meshManager.registerMesh("assets/models/player.md3");
+
         MainMenuScene::initialize(this->createScene(MAIN_MENU_ID));
         NewGameScene::initialize(this->createScene(NEW_GAME_ID));
         this->createScene(PLAY_ID);
@@ -73,7 +77,7 @@ namespace IndieStudio {
 
     SceneManager::Scene &SceneManager::createScene(const std::string &key)
     {
-        irr::core::dimension2du screenSize = IndieStudio::Game::getDevice()->getVideoDriver()->getScreenSize();
+        irr::core::dimension2du screenSize = IndieStudio::Singleton::getDevice()->getVideoDriver()->getScreenSize();
         this->container[key] = Scene(this, this->sceneRoot->createNewSceneManager(),
             this->guiRoot->addTab(irr::core::recti(0, 0, screenSize.Width, screenSize.Height),
             0, this->container.size()));
@@ -93,7 +97,7 @@ namespace IndieStudio {
     void SceneManager::setActiveScene(const std::string &key)
     {
         if (this->container.find(key) == this->container.end())
-            throw std::runtime_error("setAFailed to create scene");
+            throw std::runtime_error("setActiveScene: Failed to create scene");
         for (auto it = this->container.begin(); it != this->container.end(); ++it)
             it->second.gui->setVisible(false);
         this->active = key;

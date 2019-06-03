@@ -13,6 +13,7 @@
 #include <string>
 #include <irrlicht/irrlicht.h>
 #include "indiestudio/common/TextureManager.hpp"
+#include "indiestudio/common/MeshManager.hpp"
 
 namespace IndieStudio {
 
@@ -53,6 +54,7 @@ namespace IndieStudio {
 			{ return this->container; }
 
 		TextureManager textureManager;
+		MeshManager meshManager;
 	protected:
 	private:
 		class EventReceiver : public irr::IEventReceiver {

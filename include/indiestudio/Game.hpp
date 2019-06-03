@@ -34,10 +34,6 @@ namespace IndieStudio {
         ModManager &getModManager() { return this->modManager; }
         SceneManager &getSceneManager() { return this->sceneManager; }
 
-        static irr::IrrlichtDevice *getDevice(
-            irr::video::E_DRIVER_TYPE type = irr::video::EDT_OPENGL,
-            int width = 1280, int height = 720);
-
 	protected:
 	private:
         Logger logger;

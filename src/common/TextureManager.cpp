@@ -7,6 +7,7 @@
 
 #include "indiestudio/common/TextureManager.hpp"
 #include "indiestudio/Game.hpp"
+#include "indiestudio/Singleton.hpp"
 
 namespace IndieStudio {
 
@@ -16,7 +17,7 @@ namespace IndieStudio {
     void TextureManager::registerTexture(std::string id)
     {
         Texture Texture;
-        Texture.content = Game::getDevice()->getVideoDriver()->getTexture(id.c_str());
+        Texture.content = Singleton::getDevice()->getVideoDriver()->getTexture(id.c_str());
 
         if (!Texture.content)
             throw std::runtime_error("Failed to load the texture " + id);

@@ -7,6 +7,7 @@
 
 #include "indiestudio/Game.hpp"
 #include "indiestudio/scene/MainMenuScene.hpp"
+#include "indiestudio/Singleton.hpp"
 #include "indiestudio/scene/PlayScene.hpp"
 
 namespace IndieStudio {
@@ -19,7 +20,7 @@ namespace IndieStudio {
             Game::INSTANCE->getSoundManager());
         BACKGROUND_MUSIC.setBuffer(soundManager.getSound("assets/sounds/shooting_stars.ogg").buffer);
         BACKGROUND_MUSIC.play();
-        BACKGROUND_MUSIC.setPlayingOffset(sf::seconds(23));
+        BACKGROUND_MUSIC.setPlayingOffset(sf::seconds(21));
 
         scene.scene->addSkyDomeSceneNode(scene.manager->textureManager.getTexture("assets/textures/skydome.jpg").content);
 
@@ -131,7 +132,7 @@ namespace IndieStudio {
             pos.Z += step;
         }
 
-        auto device = Game::getDevice();
+        auto device = Singleton::getDevice();
         irr::scene::ISceneNodeAnimator* sceneAnimator =
             scene.scene->createFollowSplineAnimator(
                 device->getTimer()->getTime(), points, 2);
@@ -145,7 +146,7 @@ namespace IndieStudio {
         (void) scene;
         if (event.EventType == irr::EET_KEY_INPUT_EVENT) {
             if (event.KeyInput.Key == irr::KEY_ESCAPE && event.KeyInput.PressedDown) {
-                Game::getDevice()->closeDevice();
+                Singleton::getDevice()->closeDevice();
                 return true;
             }
         } else if (event.EventType == irr::EET_GUI_EVENT
@@ -154,7 +155,7 @@ namespace IndieStudio {
                 scene.manager->setActiveScene(SceneManager::NEW_GAME_ID);
                 return true;
             } else if (event.GUIEvent.Caller->getID() == BUTTON_ID_QUIT) {
-                Game::getDevice()->closeDevice();
+                Singleton::getDevice()->closeDevice();
                 return true;
             }
         }

@@ -10,6 +10,7 @@
 // #include "indiestudio/Game.hpp"
 // #include "indiestudio/ecs/Components.hpp"
 // #include "indiestudio/ecs/BaseSystem.hpp"
+// #include "indiestudio/Singleton.hpp"
 
 namespace IndieStudio::ECS::System {
 
@@ -21,8 +22,8 @@ namespace IndieStudio::ECS::System {
     // struct DrawEntities : public BaseSystem<ManagerType> {
 
     //     void process(ManagerType &manager) override {
-    //         auto videoDrive = IndieStudio::Game::getDevice()->getVideoDriver();
-    //         auto sceneManager = IndieStudio::Game::getDevice()->getSceneManager();
+    //         auto videoDrive = IndieStudio::Singleton::getDevice()->getVideoDriver();
+    //         auto sceneManager = IndieStudio::Singleton::getDevice()->getSceneManager();
 
     //         videoDrive->beginScene(true, true, irr::video::SColor{255, 200, 200, 200});
     //         sceneManager->drawAll();
