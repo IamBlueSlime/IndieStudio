@@ -23,6 +23,7 @@ namespace IndieStudio {
     void WorldManager::init()
     {
         this->registerGenerator("Basic", &this->basicWorldGenerator);
+        // Create map entities
     }
 
     World *WorldManager::create(WorldSettings &settings)
@@ -45,10 +46,10 @@ namespace IndieStudio {
         file.seekg(0, std::ios::beg);
 
         ByteBuffer buffer(size);
-        
+
         if (!file.read(*buffer, size))
             throw std::runtime_error("Failed to read the file");
-        
+
         file.close();
         this->assertValidWorld(buffer);
 
@@ -67,7 +68,7 @@ namespace IndieStudio {
 
         ByteBuffer buffer;
         world.pack(buffer);
-        
+
         World::FileHeader header;
         std::memcpy(header.magic, FILE_MAGIC, sizeof(header.magic));
         header.formatVersion = FILE_FORMAT_VERSION;
@@ -96,23 +97,22 @@ namespace IndieStudio {
 
         if (buffer.getSize() < sizeof(header))
             throw std::logic_error("The provided file is not a Bomberman map");
-        
+
         buffer >> header;
 
         if (std::memcmp(header.magic, FILE_MAGIC, sizeof(header.magic)) != 0)
             throw std::logic_error("The provided file is not a Bomberman map");
-        
+
         if (header.formatVersion != FILE_FORMAT_VERSION)
             throw std::logic_error("The map was created with a different version and therefore is not compatible");
-        
+
         if (buffer.getSize() - buffer.getReadCursor() != header.size)
             throw std::logic_error("The map size dosn't match the saved one");
-        
         void *payload = *buffer + sizeof(World::FileHeader);
 
         unsigned int computedChecksum =
             CRCUtils::crc32(payload, header.size);
-        
+
         if (computedChecksum != header.checksum)
             throw std::logic_error("The map checksum doesn't match");
     }

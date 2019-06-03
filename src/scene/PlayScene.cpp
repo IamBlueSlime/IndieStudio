@@ -20,11 +20,9 @@ namespace IndieStudio {
 
         WorldSettings &settings = static_cast<WorldManager &>(
             Game::INSTANCE->getWorldManager()).getLoadedWorld()->getSettings();
-        irr::scene::ICameraSceneNode *camera = scene.scene->addCameraSceneNode(0);
-        camera->setPosition(irr::core::vector3df(
-            SQUARED_SIZE * (settings.width / 2), 50 + SQUARED_SIZE * settings.width, SQUARED_SIZE * 3));
-        camera->setTarget(irr::core::vector3df(
-            SQUARED_SIZE * (settings.width / 2), 50, SQUARED_SIZE * (settings.height / 2)));
+        irr::scene::ICameraSceneNode *camera = scene.scene->addCameraSceneNode(0,
+            irr::core::vector3df(SQUARED_SIZE * (settings.width / 2), 50 + SQUARED_SIZE * settings.width, SQUARED_SIZE * 3),
+            irr::core::vector3df(SQUARED_SIZE * (settings.width / 2), 50, SQUARED_SIZE * (settings.height / 2)));
 		camera->setFarValue(10000);
 
         setupWaterBackground(scene);

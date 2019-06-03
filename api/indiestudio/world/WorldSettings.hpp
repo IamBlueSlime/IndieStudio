@@ -22,7 +22,7 @@ namespace IndieStudio {
         /* ISerializable implementation */
         void pack(ByteBuffer &buffer) const override;
         void unpack(ByteBuffer &buffer) override;
-    
+
     protected:
     private:
     };
