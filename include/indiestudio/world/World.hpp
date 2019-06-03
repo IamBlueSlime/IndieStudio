@@ -10,6 +10,7 @@
 #include <irrlicht/irrlicht.h>
 #include "indiestudio/common/ISerializable.hpp"
 #include "indiestudio/ecs/ECSManager.hpp"
+#include "indiestudio/scene/SceneManager.hpp"
 #include "indiestudio/world/WorldSettings.hpp"
 
 namespace IndieStudio {

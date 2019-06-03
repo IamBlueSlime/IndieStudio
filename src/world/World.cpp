@@ -18,8 +18,7 @@ namespace IndieStudio {
         scene(Game::INSTANCE->getSceneManager().getScene(SceneManager::PLAY_ID))
     {}
 
-    World::World() : World(WorldSettings()),
-        scene(Game::INSTANCE->getSceneManager().getScene(SceneManager::PLAY_ID))
+    World::World() : World(WorldSettings())
     {}
 
     void World::create(WorldManager &manager)
