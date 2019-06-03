@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 3.11)
 
-set(CMAKE_CXX_COMPILER clang++)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/mods)
@@ -54,7 +53,11 @@ if (UNIX)
     set(INDIE_REQUIRED_LIBRARIES ${INDIE_REQUIRED_LIBRARIES} dl)
 endif ()
 
-add_compile_options(-Wall -Wextra)
+add_compile_options(-Wall)
+
+if (UNIX)
+    add_compile_options(-Wextra)
+endif ()
 
 if (CMAKE_BUILD_TYPE EQUAL "Debug")
     add_compile_options(-g3)
