@@ -61,7 +61,7 @@ namespace IndieStudio::ECS {
             while (true) {
                 systems.process();
                 this->event_manager.clear_event_queue();
-            }                
+            }
         }
 
         EventManager &getEventManager() {

@@ -71,7 +71,7 @@ namespace IndieStudio {
         irr::core::vector3df pos(cam->getAbsolutePosition());
         irr::core::array<irr::core::vector3df> points;
 
-        int x, y, z = 0;
+        int y = 0;
         y = 450;
         points.push_back(irr::core::vector3df(pos.X + y, pos.Y + y, pos.Z + y));
         points.push_back(irr::core::vector3df(pos.X, pos.Y, pos.Z));

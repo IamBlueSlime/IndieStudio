@@ -21,12 +21,20 @@ namespace IndieStudio::ECS::Component {
     using namespace IndieStudio::ECS::Event;
 
     struct Position {
+        Position(float _x = 0.0, float _y = 0.0, float _z = 0.0)
+        :
+        x(_x),y(_y),z(_z) {}
+
         float x;
         float y;
         float z;
     };
 
     struct Speed {
+        Speed(float _x = 0.0, float _y = 0.0, float _z = 0.0)
+        :
+        x(_x), y(_y), z(_z) {}
+
         float x;
         float y;
         float z;
@@ -125,9 +133,13 @@ namespace IndieStudio::ECS::Component {
     };
 
     struct Scale {
-        Scale(float _scale = 1.0f) {scale = {_scale, _scale, _scale}; }
+        Scale(float _x = 1.0f, float _y = 1.0f, float _z = 1.0f)
+        :
+        x(_x), y(_y), z(_z) {}
 
-        irr::core::vector3df scale;
+        float x;
+        float y;
+        float z;
     };
 
     struct MaterialTexture {
@@ -181,6 +193,9 @@ namespace IndieStudio::ECS::Component {
         id(_id) {}
 
         int id;
+    };
+
+    struct Setup {
     };
 
     // struct AnimatedMesh : irr::scene::IAnimatedMeshSceneNode {

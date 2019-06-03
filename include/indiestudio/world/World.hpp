@@ -16,39 +16,38 @@
 namespace IndieStudio {
 
     using WorldECS = ECS::ECSManager<
-        // ECS::Component::Position,
-        // ECS::Component::Speed,
-        // ECS::Component::Alive,
-        // ECS::Component::Drawable,
-        // ECS::Component::Movable,
-        // ECS::Component::Indestructible,
-        // ECS::Component::LifeTime,
-        // ECS::Component::ExplosionLifeTime,
-        // ECS::Component::IsExploding,
-        // ECS::Component::ExplosionRange,
-        // ECS::Component::BombType,
-        // ECS::Component::IsPlayer,
-        // ECS::Component::IsAI,
-        // ECS::Component::IsBomb,
-        // ECS::Component::SoundID,
-        // ECS::Component::Direction,
-        // ECS::Component::Scale,
-        // ECS::Component::MaterialTexture,
-        // ECS::Component::MaterialFlag,
-        // ECS::Component::MeshPath,
-        // ECS::Component::NodeCreate,
-        // ECS::Component::Node,
-        // ECS::Component::ID
+        ECS::Component::Position,
+        ECS::Component::Speed,
+        ECS::Component::Alive,
+        ECS::Component::Drawable,
+        ECS::Component::Movable,
+        ECS::Component::Indestructible,
+        ECS::Component::LifeTime,
+        ECS::Component::ExplosionLifeTime,
+        ECS::Component::IsExploding,
+        ECS::Component::ExplosionRange,
+        ECS::Component::BombType,
+        ECS::Component::IsPlayer,
+        ECS::Component::IsAI,
+        ECS::Component::IsBomb,
+        ECS::Component::SoundID,
+        ECS::Component::Direction,
+        ECS::Component::Scale,
+        ECS::Component::MaterialTexture,
+        ECS::Component::MaterialFlag,
+        ECS::Component::MeshPath,
+        ECS::Component::NodeCreate,
+        ECS::Component::Node,
+        ECS::Component::ID,
+        ECS::Component::Setup
         // ECS::Component::EventCallbacks<WorldECS>
     >;
 
-    using WorldECSSystems = ECS::SystemsImpl<
-        WorldECS
-        // ECS::System::ApplyExplosion<WorldECS>,
-        // ECS::System::EventSystem<WorldECS>,
-        // ECS::System::ExplosionDuration<WorldECS>,
-        // ECS::System::MovePlayer<WorldECS>,
-        // ECS::System::SetupExplosion<WorldECS>
+    using WorldECSSystems = ECS::Systems<
+        ECS::System::ApplyExplosion<WorldECS>,
+        ECS::System::ExplosionDuration<WorldECS>,
+        ECS::System::MovePlayer<WorldECS>,
+        ECS::System::SetupExplosion<WorldECS>
     >;
 
     class WorldManager;

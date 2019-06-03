@@ -104,10 +104,6 @@ void map_generator(irr::scene::ISceneManager* scenemg, irr::video::IVideoDriver*
 	irr::scene::ITriangleSelector* selector = 0;
 
 	if (node) {
-		node->setMaterialTexture(0, driver->getTexture("assets/textures/block_ground_1.png"));
-		node->setMaterialFlag(irr::video::EMF_LIGHTING, true);
-		node->setScale(irr::core::vector3df(s, s, s));
-		node->setPosition(irr::core::vector3df(0.5, 50, 0.5));
 		// node->addShadowVolumeSceneNode();
 		selector = scenemg->createOctreeTriangleSelector(node->getMesh(), node, 128);
 		node->setTriangleSelector(selector);

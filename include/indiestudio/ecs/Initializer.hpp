@@ -5,6 +5,8 @@
 ** createNodeSystem
 */
 
+#pragma once
+
 #include "Components.hpp"
 #include "indiestudio/Game.hpp"
 #include "indiestudio/Singleton.hpp"
@@ -12,17 +14,15 @@
 
 using namespace IndieStudio::ECS::Component;
 
-namespace Ecs {
-
+namespace IndieStudio {
     template <typename ManagerType>
     struct Initializer {
 
         // Create the node of an entity from its MeshPath
-        static void createAllNode(ManagerType &manager)
+        static void createAllNode(ManagerType &manager, irr::scene::ISceneManager *scenemg)
         {
             manager.template forEntitiesWith<NodeCreate, MeshPath>(
-            [&manager](auto &data, [[gnu::unused]] std::size_t id) {
-                auto scenemg = IndieStudio::Singleton::getDevice()->getSceneManager();
+            [&manager, &scenemg](auto &data, [[gnu::unused]] std::size_t id) {
                 auto &mesh = manager.template getComponent<MeshPath>(data);
                 auto node = scenemg->addAnimatedMeshSceneNode(scenemg->getMesh(mesh.meshPath.c_str()));
 
@@ -34,7 +34,7 @@ namespace Ecs {
         // Set all the attributes of a node
         static void setupAllNode(ManagerType &manager)
         {
-            manager.template forEntitiesWith<Node, Position, Scale, MaterialTexture, MaterialFlag>(
+            manager.template forEntitiesWith<Node, Position, Scale, MaterialTexture, MaterialFlag, Setup>(
             [&manager](auto &data, [[gnu::unused]] std::size_t id) {
                 auto driver = IndieStudio::Singleton::getDevice()->getVideoDriver();
                 auto &node = manager.template getComponent<Node>(data);
@@ -50,9 +50,9 @@ namespace Ecs {
             });
         }
 
-        static void initAllEntities(ManagerType &manager)
+        static void initAllEntities(ManagerType &manager, irr::scene::ISceneManager *scenemg)
         {
-            createAllNode(manager);
+            createAllNode(manager, scenemg);
             setupAllNode(manager);
         }
     };
