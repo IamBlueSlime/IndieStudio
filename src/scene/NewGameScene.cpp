@@ -32,14 +32,38 @@ namespace IndieStudio {
         guiEnv->addImage(
             scene.manager->textureManager.getTexture("assets/textures/title.png").content, irr::core::position2di(350, 75), true, guiRoot);
         
-        guiEnv->addStaticText(L"Map size:",
-            irr::core::recti({500, 280}, {750, 300}), false, true, guiRoot);
-        irr::gui::IGUIScrollBar *sizeBar = guiEnv->addScrollBar(true,
-            irr::core::recti({500, 300}, {750, 320}), guiRoot, 32);
+        irr::core::vector2di origin(395, 250);
+
+        guiEnv->addStaticText(L"World size:", irr::core::recti(
+            {origin.X, origin.Y},
+            {origin.X + 225, origin.Y + 20}
+        ), false, true, guiRoot);
+        guiEnv->addStaticText(L"World generator:", irr::core::recti(
+            {origin.X + 240, origin.Y},
+            {origin.X + 240 + 225, origin.Y + 20}
+        ), false, true, guiRoot);
+        origin.Y += 20;
+
+        irr::gui::IGUIScrollBar *sizeBar = guiEnv->addScrollBar(true, irr::core::recti(
+            {origin.X, origin.Y},
+            {origin.X + 225, origin.Y + 20}
+        ), guiRoot, 32);
         sizeBar->setMin(1);
         sizeBar->setMax(3);
         sizeBar->setSmallStep(1);
         sizeBar->setLargeStep(1);
+
+        irr::gui::IGUIComboBox *generatorBox = guiEnv->addComboBox(irr::core::recti(
+            {origin.X + 240, origin.Y},
+            {origin.X + 240 + 225, origin.Y + 20}
+        ), guiRoot, 33);
+
+        WorldManager &worldManager = static_cast<WorldManager &>(Game::INSTANCE->getWorldManager());
+        int i = 0;
+        for (auto it = worldManager.getGenerators().begin(); it != worldManager.getGenerators().end(); ++it) {
+            generatorBox->addItem(std::wstring(it->first.begin(), it->first.end()).c_str(), i);
+            i += 1;
+        }
 
         irr::core::vector2di pos(395, 610);
         guiEnv->addButton(irr::core::recti(pos, {pos.X + 225, pos.Y + 50}),
@@ -67,11 +91,17 @@ namespace IndieStudio {
                     Game::INSTANCE->getWorldManager());
 
                 WorldSettings settings;
+
                 int mapScale = static_cast<irr::gui::IGUIScrollBar *>(
                     scene.gui->getElementFromId(32)
                 )->getPos();
                 settings.width *= mapScale;
                 settings.height *= mapScale;
+
+                irr::gui::IGUIComboBox *generatorBox = static_cast<irr::gui::IGUIComboBox *>(
+                    scene.gui->getElementFromId(33));
+                std::wstring generatorName = std::wstring(generatorBox->getItem(generatorBox->getSelected()));
+                settings.worldGenerator = std::string(generatorName.begin(), generatorName.end());
 
                 World *world = manager.create(settings);
                 SceneManager::Scene &playScene = scene.manager->getScene(SceneManager::PLAY_ID);

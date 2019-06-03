@@ -29,6 +29,7 @@ namespace IndieStudio {
     {
         logger.info("Creating world...");
         this->loadedWorld = std::make_unique<World>(settings);
+        this->loadedWorld->create(*this);
         return this->loadedWorld.get();
     }
 
