@@ -47,6 +47,18 @@ namespace IndieStudio {
 		node->setScale(irr::core::vector3df(20.0, 20.0, 20.0));
 		node->setPosition(irr::core::vector3df(0.5, 50, 0.5));
 
+        auto &bomb = ecs.addEntity();
+
+        auto node1 = scenemg->addAnimatedMeshSceneNode(scenemg->getMesh("assets/models/bomb.obj"));
+        ecs.setComponent(bomb, Node(node1));
+        ecs.setComponent(bomb, MaterialTexture(0, "assets/textures/bomb.png"));
+		ecs.setComponent(bomb, MaterialFlag(irr::video::EMF_LIGHTING, true));
+		ecs.setComponent(bomb, Scale(3.5, 3.5, 3.5));
+		ecs.setComponent(bomb, Position(30, 70, 23));
+        ecs.setComponent(bomb, IsBomb());
+        ecs.setComponent(bomb, LifeTime());
+        ecs.setComponent(bomb, Setup());
+
         generator->generate(pattern);
 	    pattern.forEach([&](int x, int y, int z, char c) {
 	    	if (c == IndieStudio::MapPattern::EMPTY_TILE)

@@ -18,6 +18,7 @@ namespace IndieStudio::ECS::System {
     class ApplyExplosion : public BaseSystem<ManagerType> {
     public:
         void process(ManagerType &manager) override {
+            std::cout << "BOMB2 ?" << std::endl;
             manager.template forEntitiesWith<IsBomb, Position, IsExploding, ExplosionRange>(
             [&manager](auto &data, [[gnu::unused]] auto id) {
 
@@ -31,28 +32,32 @@ namespace IndieStudio::ECS::System {
 
                     for (float i = 0; i <= bombRange.explosionRangeUp; i++) {
                         if (static_cast<int>(bombPosition.z + i) == static_cast<int>(position.z)) {
-                            manager.template unsetComponent<Alive>(data);
+                            //manager.template unsetComponent<Alive>(data);
+                            manager.template delEntity(data);
                             bombRange.explosionRangeUp = i;
                             break;
                         }
                     }
                     for (float i = 0; i <= bombRange.explosionRangeDown; i++) {
                         if (static_cast<int>(bombPosition.z - i) == static_cast<int>(position.z)) {
-                            manager.template unsetComponent<Alive>(data);
+                            //manager.template unsetComponent<Alive>(data);
+                            manager.template delEntity(data);
                             bombRange.explosionRangeDown = i;
                             break;
                         }
                     }
                     for (float i = 0; i <= bombRange.explosionRangeLeft; i++) {
                         if (static_cast<int>(bombPosition.x + i) == static_cast<int>(position.x)) {
-                            manager.template unsetComponent<Alive>(data);
+                            //manager.template unsetComponent<Alive>(data);
+                            manager.template delEntity(data);
                             bombRange.explosionRangeLeft = i;
                             break;
                         }
                     }
                     for (float i = 0; i <= bombRange.explosionRangeRight; i++) {
                         if (static_cast<int>(bombPosition.x - i) == static_cast<int>(position.x)) {
-                            manager.template unsetComponent<Alive>(data);
+                            //manager.template unsetComponent<Alive>(data);
+                            manager.template delEntity(data);
                             bombRange.explosionRangeRight = i;
                             break;
                         }

@@ -47,6 +47,7 @@ namespace IndieStudio {
                 node.node->setMaterialFlag(materialFlag.flag, materialFlag.present);
                 node.node->setScale(irr::core::vector3df{scale.x, scale.y, scale.z});
                 node.node->setPosition(irr::core::vector3df{position.x, position.y, position.z});
+                manager.template unsetComponent<Setup>(data);
             });
         }
 

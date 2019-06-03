@@ -27,7 +27,6 @@ namespace IndieStudio::ECS::System {
                     pos.z += speed.z;
             });
         }
-    
     protected:
     private:
     };
