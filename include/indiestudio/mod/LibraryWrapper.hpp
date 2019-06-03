@@ -28,13 +28,13 @@ namespace IndieStudio {
         template<typename T>
         T getSymbol(const std::string &symbolName)
         {
-            if (handle == nullptr)
+            if (this->handle == nullptr)
                 return nullptr;
 
 #ifdef WIN32
-            return static_cast<T>(GetProcAddress(handle, symbolName.c_str()));
+            return (T) GetProcAddress(static_cast<HMODULE>(this->handle), symbolName.c_str());
 #else
-            return static_cast<T>(dlsym(handle, symbolName.c_str()));
+            return static_cast<T>(dlsym(this->handle, symbolName.c_str()));
 #endif
         }
 

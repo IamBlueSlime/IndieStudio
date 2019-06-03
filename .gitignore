@@ -24,3 +24,5 @@ cmake-*
 /units
 /Testing/
 /statistics.ini
+/Debug/
+/Release/

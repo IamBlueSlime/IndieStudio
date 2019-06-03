@@ -20,7 +20,7 @@ option(BUILD_GAME "Enable build for the game" ON)
 option(BUILD_MODS "Enable build for the mods" ON)
 option(BUILD_TESTS "Enable tests" OFF)
 
-set(INDIE_API_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/api)
+set(INDIE_API_INCLUDE_DIRS ${Irrlicht_INCLUDE_DIRS} ${SFML_ROOT}/include ${CMAKE_SOURCE_DIR}/api)
 set(INDIE_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/include)
 set(INDIE_SRC_DIR ${CMAKE_SOURCE_DIR}/src)
 set(INDIE_SRC
@@ -47,10 +47,10 @@ set(INDIE_SRC
     ${INDIE_SRC_DIR}/world/WorldSettings.cpp
     ${INDIE_SRC_DIR}/utils/CRCUtils.cpp
 )
-set(INDIE_REQUIRED_LIBRARIES ${Irrlicht_LIBRARIES} sfml-system sfml-audio stdc++fs pthread)
+set(INDIE_REQUIRED_LIBRARIES ${Irrlicht_LIBRARIES} sfml-system sfml-audio)
 
 if (UNIX)
-    set(INDIE_REQUIRED_LIBRARIES ${INDIE_REQUIRED_LIBRARIES} dl)
+    set(INDIE_REQUIRED_LIBRARIES ${INDIE_REQUIRED_LIBRARIES} dl stdc++fs pthread)
 endif ()
 
 add_compile_options(-Wall)

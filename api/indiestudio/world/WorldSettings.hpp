@@ -7,7 +7,8 @@
 
 #pragma once
 
-#include <irrlicht/irrlicht.h>
+#include <irrlicht.h>
+#include <string>
 #include "indiestudio/common/ISerializable.hpp"
 
 namespace IndieStudio {

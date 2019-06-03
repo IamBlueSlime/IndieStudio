@@ -171,7 +171,7 @@ namespace IndieStudio {
         int i = 0;
 
         for (auto it = str.begin(); it != str.end(); ++it) {
-            if (!std::isspace(*it))
+            if (!isspace(*it))
                 break;
             i += 1;
         }
@@ -183,7 +183,7 @@ namespace IndieStudio {
     {
         int i = 0;
         for (auto it = str.end() - 1; it >= str.begin(); --it) {
-            if (!std::isspace(*it))
+            if (!isspace(*it))
                 break;
             i += 1;
         }

@@ -105,7 +105,7 @@ namespace IndieStudio {
         ECS::Event::EventData data;
         switch (event.EventType) {
             case irr::EEVENT_TYPE::EET_KEY_INPUT_EVENT:
-                data.type = ECS::Event::EventType::KEYBOARD_EVENT;
+                data.type = ECS::Event::EventType::INDIE_KEYBOARD_EVENT;
                 data.keyInput = event.KeyInput;
                 world->forwardEvent(data);
                 return true;
