@@ -48,7 +48,7 @@ set(INDIE_SRC
     ${INDIE_SRC_DIR}/world/WorldSettings.cpp
     ${INDIE_SRC_DIR}/utils/CRCUtils.cpp
 )
-set(INDIE_REQUIRED_LIBRARIES ${Irrlicht_LIBRARIES} sfml-audio stdc++fs pthread)
+set(INDIE_REQUIRED_LIBRARIES ${Irrlicht_LIBRARIES} sfml-system sfml-audio stdc++fs pthread)
 
 if (UNIX)
     set(INDIE_REQUIRED_LIBRARIES ${INDIE_REQUIRED_LIBRARIES} dl)
