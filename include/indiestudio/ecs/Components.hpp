@@ -102,9 +102,6 @@ namespace IndieStudio::ECS::Component {
     struct IsPlayer {
     };
 
-    struct IsAI {
-    };
-
     struct IsBomb {
     };
 
@@ -215,6 +212,17 @@ namespace IndieStudio::ECS::Component {
 
     private:
         std::unordered_map<EventData, std::vector<CallbackType>> callbacks;
+    };
+
+    struct IA {
+        enum class Action {
+            NOTHING,
+            ATK,
+            WALL,
+            PICKUP
+        };
+
+        Action current_action = Action::NOTHING;
     };
 
 }

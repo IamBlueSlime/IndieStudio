@@ -28,7 +28,7 @@ namespace IndieStudio {
         ECS::Component::ExplosionRange,
         ECS::Component::BombType,
         ECS::Component::IsPlayer,
-        ECS::Component::IsAI,
+        ECS::Component::IA,
         ECS::Component::IsBomb,
         ECS::Component::SoundID,
         ECS::Component::Direction,
@@ -47,7 +47,8 @@ namespace IndieStudio {
         ECS::System::ApplyExplosion<WorldECS>,
         ECS::System::ExplosionDuration<WorldECS>,
         ECS::System::MovePlayer<WorldECS>,
-        ECS::System::SetupExplosion<WorldECS>
+        ECS::System::SetupExplosion<WorldECS>,
+        ECS::System::IASystem<WorldECS>
     >;
 
     class WorldManager;

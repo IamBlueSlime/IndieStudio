@@ -13,3 +13,4 @@
 #include "indiestudio/ecs/systems/EventSystem.hpp"
 #include "indiestudio/ecs/systems/DrawEntitiesSystem.hpp"
 #include "indiestudio/ecs/systems/MovePlayerSystem.hpp"
+#include "indiestudio/ecs/systems/IASystem.hpp"

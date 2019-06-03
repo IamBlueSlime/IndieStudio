@@ -13,7 +13,6 @@ namespace IndieStudio::ECS::System {
 
     using namespace ECS::Event;
 
-    //TODO: thread safety omg
     template<typename ManagerType>
     class EventSystem : public BaseSystem<ManagerType> {
     public:
