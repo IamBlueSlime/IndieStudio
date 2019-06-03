@@ -56,14 +56,12 @@ namespace IndieStudio {
 
     class World : public ISerializable {
     public:
-        PACKED(
-        struct FileHeader {
+        PACKED(struct FileHeader {
             unsigned char magic[4];
             unsigned char formatVersion;
             unsigned long size;
             unsigned int checksum;
-        };
-        )
+        });
 
         World(WorldSettings settings);
         World();

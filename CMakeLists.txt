@@ -11,16 +11,18 @@ project(bomberman VERSION 1.0.0 LANGUAGES CXX)
 set(Irrlicht_DIR "vendor/Irrlicht")
 set(Irrlicht_FIND_REQUIRED TRUE)
 include(FindIrrlicht)
-include_directories(${Irrlicht_INCLUDE_DIRS})
 
 find_package(Irrlicht REQUIRED)
+include_directories(SYSTEM ${Irrlicht_INCLUDE_DIRS})
+
 find_package(SFML 2 REQUIRED audio)
+include_directories(SYSTEM ${SFML_ROOT}/include)
 
 option(BUILD_GAME "Enable build for the game" ON)
 option(BUILD_MODS "Enable build for the mods" ON)
 option(BUILD_TESTS "Enable tests" OFF)
 
-set(INDIE_API_INCLUDE_DIRS ${Irrlicht_INCLUDE_DIRS} ${SFML_ROOT}/include ${CMAKE_SOURCE_DIR}/api)
+set(INDIE_API_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/api)
 set(INDIE_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/include)
 set(INDIE_SRC_DIR ${CMAKE_SOURCE_DIR}/src)
 set(INDIE_SRC

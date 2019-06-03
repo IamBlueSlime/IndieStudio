@@ -55,6 +55,9 @@ namespace IndieStudio::ECS::System {
             // dodge le rayon d action des bombes "endormies"
             // renvoie true si il y a quelque chose à eviter
             // renvoie false sinon
+
+            // This removes a warning
+            return false;
         }
 
         IA::Action select_action() {

@@ -68,14 +68,14 @@ namespace std {
         std::size_t operator()([[gnu::unused]] const IndieStudio::ECS::Event::EventData &event) const
         {
             switch (event.type) {
-                case IndieStudio::ECS::Event::EventType::INDIE_GUI_EVENT: return (hash<int>()(static_cast<int>(event.type))) ^ (hash<int>()(static_cast<int>(event.guiEvent.EventType) << 1)) >> 1;
-                    break;
-                case IndieStudio::ECS::Event::EventType::INDIE_KEYBOARD_EVENT: return (hash<int>()(static_cast<int>(event.type))) ^ (hash<int>()(static_cast<int>(event.keyInput.Key) << 1)) >> 1;
-                    break;
-                case IndieStudio::ECS::Event::EventType::INDIE_MOUSE_EVENT: return (hash<int>()(static_cast<int>(event.type))) ^ (hash<int>()(static_cast<int>(event.mouseInput.Event) << 1)) >> 1;
-                    break;
-                case IndieStudio::ECS::Event::EventType::INDIE_CUSTOM_EVENT_1: return (hash<int>()(static_cast<int>(event.type))) ^ (hash<bool>()(event.custom_event_1 << 1)) >> 1;
-                    break;
+                case IndieStudio::ECS::Event::EventType::INDIE_GUI_EVENT:
+                    return (hash<int>()(static_cast<int>(event.type))) ^ (hash<int>()(static_cast<int>(event.guiEvent.EventType) << 1)) >> 1;
+                case IndieStudio::ECS::Event::EventType::INDIE_KEYBOARD_EVENT:
+                    return (hash<int>()(static_cast<int>(event.type))) ^ (hash<int>()(static_cast<int>(event.keyInput.Key) << 1)) >> 1;
+                case IndieStudio::ECS::Event::EventType::INDIE_MOUSE_EVENT:
+                    return (hash<int>()(static_cast<int>(event.type))) ^ (hash<int>()(static_cast<int>(event.mouseInput.Event) << 1)) >> 1;
+                case IndieStudio::ECS::Event::EventType::INDIE_CUSTOM_EVENT_1:
+                    return (hash<int>()(static_cast<int>(event.type))) ^ (hash<bool>()(event.custom_event_1)) >> 1;
                 default:
                     std::cout << "hash not implemented on this ECS::Event::EventData <<: aborting" << std::endl;
                     assert(false);
