@@ -103,8 +103,9 @@ namespace IndieStudio {
                 std::wstring generatorName = std::wstring(generatorBox->getItem(generatorBox->getSelected()));
                 settings.worldGenerator = std::string(generatorName.begin(), generatorName.end());
 
-                World *world = manager.create(settings);
                 SceneManager::Scene &playScene = scene.manager->getScene(SceneManager::PLAY_ID);
+                playScene.scene->clear();
+                World *world = manager.create(settings);
                 PlayScene::initialize(playScene);
                 scene.manager->setActiveScene(SceneManager::PLAY_ID);
                 world->focusECS(playScene.scene);

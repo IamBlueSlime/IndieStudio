@@ -18,8 +18,6 @@ namespace IndieStudio {
         auto guiEnv = scene.scene->getGUIEnvironment();
         auto guiRoot = scene.gui;
 
-        scene.scene->clear();
-
         WorldSettings &settings = static_cast<WorldManager &>(
             Game::INSTANCE->getWorldManager()).getLoadedWorld()->getSettings();
         irr::scene::ICameraSceneNode *camera = scene.scene->addCameraSceneNode(0);
