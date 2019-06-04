@@ -7,7 +7,10 @@
 
 #pragma once
 
+#include <optional>
+
 #include "indiestudio/ecs/Events.hpp"
+#include "indiestudio/world/MapPattern.hpp"
 
 namespace IndieStudio::ECS::System {
 
@@ -21,32 +24,20 @@ namespace IndieStudio::ECS::System {
 
             manager.template forEntitiesWith<IA>(
                 [&manager, this](auto &data, auto id) {
-                    // Component, containing :
-                    //  - the state (action currently executed or 'nothing')
-                    //
 
-                    auto &ia = manager.template getEntity<IA>();
-
-                    // get the tile map
-//                    auto &tilemap = getfromworld,scene,oreventsingleton
-                        // tile map types :
-                        //  - player
-                        //  - bomb
-                        //  - explosion
-                        //  - powerup (any kind)
-                        //  - mur destructible
-                        //  - mur indestructible
+                    auto &ia = manager.template getComponent<IA>(data);
 
                     if (this->emergency_move()) {
                         // cancel current action
+                        ia.current_action = IA::Action::NOTHING;
                     } else {
-                        // si il n y a pas d action en cours :
-                            // decider entre
-                            //  - ramasser powerup (si impossible, reroll)
-                            //  - attaquer (to define) (si impossible, reroll)
-                            //  - briser mur (si impossible, reroll)
-                            // et set la current_action correctement
+                        if (ia.current_action == IA::Action::NOTHING) {
+                            ia.current_action = this->select_action();
+                        }
                         // executer la current action
+                        while (!this->execute_action(ia.current_action)) {
+                            ia.current_action = this->select_action();
+                        }
                     }
                 }
             );
@@ -72,7 +63,7 @@ namespace IndieStudio::ECS::System {
             }
         }
 
-        void execute_action(IA::Action action) {
+        bool execute_action(IA::Action action) {
             switch (action) {
                 case IA::Action::ATK: return atk_player();
                 case IA::Action::WALL: return destroy_wall();
@@ -80,13 +71,163 @@ namespace IndieStudio::ECS::System {
             }
         }
 
-        void atk_player() {}
+        bool atk_player() {
+            return false;
+        }
 
-        void destroy_wall() {}
+        bool destroy_wall() {
+            return false;
+        }
 
-        void pick_powerup() {}
+        bool pick_powerup() {
+            return false;
+        }
 
     protected:
     private:
     };
 }
+
+struct Tile {
+    std::size_t delta;
+    MapPattern::TileType type;
+};
+
+using Hitmap = std::vector<std::vector<Tile>>;
+
+class Poti {
+
+    enum class Direction {
+        LEFT,
+        RIGHT,
+        TOP,
+        BOT
+    };
+
+    struct Coord {
+        std::size_t x;
+        std::size_t y;
+    }
+
+    std::optional<Direction> search_for(MapPattern::TileType target, MapPattern *map, std::size_t x, std::size_t y) {
+        Hitmap hitmap = this->init_hitmap(map);
+        this->fill_hitmap(hitmap, {x, y}, 0);
+        std::optional<Coord> target_coord = this->find_nearest_target(target, hitmap);
+        if (target_coord == std::nullopt) {
+            return std::nullopt;
+        }
+        this->reset_hitmap(hitmap);
+        this->fill_hitmap(hitmap, {target_coord.x, target_coord.y}, 0);
+        return std::make_optional(this->get_direction(hitmap, {x, y}));
+    }
+
+private:
+
+    Hitmap init_hitmap(MapPattern *map) {
+        Hitmap hitmap;
+        for (std::size_t i = 0 ; i < map->getHeight() ; i++) {
+            hitmap.push_back(std::vector<Tile>());
+            for (std::size_t j = 0 ; j < map->getWidth() ; j++) {
+                hitmap[i].push_back({-1, map->get(j, 1, i)});
+            }
+        }
+    }
+
+    void fill_hitmap(Hitmap &hitmap, Coord coord, std::size_t current) {
+        hitmap[coord.y][coord.x].delta = current;
+
+        if (!is_solid(hitmap[coord.y][coord.x - 1]) && hitmap[coord.y][coord.x - 1].delta > current + 1) {
+            fill_hitmap(hitmap, {coord.x - 1, coord.y}, current + 1);
+        }
+        if (!is_solid(hitmap[coord.y][coord.x + 1]) && hitmap[coord.y][coord.x + 1].delta > current + 1) {
+            fill_hitmap(hitmap, {coord.x + 1, coord.y}, current + 1);
+        }
+        if (!is_solid(hitmap[coord.y - 1][coord.x]) && hitmap[coord.y - 1][coord.x].delta > current + 1) {
+            fill_hitmap(hitmap, {coord.x, coord.y - 1}, current + 1);
+        }
+        if (!is_solid(hitmap[coord.y + 1][coord.x]) && hitmap[coord.y + 1][coord.x].delta > current + 1) {
+            fill_hitmap(hitmap, {coord.x, coord.y + 1}, current + 1);
+        }
+    }
+
+    bool is_solid(const Tile &tile) {
+        switch (tile.type) {
+            case MapPattern::TileType::EMPTY: return false;
+            case MapPattern::TileType::PLAYER: return false;
+            case MapPattern::TileType::POWER_UP: return false;
+            case MapPattern::TileType::BOMB: return true;
+            case MapPattern::TileType::BOMB_EXPLOSION: return true;
+            case MapPattern::TileType::BREAKABLE_WALL: return true;
+            case MapPattern::TileType::BORDER_WALL_BLOCK: return true;
+            case MapPattern::TileType::INNER_WALL_BLOCK: return true;
+        }
+    }
+
+    void reset_hitmap(Hitmap &hitmap) {
+        for (auto &tmp : hitmap) {
+            for (auto &tile : tmp) {
+                tile.delta = -1;
+            }
+        }
+    }
+
+    std::optional<Coord> find_nearest_target(MapPattern::TileType target, const Hitmap &hitmap) {
+        std::size_t nearest = -1;
+        Coord nearest_target = {0, 0};
+
+        for (std::size_t y = 0 ; y < hitmap.size() ; y++) {
+            for (std::size_t x = 0 ; x < hitmap[y].size() ; x++) {
+                if (hitmap[y][x].type == target) {
+                    is_nearest(hitmap, nearest, nearest_target, {x, y});
+                }
+            }
+        }
+        if (nearest == static_cast<std::size_t>(-1)) {
+            return std::nullopt;
+        }
+        return std::make_optional(nearest_target);
+    }
+
+    void is_nearest(const Hitmap &hitmap, std::size_t &nearest, Coord &nearest_target, Coord current_coord) {
+        if (current_coord.x > 0 && hitmap[current_coord.y][current_coord.x - 1].delta < nearest) {
+            nearest = hitmap[current_coord.y][current_coord.x - 1].delta;
+            nearest_target = current_coord;
+        }
+        if (current_coord.x < hitmap[current_coord.y].size() && hitmap[current_coord.y][current_coord.x + 1].delta < nearest) {
+            nearest = hitmap[current_coord.y][current_coord.x + 1].delta;
+            nearest_target = current_coord;
+        }
+        if (current_coord.y > 0 && hitmap[current_coord.y - 1][current_coord.x].delta < nearest) {
+            nearest = hitmap[current_coord.y - 1][current_coord.x].delta;
+            nearest_target = current_coord;
+        }
+        if (current_coord.y < hitmap.size() && hitmap[current_coord.y + 1][current_coord.x].delta < nearest) {
+            nearest = hitmap[current_coord.y + 1][current_coord.x].delta;
+            nearest_target = current_coord;
+        }
+    }
+
+    Direction get_direction(const Hitmap &hitmap, Coord coord) {
+        std::size_t tmp = -1;
+        Direction direction = Direction::LEFT;
+
+        if (coord.x > 0 && hitmap[coord.y][coord.x - 1].delta < tmp) {
+            tmp = hitmap[coord.y][coord.x - 1].delta;
+            direction = Direction::LEFT;
+        }
+        if (coord.x < hitmap[coord.y].size() && hitmap[coord.y][coord.x + 1].delta < tmp) {
+            tmp = hitmap[coord.y][coord.x + 1].delta;
+            direction = Direction::RIGHT;
+        }
+        if (coord.y > 0 && hitmap[coord.y - 1][coord.x].delta < tmp) {
+            tmp = hitmap[coord.y - 1][coord.x].delta;
+            direction = Direction::TOP;
+        }
+        if (coord.y < hitmap.size() && hitmap[coord.y + 1][coord.x].delta < tmp) {
+            tmp = hitmap[coord.y + 1][coord.x].delta;
+            direction = Direction::BOT;
+        }
+        return direction;
+    }
+
+};

@@ -43,10 +43,10 @@ namespace IndieStudio {
         ECS::Component::Node,
         ECS::Component::ID,
         ECS::Component::Setup
-        // ECS::Component::EventCallbacks<WorldECS>
     >;
 
     using WorldECSSystems = ECS::Systems<
+        WorldECS,
         ECS::System::EventSystem<WorldECS>,
         ECS::System::ApplyExplosion<WorldECS>,
         ECS::System::ExplosionDuration<WorldECS>,

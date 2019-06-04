@@ -17,11 +17,9 @@
 namespace IndieStudio::ECS::Event {
 
     enum class EventType {
-        INDIE_GUI_EVENT,
-		INDIE_JOYSTICK_EVENT,
 		INDIE_KEYBOARD_EVENT,
-		INDIE_MOUSE_EVENT,
-		INDIE_CUSTOM_EVENT_1
+		INDIE_JOYSTICK_EVENT,
+		INDIE_MOUSE_EVENT
     };
 
     struct EventData {
@@ -33,13 +31,10 @@ namespace IndieStudio::ECS::Event {
             }
 
             switch (this->type) {
-                case EventType::INDIE_GUI_EVENT: return this->guiEvent.EventType == other.guiEvent.EventType;
-                    break;
                 case EventType::INDIE_KEYBOARD_EVENT: return this->keyInput.Key == other.keyInput.Key;
                     break;
                 case EventType::INDIE_MOUSE_EVENT: return this->mouseInput.Event == other.mouseInput.Event;
                     break;
-                case EventType::INDIE_CUSTOM_EVENT_1: return this->custom_event_1 == other.custom_event_1;
                 default:
                     std::cout << "operator== not implemented on this ECS::Event::EventData : aborting" << std::endl;
                     assert(false);
@@ -50,11 +45,9 @@ namespace IndieStudio::ECS::Event {
         EventType type;
 
         union {
-            struct irr::SEvent::SGUIEvent guiEvent;
-            struct irr::SEvent::SJoystickEvent joystickEvent;
             struct irr::SEvent::SKeyInput keyInput;
+            struct irr::SEvent::SJoystickEvent joystickEvent;
             struct irr::SEvent::SMouseInput mouseInput;
-            bool custom_event_1;
         };
     };
 
@@ -68,14 +61,10 @@ namespace std {
         std::size_t operator()([[gnu::unused]] const IndieStudio::ECS::Event::EventData &event) const
         {
             switch (event.type) {
-                case IndieStudio::ECS::Event::EventType::INDIE_GUI_EVENT:
-                    return (hash<int>()(static_cast<int>(event.type))) ^ (hash<int>()(static_cast<int>(event.guiEvent.EventType) << 1)) >> 1;
                 case IndieStudio::ECS::Event::EventType::INDIE_KEYBOARD_EVENT:
                     return (hash<int>()(static_cast<int>(event.type))) ^ (hash<int>()(static_cast<int>(event.keyInput.Key) << 1)) >> 1;
                 case IndieStudio::ECS::Event::EventType::INDIE_MOUSE_EVENT:
                     return (hash<int>()(static_cast<int>(event.type))) ^ (hash<int>()(static_cast<int>(event.mouseInput.Event) << 1)) >> 1;
-                case IndieStudio::ECS::Event::EventType::INDIE_CUSTOM_EVENT_1:
-                    return (hash<int>()(static_cast<int>(event.type))) ^ (hash<bool>()(event.custom_event_1)) >> 1;
                 default:
                     std::cout << "hash not implemented on this ECS::Event::EventData <<: aborting" << std::endl;
                     assert(false);
