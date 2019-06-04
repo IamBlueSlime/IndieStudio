@@ -23,7 +23,7 @@ namespace IndieStudio::ECS::System {
                     //  - the state (action currently executed or 'nothing')
                     //
 
-                    auto &ia = manager.template getEntity<IA>();
+                    auto &ia = manager.template getComponent<IA>(data);
 
                     // get the tile map
 //                    auto &tilemap = getfromworld,scene,oreventsingleton

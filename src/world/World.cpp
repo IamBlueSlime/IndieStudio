@@ -95,7 +95,7 @@ namespace IndieStudio {
 
     void World::focusECS(irr::scene::ISceneManager *sceneManager)
     {
-        auto systems = WorldECSSystems();
+        auto systems = WorldECSSystems(this->ecs);
 
         while (Game::INSTANCE->getSceneManager().getActive() == SceneManager::PLAY_ID
         && Singleton::getDevice()->run()) {
