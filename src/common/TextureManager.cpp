@@ -16,19 +16,19 @@ namespace IndieStudio {
 
     void TextureManager::registerTexture(std::string id)
     {
-        Texture Texture;
-        Texture.content = Singleton::getDevice()->getVideoDriver()->getTexture(id.c_str());
+        Texture texture;
+        texture.content = Singleton::getDevice()->getVideoDriver()->getTexture(id.c_str());
 
-        if (!Texture.content)
+        if (!texture.content)
             throw std::runtime_error("Failed to load the texture " + id);
 
-        this->registerTexture(id, Texture);
+        this->registerTexture(id, texture);
     }
 
-    void TextureManager::registerTexture(std::string id, Texture &Texture,
+    void TextureManager::registerTexture(std::string id, Texture &texture,
         bool overrideExisting)
     {
-        this->registry.add(id, std::move(Texture), overrideExisting);
+        this->registry.add(id, std::move(texture), overrideExisting);
         this->logger.debug("Registered texture '" + id + "'.");
     }
 

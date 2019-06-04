@@ -31,8 +31,8 @@ namespace IndieStudio {
         };
 
         std::string name;
-        unsigned int width = 17;
-        unsigned int height = 11;
+        unsigned short width = 17;
+        unsigned short height = 11;
         std::string worldGenerator = "Basic";
         Player players[4];
 
