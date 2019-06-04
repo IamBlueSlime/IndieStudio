@@ -79,6 +79,14 @@ namespace IndieStudio {
             return ptr[z * this->width + x];
         }
 
+        bool isWalkable(short x, short z) const
+        {
+            TileType tileType = this->get(x, 1, z);
+
+            return tileType == TileType::EMPTY || tileType == TileType::BOMB_EXPLOSION
+                || tileType == TileType::PLAYER || tileType == TileType::POWER_UP;
+        }
+
         short getWidth() const { return this->width; }
         short getHeight() const { return this->height; }
 
