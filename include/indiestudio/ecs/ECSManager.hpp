@@ -52,6 +52,10 @@ namespace IndieStudio::ECS {
                     func(entity.second, entity.first);
                 }
             }
+            for (auto &entity : this->to_delete) {
+                this->entities.erase(entity);
+            }
+            this->to_delete.clear();
         }
 
         template<typename... SystemTypes>
@@ -78,12 +82,12 @@ namespace IndieStudio::ECS {
 
         // Delete the given entity from the manager
         void delEntity(EntityType &entity) {
-            this->entities.erase(entity.id);
+            this->to_delete.push_back(this->entities.find(entity.id));
         }
 
         // Delete the entity of the given ID from the manager
         void delEntity(std::size_t id) {
-            this->entities.erase(id);
+            this->to_delete.push_back(this->entities.find(id));
         }
 
         // Flush all the entities from the manager
@@ -171,6 +175,7 @@ namespace IndieStudio::ECS {
         }
 
         std::map<std::size_t, EntityType> entities;
+        std::vector<typename std::map<std::size_t, EntityType>::iterator> to_delete;
         EventManager event_manager;
         size_t id_seed = 0;
     };

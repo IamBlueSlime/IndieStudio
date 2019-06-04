@@ -20,12 +20,16 @@ namespace IndieStudio::ECS::System {
         void process(ManagerType &manager, World *world) override {
             (void) world;
 
+<<<<<<< HEAD
+=======
+//            std::cout << "BOMB1 ?" << std::endl;
+>>>>>>> a308cfd0a827b946fe4484fa0f430c6df5537794
             manager.template forEntitiesWith<IsBomb, IsExploding, ExplosionLifeTime>(
                 [&manager](auto &data, [[gnu::unused]] auto id) {
                     auto &explosionTime = manager.template getComponent<ExplosionLifeTime>(data);
 
                     if ((std::time(nullptr) - explosionTime.explosionLifeTime) >= 1)
-                        manager.template delEntity(data);
+                        manager.delEntity(data);
             });
         }
     protected:
