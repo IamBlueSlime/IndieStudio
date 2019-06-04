@@ -47,6 +47,7 @@ namespace IndieStudio {
     >;
 
     using WorldECSSystems = ECS::Systems<
+        ECS::System::EventSystem<WorldECS>,
         ECS::System::ApplyExplosion<WorldECS>,
         ECS::System::ExplosionDuration<WorldECS>,
         ECS::System::MovePlayer<WorldECS>,
@@ -71,7 +72,7 @@ namespace IndieStudio {
         void create(WorldManager &manager);
 
         void focusECS(irr::scene::ISceneManager *sceneManager);
-        void forwardEvent(ECS::Event::EventData &event);
+        void forwardEvent(ECS::Event::EventData event);
 
         /* ISerializable implementation */
         void pack(ByteBuffer &buffer) const override;

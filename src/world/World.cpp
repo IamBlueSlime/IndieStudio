@@ -91,7 +91,31 @@ namespace IndieStudio {
 
             ecs.setComponent(newBlock, MaterialFlag(irr::video::EMF_LIGHTING, true));
             ecs.setComponent(newBlock, Setup());
-	    });
+        });
+
+        auto &player1 = ecs.addEntity();
+
+        auto node_p = scenemg->addAnimatedMeshSceneNode(scenemg->getMesh("assets/models/player.md3"));
+        ecs.setComponent(player1, Node(node_p));
+	    ecs.setComponent(player1, MaterialTexture(0, "assets/textures/player_black.png"));
+		ecs.setComponent(player1, MaterialFlag(irr::video::EMF_LIGHTING, false));
+		ecs.setComponent(player1, Scale(20, 20, 20));
+		ecs.setComponent(player1, Position(30, 70, 23));
+
+        auto eventCB = EventCallbacks<WorldECS>();
+        IndieStudio::ECS::Event::EventData event;
+        event.keyInput.Key = irr::KEY_LEFT;
+		event.type = ECS::Event::EventType::INDIE_KEYBOARD_EVENT;
+
+        eventCB.addCallback(event,
+            [&] (const EventData& event, std::size_t id, WorldECS &ecs)
+            {
+                std::cout << "hello" << std::endl;
+            }
+        );
+
+        ecs.setComponent(player1, eventCB);
+        ecs.setComponent(player1, Setup());
 
         Initializer<WorldECS>::initAllEntities(ecs, scenemg);
     }
@@ -110,7 +134,7 @@ namespace IndieStudio {
         }
     }
 
-    void World::forwardEvent(ECS::Event::EventData &event)
+    void World::forwardEvent(ECS::Event::EventData event)
     {
         this->ecs.getEventManager().push_event(event);
     }
