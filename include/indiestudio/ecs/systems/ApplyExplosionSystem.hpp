@@ -9,6 +9,7 @@
 
 #include "indiestudio/ecs/Components.hpp"
 #include "indiestudio/ecs/BaseSystem.hpp"
+#include "unistd.h"
 
 namespace IndieStudio::ECS::System {
 
@@ -19,8 +20,6 @@ namespace IndieStudio::ECS::System {
     public:
         void process(ManagerType &manager, World *world) override {
             (void) world;
-
-            std::cout << "BOMB2 ?" << std::endl;
             manager.template forEntitiesWith<IsBomb, Position, IsExploding, ExplosionRange>(
             [&manager](auto &data, [[gnu::unused]] auto id) {
 
@@ -67,8 +66,5 @@ namespace IndieStudio::ECS::System {
                 });
             });
         }
-    
-    protected:
-    private:
     };
 }
