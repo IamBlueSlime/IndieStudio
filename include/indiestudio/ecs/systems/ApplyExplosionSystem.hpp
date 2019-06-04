@@ -12,6 +12,8 @@
 
 namespace IndieStudio::ECS::System {
 
+    using namespace ECS::Component;
+
     template<typename ManagerType>
     class ApplyExplosion : public BaseSystem<ManagerType> {
     public:
@@ -33,28 +35,28 @@ namespace IndieStudio::ECS::System {
 
                     for (float i = 0; i <= bombRange.explosionRangeUp; i += 1.0) {
                         if (static_cast<int>(bombPosition.z + i) == static_cast<int>(position.z)) {
-                            node.node->setVisibility(false);
+                            node.node->setVisible(false);
                             bombRange.explosionRangeUp = i;
                             break;
                         }
                     }
                     for (float i = 0; i <= bombRange.explosionRangeDown; i++) {
                         if (static_cast<int>(bombPosition.z - i) == static_cast<int>(position.z)) {
-                            node.node->setVisibility(false);
+                            node.node->setVisible(false);
                             bombRange.explosionRangeDown = i;
                             break;
                         }
                     }
                     for (float i = 0; i <= bombRange.explosionRangeLeft; i++) {
                         if (static_cast<int>(bombPosition.x - i) == static_cast<int>(position.x)) {
-                            node.node->setVisibility(false);
+                            node.node->setVisible(false);
                             bombRange.explosionRangeLeft = i;
                             break;
                         }
                     }
                     for (float i = 0; i <= bombRange.explosionRangeRight; i++) {
                         if (static_cast<int>(bombPosition.x + i) == static_cast<int>(position.x)) {
-                            node.node->setVisibility(false);
+                            node.node->setVisible(false);
                             bombRange.explosionRangeRight = i;
                             break;
                         }
