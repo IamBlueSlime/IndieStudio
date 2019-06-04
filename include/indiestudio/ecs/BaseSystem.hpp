@@ -32,7 +32,7 @@ namespace IndieStudio::ECS {
             BaseSystem() {}
             virtual ~BaseSystem() = default;
 
-            virtual void process([[gnu::unused]] ManagerType &manager, World *world) {}
+            virtual void process([[gnu::unused]] ManagerType &manager, [[gnu::unused]] World *world) {}
         };
 
         struct ISyst {

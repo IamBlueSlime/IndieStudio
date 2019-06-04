@@ -20,7 +20,7 @@ namespace IndieStudio::ECS::System {
         void process(ManagerType &manager, World *world) override {
             (void) world;
 
-            std::cout << "BOMB2 ?" << std::endl;
+//            std::cout << "BOMB2 ?" << std::endl;
             manager.template forEntitiesWith<IsBomb, Position, IsExploding, ExplosionRange>(
             [&manager](auto &data, [[gnu::unused]] auto id) {
 

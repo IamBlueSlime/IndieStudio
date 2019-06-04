@@ -126,6 +126,7 @@ namespace IndieStudio {
 
         while (Game::INSTANCE->getSceneManager().getActive() == SceneManager::PLAY_ID
         && Singleton::getDevice()->run()) {
+            this->ecs.getEventManager().switch_event_queue();
             sceneManager->getVideoDriver()->beginScene(true, true);
             systems.process();
             this->ecs.getEventManager().clear_event_queue();

@@ -23,7 +23,7 @@ namespace IndieStudio::ECS::System {
             (void) world;
 
             manager.template forEntitiesWith<IA>(
-                [&manager, this](auto &data, auto id) {
+                [&manager, this](auto &data, [[gnu::unused]] auto id) {
                     auto &ia = manager.template getComponent<IA>(data);
 
                     if (this->emergency_move()) {
