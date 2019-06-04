@@ -74,6 +74,7 @@ namespace IndieStudio {
         void focusECS(irr::scene::ISceneManager *sceneManager);
         void forwardEvent(ECS::Event::EventData event);
 
+        void initPlayer(WorldManager &manager, irr::scene::ISceneManager *scenemg, int playerId);
         std::function<void(const ECS::EventData&, std::size_t, WorldECS &)> move(
             const irr::core::vector3df &direction, ECS::Position &pos, ECS::Speed &speed, ECS::Node &node);
 

@@ -49,6 +49,53 @@ namespace IndieStudio {
             };
     }
 
+    void World::initPlayer(WorldManager &manager, irr::scene::ISceneManager *scenemg, int playerId)
+    {
+        auto &player = ecs.addEntity();
+        irr::core::vector3df position[4] = {
+            {30, 70, 23},
+            {50, 70, 23},
+            {70, 70, 23},
+            {90, 70, 23}
+        };
+        std::string texture[4] = {
+            "black",
+            "pink",
+            "white",
+            "red"
+        };
+
+        auto node_p = scenemg->addAnimatedMeshSceneNode(scenemg->getMesh("assets/models/player.md3"));
+        ecs.setComponent(player, Node(node_p));
+	    ecs.setComponent(player, MaterialTexture(0, "assets/textures/player_" + texture[playerId] + ".png"));
+		ecs.setComponent(player, MaterialFlag(irr::video::EMF_LIGHTING, false));
+		ecs.setComponent(player, Scale(20, 20, 20));
+		ecs.setComponent(player, Position(position[playerId].X, position[playerId].Y, position[playerId].Z));
+        ecs.setComponent(player, Speed(1, 1, 1));
+
+        auto eventCB = EventCallbacks<WorldECS>();
+        IndieStudio::ECS::Event::EventData event;
+		event.type = ECS::Event::EventType::INDIE_KEYBOARD_EVENT;
+
+        auto &pos = ecs.getComponent<Position>(player);
+        auto &speed = ecs.getComponent<Speed>(player);
+        auto &nodeEcs = ecs.getComponent<Node>(player);
+
+        if (this->settings.players[playerId].controlType == WorldSettings::Player::ControlType::KEYBOARD) {
+            event.keyInput.Key = this->settings.players[playerId].keyboardUp;
+            eventCB.addCallback(event, move(direction[0], pos, speed, nodeEcs));
+            event.keyInput.Key = this->settings.players[playerId].keyboardDown;
+            eventCB.addCallback(event, move(direction[1], pos, speed, nodeEcs));
+            event.keyInput.Key = this->settings.players[playerId].keyboardLeft;
+            eventCB.addCallback(event, move(direction[2], pos, speed, nodeEcs));
+            event.keyInput.Key = this->settings.players[playerId].keyboardRight;
+            eventCB.addCallback(event, move(direction[3], pos, speed, nodeEcs));
+        }
+
+        ecs.setComponent(player, eventCB);
+        ecs.setComponent(player, Setup());
+    }
+
     void World::create(WorldManager &manager)
     {
         IWorldGenerator *generator = nullptr;
@@ -119,35 +166,10 @@ namespace IndieStudio {
             ecs.setComponent(newBlock, Setup());
         });
 
-        auto &player1 = ecs.addEntity();
-
-        auto node_p = scenemg->addAnimatedMeshSceneNode(scenemg->getMesh("assets/models/player.md3"));
-        ecs.setComponent(player1, Node(node_p));
-	    ecs.setComponent(player1, MaterialTexture(0, "assets/textures/player_black.png"));
-		ecs.setComponent(player1, MaterialFlag(irr::video::EMF_LIGHTING, false));
-		ecs.setComponent(player1, Scale(20, 20, 20));
-		ecs.setComponent(player1, Position(30, 70, 23));
-        ecs.setComponent(player1, Speed(1, 1, 1));
-
-        auto eventCB = EventCallbacks<WorldECS>();
-        IndieStudio::ECS::Event::EventData event;
-		event.type = ECS::Event::EventType::INDIE_KEYBOARD_EVENT;
-        event.keyInput.Key = irr::KEY_UP;
-
-        auto &pos = ecs.getComponent<Position>(player1);
-        auto &speed = ecs.getComponent<Speed>(player1);
-        auto &nodeEcs = ecs.getComponent<Node>(player1);
-
-        eventCB.addCallback(event, move(direction[0], pos, speed, nodeEcs));
-
-        event.keyInput.Key = irr::KEY_DOWN;
-        eventCB.addCallback(event, move(direction[1], pos, speed, nodeEcs));
-
-        event.keyInput.Key = irr::KEY_LEFT;
-        eventCB.addCallback(event, move(direction[2], pos, speed, nodeEcs));
-
-        event.keyInput.Key = irr::KEY_RIGHT;
-        eventCB.addCallback(event, move(direction[3], pos, speed, nodeEcs));
+        initPlayer(manager, scenemg, 0);
+        initPlayer(manager, scenemg, 1);
+        initPlayer(manager, scenemg, 2);
+        initPlayer(manager, scenemg, 3);
 
         // eventCB.addCallback(event,
         //     [&] (const EventData& event, std::size_t id, WorldECS &ecs)
@@ -162,9 +184,6 @@ namespace IndieStudio {
         //         pos.y = newPos.Y;
         //         pos.z = newPos.Z;
         //     });
-
-        ecs.setComponent(player1, eventCB);
-        ecs.setComponent(player1, Setup());
 
         Initializer<WorldECS>::initAllEntities(ecs, scenemg);
     }
