@@ -22,8 +22,13 @@ namespace IndieStudio::ECS::System {
         void process(ManagerType &manager, World *world) override {
             (void) world;
 
+<<<<<<< HEAD
             manager.template forEntitiesWith<IA, Speed, Position>(
                 [&manager, world, this](auto &data, auto id) {
+=======
+            manager.template forEntitiesWith<IA>(
+                [&manager, this](auto &data, [[gnu::unused]] auto id) {
+>>>>>>> 280d8a92f669cb70911c54e4177769fa5df07179
                     auto &ia = manager.template getComponent<IA>(data);
                     auto &speed = manager.template getComponent<Speed>(data);
                     auto &position = manager.template getComponent<Position>(data);
@@ -69,11 +74,12 @@ namespace IndieStudio::ECS::System {
                 case IA::Action::ATK: return atk_player();
                 case IA::Action::WALL: return destroy_wall();
                 case IA::Action::PICKUP: return pick_powerup();
+                default: return false;
             }
         }
 
         bool atk_player() {
-            return false;
+            return true;
         }
 
         bool destroy_wall() {
@@ -127,6 +133,7 @@ namespace IndieStudio::ECS::System {
     };
 }
 
+namespace IndieStudio {
 struct Tile {
     std::size_t delta;
     MapPattern::TileType type;
@@ -175,9 +182,10 @@ private:
         for (std::size_t i = 0 ; i < map->getHeight() ; i++) {
             hitmap.push_back(std::vector<Tile>());
             for (std::size_t j = 0 ; j < map->getWidth() ; j++) {
-                hitmap[i].push_back({-1, map->get(j, 1, i)});
+                hitmap[i].push_back({static_cast<std::size_t>(-1), map->get(j, 1, i)});
             }
         }
+        return hitmap;
     }
 
     void fill_hitmap(Hitmap &hitmap, Coord coord, std::size_t current) {
@@ -202,11 +210,7 @@ private:
             case MapPattern::TileType::EMPTY: return false;
             case MapPattern::TileType::PLAYER: return false;
             case MapPattern::TileType::POWER_UP: return false;
-            case MapPattern::TileType::BOMB: return true;
-            case MapPattern::TileType::BOMB_EXPLOSION: return true;
-            case MapPattern::TileType::BREAKABLE_WALL: return true;
-            case MapPattern::TileType::BORDER_WALL_BLOCK: return true;
-            case MapPattern::TileType::INNER_WALL_BLOCK: return true;
+            default: return true;
         }
     }
 
@@ -278,3 +282,4 @@ private:
     }
 
 };
+}
