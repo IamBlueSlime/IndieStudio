@@ -45,7 +45,7 @@ namespace IndieStudio {
         ECS::Component::Setup
     >;
 
-    using WorldECSSystems = ECS::Systems<
+    using WorldECSSystems = ECS::SystemsImpl<
         WorldECS,
         ECS::System::EventSystem<WorldECS>,
         ECS::System::ApplyExplosion<WorldECS>,
