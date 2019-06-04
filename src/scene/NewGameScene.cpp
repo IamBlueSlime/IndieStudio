@@ -119,6 +119,7 @@ namespace IndieStudio {
         playerTypeBox->addItem(L"Keyboard");
         playerTypeBox->addItem(L"Controller");
         playerTypeBox->addItem(L"AI");
+        playerTypeBox->setSelected(static_cast<irr::s32>(settings.players[idx].controlType));
 
         origin.X += 20;
         origin.Y += 40;
@@ -146,6 +147,11 @@ namespace IndieStudio {
     void NewGameScene::updateKeyboardButtons(SceneManager::Scene &scene)
     {
         for (int i = 0; i < 4; i += 1) {
+            irr::gui::IGUIComboBox *comboBox = static_cast<irr::gui::IGUIComboBox *>(
+                scene.gui->getElementFromId(42 + (i * 10)));
+            
+            bool visible = comboBox->getSelected() == 0;
+
             irr::EKEY_CODE *codes[5] = {
                 &settings.players[i].keyboardUp,
                 &settings.players[i].keyboardLeft,
@@ -158,6 +164,7 @@ namespace IndieStudio {
                 std::wstring tmp;
                 tmp += *codes[j - 1];
                 scene.gui->getElementFromId(42 + (i * 10) + j)->setText(tmp.c_str());
+                scene.gui->getElementFromId(42 + (i * 10) + j)->setVisible(visible);
             }
         }
     }
@@ -244,14 +251,7 @@ namespace IndieStudio {
             if (comboBox->getID() < 42)
                 return false;
             
-            int idx = (comboBox->getID() - 42) / 10;
-            bool visible = comboBox->getSelected() == 0;
-
-            for (int i = 1; i < 6; i += 1) {
-                static_cast<irr::gui::IGUIButton *>(
-                    scene.gui->getElementFromId(42 + (idx * 10) + i))->setVisible(visible);
-            }
-
+            updateKeyboardButtons(scene);
             return true;
         } else if (event.EventType == irr::EET_KEY_INPUT_EVENT
         && isValidKeyboardKey(event.KeyInput.Key)
