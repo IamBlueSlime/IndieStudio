@@ -16,12 +16,14 @@
 #include "indiestudio/ecs/TypeList.hpp"
 #include "indiestudio/ecs/Entity.hpp"
 
+namespace IndieStudio {
+    class World;
+}
+
 namespace IndieStudio::ECS {
 
     template<typename... ComponentTypes>
     class Manager;
-
-    class World;
 
     namespace System {
 

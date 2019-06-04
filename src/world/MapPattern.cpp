@@ -13,7 +13,7 @@ namespace IndieStudio {
     {
         unsigned int tileCount = 0;
 
-        this->forEach([&](short x, short y, short z, TileType tileType) {
+        this->forEach([&](unsigned short x, unsigned short y, unsigned short z, TileType tileType) {
             (void) x;
             (void) y;
             (void) z;
@@ -26,7 +26,7 @@ namespace IndieStudio {
 
         buffer << tileCount;
 
-        this->forEach([&](short x, short y, short z, TileType tileType) {
+        this->forEach([&](unsigned short x, unsigned short y, unsigned short z, TileType tileType) {
             if (tileType == TileType::EMPTY)
                 return;
             
