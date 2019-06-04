@@ -21,6 +21,8 @@ namespace IndieStudio::ECS {
     template<typename... ComponentTypes>
     class Manager;
 
+    class World;
+
     namespace System {
 
         template<typename ManagerType>
@@ -44,17 +46,18 @@ namespace IndieStudio::ECS {
         template<typename ManagerType, typename... SystemTypes>
         struct SystemsImpl : public Systems<SystemTypes...> {
 
-            SystemsImpl(ManagerType &manager_)
-            :
-            manager(manager_) {}
+            SystemsImpl(ManagerType &manager, World *world)
+                : manager(manager), world(world)
+            {}
 
             void process() final {
                 TypeList<SystemTypes...>::forEach([this](auto ref, [[gnu::unused]] std::size_t idx) {
-                    std::get<typeof(ref)>(this->systems).process(this->manager);
+                    std::get<typeof(ref)>(this->systems).process(this->manager, world);
                 });
             }
 
             ManagerType &manager;
+            World *world;
             std::tuple<SystemTypes...> systems;
 
         };
