@@ -7,7 +7,6 @@
 
 #include "indiestudio/Game.hpp"
 #include "indiestudio/ecs/Events.hpp"
-#include "indiestudio/world/MapPattern.hpp"
 #include "indiestudio/world/World.hpp"
 #include "indiestudio/world/WorldManager.hpp"
 #include "indiestudio/Singleton.hpp"
@@ -17,6 +16,7 @@ namespace IndieStudio {
 
     World::World(WorldSettings settings)
         : settings(settings),
+        pattern(std::make_unique<MapPattern>(settings.width, settings.height)),
         scene(Game::INSTANCE->getSceneManager().getScene(SceneManager::PLAY_ID))
     {}
 
@@ -25,7 +25,6 @@ namespace IndieStudio {
 
     void World::create(WorldManager &manager)
     {
-        MapPattern pattern(this->settings.width, this->settings.height);
         IWorldGenerator *generator = nullptr;
 
         for (auto it = manager.getGenerators().begin(); it != manager.getGenerators().end(); ++it) {
@@ -59,10 +58,11 @@ namespace IndieStudio {
         ecs.setComponent(bomb, LifeTime());
         ecs.setComponent(bomb, Setup());
 
-        generator->generate(pattern);
-	    pattern.forEach([&](int x, int y, int z, char c) {
-	    	if (c == IndieStudio::MapPattern::EMPTY_TILE)
+        generator->generate(this->pattern.get());
+	    this->pattern->forEach([&](int x, int y, int z, MapPattern::TileType tileType) {
+	    	if (tileType == MapPattern::TileType::EMPTY)
 	    		return;
+
             auto &newBlock = ecs.addEntity();
 
             ecs.setComponent(newBlock, Node(static_cast<irr::scene::IAnimatedMeshSceneNode *>(node->clone())));
@@ -71,26 +71,29 @@ namespace IndieStudio {
                 node->getPosition().Y + node->getScale().Y * (y == 1 ? 1 : 0),
                 node->getPosition().Z + node->getScale().Z * z
             ));
-	    	if (c == IndieStudio::MapPattern::GROUND_FIRST_TILE) {
+
+	    	if (tileType == MapPattern::TileType::FLOOR_FIRST) {
 	    		ecs.setComponent(newBlock, MaterialTexture(0, "assets/textures/block_ground_1.png"));
                 ecs.setComponent(newBlock, Scale(20.0, 20.0, 20.0));
-	    	} else if (c == IndieStudio::MapPattern::GROUND_SECOND_TILE) {
+	    	} else if (tileType == MapPattern::TileType::FLOOR_SECOND) {
 	    	    ecs.setComponent(newBlock, MaterialTexture(0, "assets/textures/block_ground_2.png"));
                 ecs.setComponent(newBlock, Scale(20.0, 20.0, 20.0));
-	    	} else if (c == IndieStudio::MapPattern::BORDER_WALL_TILE) {
+	    	} else if (tileType == MapPattern::TileType::BORDER_WALL_BLOCK) {
 	    		ecs.setComponent(newBlock, MaterialTexture(0, "assets/textures/block_wall.png"));
                 ecs.setComponent(newBlock, Scale(20.0, 20.0, 20.0));
-	    	} else if (c == IndieStudio::MapPattern::INNER_WALL_TILE) {
+	    	} else if (tileType == MapPattern::TileType::INNER_WALL_BLOCK) {
 	    		ecs.setComponent(newBlock, MaterialTexture(0, "assets/textures/block_wall.png"));
                 ecs.setComponent(newBlock, Scale(20.0 * 0.9, 20.0 * 0.9, 20.0 * 0.9));
-            } else if (c == IndieStudio::MapPattern::BREAKABLE_BLOCK_TILE) {
+            } else if (tileType == MapPattern::TileType::BREAKABLE_BLOCK) {
 	    		ecs.setComponent(newBlock, MaterialTexture(0, "assets/textures/block_brick.png"));
                 ecs.setComponent(newBlock, Scale(20.0 * 0.9, 20.0 * 0.9, 20.0 * 0.9));
             }
+
             ecs.setComponent(newBlock, MaterialFlag(irr::video::EMF_LIGHTING, true));
             ecs.setComponent(newBlock, Setup());
 	    });
-        IndieStudio::Initializer<WorldECS>::initAllEntities(ecs, scenemg);
+
+        Initializer<WorldECS>::initAllEntities(ecs, scenemg);
     }
 
     void World::focusECS(irr::scene::ISceneManager *sceneManager)
@@ -115,11 +118,15 @@ namespace IndieStudio {
     void World::pack(ByteBuffer &buffer) const
     {
         this->settings.pack(buffer);
+        this->pattern->pack(buffer);
     }
 
     void World::unpack(ByteBuffer &buffer)
     {
         this->settings.unpack(buffer);
+        this->pattern = std::make_unique<MapPattern>(this->settings.width,
+            this->settings.height);
+        this->pattern->unpack(buffer);
 
         // TODO: Restore the entities in the ECS
     }

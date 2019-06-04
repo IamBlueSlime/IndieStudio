@@ -16,7 +16,9 @@ namespace IndieStudio::ECS::System {
     template<typename ManagerType>
     class EventSystem : public BaseSystem<ManagerType> {
     public:
-        void process(ManagerType &manager) override {
+        void process(ManagerType &manager, World *world) override {
+            (void) world;
+
             manager.template forEntitiesWith<EventCallbacks<ManagerType>>(
                 [&manager](auto &data, auto id) {
                     auto &event_manager = manager.getEventManager();

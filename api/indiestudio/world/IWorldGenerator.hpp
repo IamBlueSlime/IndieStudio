@@ -14,7 +14,7 @@ namespace IndieStudio {
     class IWorldGenerator {
 	public:
 		virtual ~IWorldGenerator() = default;
-		virtual void generate(MapPattern &pattern) = 0;
+		virtual void generate(MapPattern *pattern) = 0;
     };
 
 }

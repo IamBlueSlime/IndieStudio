@@ -17,7 +17,9 @@ namespace IndieStudio::ECS::System {
     template<typename ManagerType>
     class ApplyExplosion : public BaseSystem<ManagerType> {
     public:
-        void process(ManagerType &manager) override {
+        void process(ManagerType &manager, World *world) override {
+            (void) world;
+
             std::cout << "BOMB2 ?" << std::endl;
             manager.template forEntitiesWith<IsBomb, Position, IsExploding, ExplosionRange>(
             [&manager](auto &data, [[gnu::unused]] auto id) {
