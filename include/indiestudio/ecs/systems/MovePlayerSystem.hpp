@@ -17,9 +17,9 @@ namespace IndieStudio::ECS::System {
     template<typename ManagerType>
     class MovePlayer : public BaseSystem<ManagerType> {
     public:
+        bool isColliding(short playerX, short playerZ, short directionX, short directionZ, World *world);
         void process(ManagerType &manager, World *world) override {
             (void) world;
-
             manager.template forEntitiesWith<Position, Speed, Movable>(
                 [&manager](auto &data, [[gnu::unused]] auto id) {
                     auto &pos = manager.template getComponent<Position>(data);
