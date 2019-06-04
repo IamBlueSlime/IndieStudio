@@ -9,75 +9,97 @@
 
 #include <functional>
 #include <memory>
+#include "indiestudio/common/ISerializable.hpp"
 
 namespace IndieStudio {
 
-    class MapPattern {
+    class MapPattern : public ISerializable {
 	public:
-        static const char BORDER_WALL_TILE = '#';
-        static const char INNER_WALL_TILE = '*';
-        static const char BREAKABLE_BLOCK_TILE = 'X';
-        static const char GROUND_FIRST_TILE = '1';
-        static const char GROUND_SECOND_TILE = '2';
-        static const char EMPTY_TILE = '0';
+        enum class TileType {
+            // On the player level
+            EMPTY,
+            PLAYER,
+            BOMB,
+            BOMB_EXPLOSION,
+            POWER_UP,
+            BREAKABLE_BLOCK,
+            BORDER_WALL_BLOCK,
+            INNER_WALL_BLOCK,
 
-		MapPattern(int width, int height) : width(width), height(height)
+            // On the floor
+            FLOOR_FIRST,
+            FLOOR_SECOND
+        };
+
+		MapPattern(short width, short height) : width(width), height(height)
         {
-            this->ground = std::make_unique<unsigned char []>(width * height);
-            this->walls = std::make_unique<unsigned char []>(width * height);
+            this->ground = std::make_unique<TileType[]>(width * height);
+            this->walls = std::make_unique<TileType[]>(width * height);
 
-            for (int x = 1; x < this->width - 1; x += 1)
-                for (int z = 1; z < this->height - 1; z += 1)
-                    this->set(x, 0, z, GROUND_FIRST_TILE);
+            for (short x = 1; x < this->width - 1; x += 1)
+                for (short z = 1; z < this->height - 1; z += 1)
+                    this->set(x, 0, z, TileType::FLOOR_FIRST);
             
-            for (int x = 1; x < this->width - 1; x += 1)
-                for (int z = 1; z < this->height - 1; z += 1)
-                    this->set(x, 1, z, BREAKABLE_BLOCK_TILE);
+            for (short x = 1; x < this->width - 1; x += 1)
+                for (short z = 1; z < this->height - 1; z += 1)
+                    this->set(x, 1, z, TileType::BREAKABLE_BLOCK);
             
             // This code generate the horizontal walls
-            for (int x = 0; x < this->width; x += 1) {
-                this->set(x, 1, 0, BORDER_WALL_TILE);
-                this->set(x, 1, height - 1, BORDER_WALL_TILE);
+            for (short x = 0; x < this->width; x += 1) {
+                this->set(x, 1, 0, TileType::BORDER_WALL_BLOCK);
+                this->set(x, 1, height - 1, TileType::BORDER_WALL_BLOCK);
             }
 
             // This code generate the vertical walls
-            for (int z = 0; z < this->height; z += 1) {
-                this->set(0, 1, z, BORDER_WALL_TILE);
-                this->set(width - 1, 1, z, BORDER_WALL_TILE);
+            for (short z = 0; z < this->height; z += 1) {
+                this->set(0, 1, z, TileType::BORDER_WALL_BLOCK);
+                this->set(width - 1, 1, z, TileType::BORDER_WALL_BLOCK);
             }
         }
 
-        void forEach(std::function<void(int, int, int, unsigned char)> callback) const
+        void forEach(std::function<void(short, short, short, TileType)> callback) const
         {
-            for (int x = 0; x < this->width; x += 1) {
-                for (int z = 0; z < this->height; z += 1) {
+            for (short x = 0; x < this->width; x += 1) {
+                for (short z = 0; z < this->height; z += 1) {
                     callback(x, 0, z, this->get(x, 0, z));
                     callback(x, 1, z, this->get(x, 1, z));
                 }
             }
         }
 
-        void set(int x, int y, int z, unsigned char value)
+        void set(short x, short y, short z, TileType value)
         {
-            unsigned char *ptr = (y == 0 ? this->ground.get() : this->walls.get());
+            TileType *ptr = (y == 0 ? this->ground.get() : this->walls.get());
             ptr[z * this->width + x] = value;
         }
 
-        unsigned char get(int x, int y, int z) const
+        TileType get(short x, short y, short z) const
         {
-            unsigned char *ptr = (y == 0 ? this->ground.get() : this->walls.get());
+            TileType *ptr = (y == 0 ? this->ground.get() : this->walls.get());
             return ptr[z * this->width + x];
         }
 
-        int getWidth() const { return this->width; }
-        int getHeight() const { return this->height; }
+        bool isWalkable(short x, short z) const
+        {
+            TileType tileType = this->get(x, 1, z);
+
+            return tileType == TileType::EMPTY || tileType == TileType::BOMB_EXPLOSION
+                || tileType == TileType::PLAYER || tileType == TileType::POWER_UP;
+        }
+
+        short getWidth() const { return this->width; }
+        short getHeight() const { return this->height; }
+
+        /* ISerializable implementation */
+        void pack(ByteBuffer &buffer) const override;
+        void unpack(ByteBuffer &buffer) override;
 
 	protected:
 	private:
-        const int width;
-        const int height;
-        std::unique_ptr<unsigned char []> ground;
-        std::unique_ptr<unsigned char []> walls;
+        const short width;
+        const short height;
+        std::unique_ptr<TileType[]> ground;
+        std::unique_ptr<TileType[]> walls;
     };
 
 }

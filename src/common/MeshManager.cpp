@@ -12,31 +12,31 @@
 
 namespace IndieStudio {
 
-    MeshManager::MeshManager() : logger("Meshmanager")
+    MeshManager::MeshManager() : logger("meshmanager")
     {}
 
     void MeshManager::registerMesh(std::string id)
     {
-        Mesh Mesh;
-        Mesh.content = Singleton::getDevice()->getSceneManager()->getMesh(id.c_str());
+        Mesh mesh;
+        mesh.content = Singleton::getDevice()->getSceneManager()->getMesh(id.c_str());
 
-        if (!Mesh.content)
-            throw std::runtime_error("Failed to load the Mesh " + id);
+        if (!mesh.content)
+            throw std::runtime_error("Failed to load the mesh " + id);
 
-        this->registerMesh(id, Mesh);
+        this->registerMesh(id, mesh);
     }
 
-    void MeshManager::registerMesh(std::string id, Mesh &Mesh,
+    void MeshManager::registerMesh(std::string id, Mesh &mesh,
         bool overrideExisting)
     {
-        this->registry.add(id, std::move(Mesh), overrideExisting);
-        this->logger.debug("Registered Mesh '" + id + "'.");
+        this->registry.add(id, std::move(mesh), overrideExisting);
+        this->logger.debug("Registered mesh '" + id + "'.");
     }
 
     MeshManager::Mesh &MeshManager::getMesh(const std::string &id)
     {
         if (!this->registry.has(id))
-            throw std::runtime_error("Failed to find Mesh with id " + id);
+            throw std::runtime_error("Failed to find mesh with id " + id);
 
         return this->registry.get(id);
     }

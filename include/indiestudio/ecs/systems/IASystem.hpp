@@ -19,7 +19,9 @@ namespace IndieStudio::ECS::System {
     template<typename ManagerType>
     class IASystem : public BaseSystem<ManagerType> {
     public:
-        void process(ManagerType &manager) override {
+        void process(ManagerType &manager, World *world) override {
+            (void) world;
+
             manager.template forEntitiesWith<IA>(
                 [&manager, this](auto &data, auto id) {
 

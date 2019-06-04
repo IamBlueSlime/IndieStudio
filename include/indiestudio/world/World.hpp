@@ -7,10 +7,12 @@
 
 #pragma once
 
+#include <memory>
 #include <irrlicht.h>
 #include "indiestudio/common/ISerializable.hpp"
 #include "indiestudio/ecs/ECSManager.hpp"
 #include "indiestudio/scene/SceneManager.hpp"
+#include "indiestudio/world/MapPattern.hpp"
 #include "indiestudio/world/WorldSettings.hpp"
 #include "indiestudio/utils/Packed.hpp"
 
@@ -76,11 +78,13 @@ namespace IndieStudio {
         void unpack(ByteBuffer &buffer) override;
 
         WorldSettings &getSettings() { return this->settings; }
+        MapPattern *getPattern() { return this->pattern.get(); }
         const WorldSettings &getSettings() const { return this->settings; }
 
     protected:
     private:
         WorldSettings settings;
+        std::unique_ptr<MapPattern> pattern;
         WorldECS ecs;
         SceneManager::Scene &scene;
     };

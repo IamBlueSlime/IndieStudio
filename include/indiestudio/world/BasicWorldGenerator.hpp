@@ -13,7 +13,7 @@ namespace IndieStudio {
 
     class BasicWorldGenerator : public IWorldGenerator {
 	public:
-        void generate(MapPattern &pattern) override;
+        void generate(MapPattern *pattern) override;
 
 	protected:
 	private:
