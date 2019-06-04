@@ -24,8 +24,10 @@ namespace IndieStudio::ECS::System {
                 [&manager](auto &data, [[gnu::unused]] auto id) {
                     auto &explosionTime = manager.template getComponent<ExplosionLifeTime>(data);
 
-                    if ((std::time(nullptr) - explosionTime.explosionLifeTime) >= 1)
-                        manager.delEntity(data);
+                    if ((std::time(nullptr) - explosionTime.explosionLifeTime) >= 1) {
+                        manager.template unsetComponent<IsExploding>(data);
+                        manager.template unsetComponent<ExplosionLifeTime>(data);
+                    }
             });
         }
     protected:

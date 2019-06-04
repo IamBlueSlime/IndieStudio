@@ -53,8 +53,9 @@ namespace IndieStudio {
         ecs.setComponent(bomb, MaterialTexture(0, "assets/textures/bomb.png"));
 		ecs.setComponent(bomb, MaterialFlag(irr::video::EMF_LIGHTING, true));
 		ecs.setComponent(bomb, Scale(3.5, 3.5, 3.5));
-		ecs.setComponent(bomb, Position(30, 70, 23));
+		ecs.setComponent(bomb, Position(40.5, 70, 100.5));
         ecs.setComponent(bomb, IsBomb());
+        ecs.setComponent(bomb, ExplosionRange());
         ecs.setComponent(bomb, LifeTime());
         ecs.setComponent(bomb, Setup());
 
@@ -87,6 +88,7 @@ namespace IndieStudio {
             } else if (tileType == MapPattern::TileType::BREAKABLE_BLOCK) {
 	    		ecs.setComponent(newBlock, MaterialTexture(0, "assets/textures/block_brick.png"));
                 ecs.setComponent(newBlock, Scale(20.0 * 0.9, 20.0 * 0.9, 20.0 * 0.9));
+                ecs.setComponent(newBlock, Alive());
             }
 
             ecs.setComponent(newBlock, MaterialFlag(irr::video::EMF_LIGHTING, true));
