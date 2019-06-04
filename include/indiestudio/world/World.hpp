@@ -47,6 +47,7 @@ namespace IndieStudio {
 
     using WorldECSSystems = ECS::SystemsImpl<
         WorldECS,
+        ECS::System::EventSystem<WorldECS>,
         ECS::System::ApplyExplosion<WorldECS>,
         ECS::System::ExplosionDuration<WorldECS>,
         ECS::System::MovePlayer<WorldECS>,
@@ -71,7 +72,11 @@ namespace IndieStudio {
         void create(WorldManager &manager);
 
         void focusECS(irr::scene::ISceneManager *sceneManager);
-        void forwardEvent(ECS::Event::EventData &event);
+        void forwardEvent(ECS::Event::EventData event);
+
+        void initPlayer(WorldManager &manager, irr::scene::ISceneManager *scenemg, int playerId);
+        std::function<void(const ECS::EventData&, std::size_t, WorldECS &)> move(
+            const irr::core::vector3df &direction, ECS::Position &pos, ECS::Speed &speed, ECS::Node &node);
 
         /* ISerializable implementation */
         void pack(ByteBuffer &buffer) const override;
@@ -83,6 +88,12 @@ namespace IndieStudio {
 
     protected:
     private:
+        irr::core::vector3df direction[4] = {
+            {0, 0, 1},
+            {0, 0, -1},
+            {-1, 0, 0},
+            {1, 0, 0}
+        };
         WorldSettings settings;
         std::unique_ptr<MapPattern> pattern;
         WorldECS ecs;

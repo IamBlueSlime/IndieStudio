@@ -23,6 +23,79 @@ namespace IndieStudio {
     World::World() : World(WorldSettings())
     {}
 
+    static irr::core::vector3df try_move(irr::scene::ISceneNode *node, const irr::core::vector3df &vector, const irr::core::vector3df &velocity)
+    {
+        irr::core::vector3df actPos(node->getAbsolutePosition());
+        irr::core::vector3df newPos(
+            actPos.X + (vector.X * velocity.X),
+            actPos.Y + (vector.Y * velocity.Y),
+            actPos.Z + (vector.Z * velocity.Z));
+        //TODO: check boundingbox at newPos, if can't move return actPos
+        node->setPosition(newPos);
+        return newPos;
+    }
+
+    std::function<void(const ECS::EventData&, std::size_t, WorldECS &)> World::move(
+        const irr::core::vector3df &direction, ECS::Position &pos, ECS::Speed &speed, ECS::Node &node)
+    {
+        return [&] (const EventData &event, std::size_t id, WorldECS &ecs)
+            {
+                irr::core::vector3df newPos(
+                    try_move(node.node, direction, irr::core::vector3df(speed.x, speed.y, speed.z))
+                );
+                pos.x = newPos.X;
+                pos.y = newPos.Y;
+                pos.z = newPos.Z;
+            };
+    }
+
+    void World::initPlayer(WorldManager &manager, irr::scene::ISceneManager *scenemg, int playerId)
+    {
+        auto &player = ecs.addEntity();
+        irr::core::vector3df position[4] = {
+            {30, 70, 23},
+            {50, 70, 23},
+            {70, 70, 23},
+            {90, 70, 23}
+        };
+        std::string texture[4] = {
+            "black",
+            "pink",
+            "white",
+            "red"
+        };
+
+        auto node_p = scenemg->addAnimatedMeshSceneNode(scenemg->getMesh("assets/models/player.md3"));
+        ecs.setComponent(player, Node(node_p));
+	    ecs.setComponent(player, MaterialTexture(0, "assets/textures/player_" + texture[playerId] + ".png"));
+		ecs.setComponent(player, MaterialFlag(irr::video::EMF_LIGHTING, false));
+		ecs.setComponent(player, Scale(20, 20, 20));
+		ecs.setComponent(player, Position(position[playerId].X, position[playerId].Y, position[playerId].Z));
+        ecs.setComponent(player, Speed(1, 1, 1));
+
+        auto eventCB = EventCallbacks<WorldECS>();
+        IndieStudio::ECS::Event::EventData event;
+		event.type = ECS::Event::EventType::INDIE_KEYBOARD_EVENT;
+
+        auto &pos = ecs.getComponent<Position>(player);
+        auto &speed = ecs.getComponent<Speed>(player);
+        auto &nodeEcs = ecs.getComponent<Node>(player);
+
+        if (this->settings.players[playerId].controlType == WorldSettings::Player::ControlType::KEYBOARD) {
+            event.keyInput.Key = this->settings.players[playerId].keyboardUp;
+            eventCB.addCallback(event, move(direction[0], pos, speed, nodeEcs));
+            event.keyInput.Key = this->settings.players[playerId].keyboardDown;
+            eventCB.addCallback(event, move(direction[1], pos, speed, nodeEcs));
+            event.keyInput.Key = this->settings.players[playerId].keyboardLeft;
+            eventCB.addCallback(event, move(direction[2], pos, speed, nodeEcs));
+            event.keyInput.Key = this->settings.players[playerId].keyboardRight;
+            eventCB.addCallback(event, move(direction[3], pos, speed, nodeEcs));
+        }
+
+        ecs.setComponent(player, eventCB);
+        ecs.setComponent(player, Setup());
+    }
+
     void World::create(WorldManager &manager)
     {
         IWorldGenerator *generator = nullptr;
@@ -91,17 +164,37 @@ namespace IndieStudio {
 
             ecs.setComponent(newBlock, MaterialFlag(irr::video::EMF_LIGHTING, true));
             ecs.setComponent(newBlock, Setup());
-	    });
+        });
+
+        initPlayer(manager, scenemg, 0);
+        initPlayer(manager, scenemg, 1);
+        initPlayer(manager, scenemg, 2);
+        initPlayer(manager, scenemg, 3);
+
+        // eventCB.addCallback(event,
+        //     [&] (const EventData& event, std::size_t id, WorldECS &ecs)
+        //     {
+        //         auto &pos = ecs.getComponent<Position>(player1);
+        //         auto &speed = ecs.getComponent<Speed>(player1);
+        //         auto &node = ecs.getComponent<Node>(player1).node;
+        //         irr::core::vector3df newPos(
+        //             move_player(node, irr::core::vector3df(0, 0, 1), irr::core::vector3df(speed.x, speed.y, speed.z))
+        //         );
+        //         pos.x = newPos.X;
+        //         pos.y = newPos.Y;
+        //         pos.z = newPos.Z;
+        //     });
 
         Initializer<WorldECS>::initAllEntities(ecs, scenemg);
     }
 
     void World::focusECS(irr::scene::ISceneManager *sceneManager)
     {
-        auto systems = WorldECSSystems(this->ecs);
+        auto systems = WorldECSSystems(this->ecs, this);
 
         while (Game::INSTANCE->getSceneManager().getActive() == SceneManager::PLAY_ID
         && Singleton::getDevice()->run()) {
+            this->ecs.getEventManager().switch_event_queue();
             sceneManager->getVideoDriver()->beginScene(true, true);
             systems.process();
             this->ecs.getEventManager().clear_event_queue();
@@ -110,7 +203,7 @@ namespace IndieStudio {
         }
     }
 
-    void World::forwardEvent(ECS::Event::EventData &event)
+    void World::forwardEvent(ECS::Event::EventData event)
     {
         this->ecs.getEventManager().push_event(event);
     }
