@@ -23,6 +23,32 @@ namespace IndieStudio {
     World::World() : World(WorldSettings())
     {}
 
+    static irr::core::vector3df try_move(irr::scene::ISceneNode *node, const irr::core::vector3df &vector, const irr::core::vector3df &velocity)
+    {
+        irr::core::vector3df actPos(node->getAbsolutePosition());
+        irr::core::vector3df newPos(
+            actPos.X + (vector.X * velocity.X),
+            actPos.Y + (vector.Y * velocity.Y),
+            actPos.Z + (vector.Z * velocity.Z));
+        //TODO: check boundingbox at newPos, if can't move return actPos
+        node->setPosition(newPos);
+        return newPos;
+    }
+
+    std::function<void(const ECS::EventData&, std::size_t, WorldECS &)> World::move(
+        const irr::core::vector3df &direction, ECS::Position &pos, ECS::Speed &speed, ECS::Node &node)
+    {
+        return [&] (const EventData &event, std::size_t id, WorldECS &ecs)
+            {
+                irr::core::vector3df newPos(
+                    try_move(node.node, direction, irr::core::vector3df(speed.x, speed.y, speed.z))
+                );
+                pos.x = newPos.X;
+                pos.y = newPos.Y;
+                pos.z = newPos.Z;
+            };
+    }
+
     void World::create(WorldManager &manager)
     {
         IWorldGenerator *generator = nullptr;
@@ -101,18 +127,41 @@ namespace IndieStudio {
 		ecs.setComponent(player1, MaterialFlag(irr::video::EMF_LIGHTING, false));
 		ecs.setComponent(player1, Scale(20, 20, 20));
 		ecs.setComponent(player1, Position(30, 70, 23));
+        ecs.setComponent(player1, Speed(1, 1, 1));
 
         auto eventCB = EventCallbacks<WorldECS>();
         IndieStudio::ECS::Event::EventData event;
-        event.keyInput.Key = irr::KEY_LEFT;
 		event.type = ECS::Event::EventType::INDIE_KEYBOARD_EVENT;
+        event.keyInput.Key = irr::KEY_UP;
 
-        eventCB.addCallback(event,
-            [&] (const EventData& event, std::size_t id, WorldECS &ecs)
-            {
-                std::cout << "hello" << std::endl;
-            }
-        );
+        auto &pos = ecs.getComponent<Position>(player1);
+        auto &speed = ecs.getComponent<Speed>(player1);
+        auto &nodeEcs = ecs.getComponent<Node>(player1);
+
+        eventCB.addCallback(event, move(direction[0], pos, speed, nodeEcs));
+
+        event.keyInput.Key = irr::KEY_DOWN;
+        eventCB.addCallback(event, move(direction[1], pos, speed, nodeEcs));
+
+        event.keyInput.Key = irr::KEY_LEFT;
+        eventCB.addCallback(event, move(direction[2], pos, speed, nodeEcs));
+
+        event.keyInput.Key = irr::KEY_RIGHT;
+        eventCB.addCallback(event, move(direction[3], pos, speed, nodeEcs));
+
+        // eventCB.addCallback(event,
+        //     [&] (const EventData& event, std::size_t id, WorldECS &ecs)
+        //     {
+        //         auto &pos = ecs.getComponent<Position>(player1);
+        //         auto &speed = ecs.getComponent<Speed>(player1);
+        //         auto &node = ecs.getComponent<Node>(player1).node;
+        //         irr::core::vector3df newPos(
+        //             move_player(node, irr::core::vector3df(0, 0, 1), irr::core::vector3df(speed.x, speed.y, speed.z))
+        //         );
+        //         pos.x = newPos.X;
+        //         pos.y = newPos.Y;
+        //         pos.z = newPos.Z;
+        //     });
 
         ecs.setComponent(player1, eventCB);
         ecs.setComponent(player1, Setup());
