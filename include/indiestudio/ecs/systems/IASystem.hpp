@@ -24,7 +24,6 @@ namespace IndieStudio::ECS::System {
 
             manager.template forEntitiesWith<IA>(
                 [&manager, this](auto &data, auto id) {
-
                     auto &ia = manager.template getComponent<IA>(data);
 
                     if (this->emergency_move()) {
@@ -68,19 +67,20 @@ namespace IndieStudio::ECS::System {
                 case IA::Action::ATK: return atk_player();
                 case IA::Action::WALL: return destroy_wall();
                 case IA::Action::PICKUP: return pick_powerup();
+                default: return false;
             }
         }
 
         bool atk_player() {
-            return false;
+            return true;
         }
 
         bool destroy_wall() {
-            return false;
+            return true;
         }
 
         bool pick_powerup() {
-            return false;
+            return true;
         }
 
     protected:
@@ -88,6 +88,7 @@ namespace IndieStudio::ECS::System {
     };
 }
 
+namespace IndieStudio {
 struct Tile {
     std::size_t delta;
     MapPattern::TileType type;
@@ -107,7 +108,7 @@ class Poti {
     struct Coord {
         std::size_t x;
         std::size_t y;
-    }
+    };
 
     std::optional<Direction> search_for(MapPattern::TileType target, MapPattern *map, std::size_t x, std::size_t y) {
         Hitmap hitmap = this->init_hitmap(map);
@@ -117,7 +118,7 @@ class Poti {
             return std::nullopt;
         }
         this->reset_hitmap(hitmap);
-        this->fill_hitmap(hitmap, {target_coord.x, target_coord.y}, 0);
+        this->fill_hitmap(hitmap, {target_coord.value().x, target_coord.value().y}, 0);
         return std::make_optional(this->get_direction(hitmap, {x, y}));
     }
 
@@ -128,9 +129,10 @@ private:
         for (std::size_t i = 0 ; i < map->getHeight() ; i++) {
             hitmap.push_back(std::vector<Tile>());
             for (std::size_t j = 0 ; j < map->getWidth() ; j++) {
-                hitmap[i].push_back({-1, map->get(j, 1, i)});
+                hitmap[i].push_back({static_cast<std::size_t>(-1), map->get(j, 1, i)});
             }
         }
+        return hitmap;
     }
 
     void fill_hitmap(Hitmap &hitmap, Coord coord, std::size_t current) {
@@ -155,11 +157,7 @@ private:
             case MapPattern::TileType::EMPTY: return false;
             case MapPattern::TileType::PLAYER: return false;
             case MapPattern::TileType::POWER_UP: return false;
-            case MapPattern::TileType::BOMB: return true;
-            case MapPattern::TileType::BOMB_EXPLOSION: return true;
-            case MapPattern::TileType::BREAKABLE_WALL: return true;
-            case MapPattern::TileType::BORDER_WALL_BLOCK: return true;
-            case MapPattern::TileType::INNER_WALL_BLOCK: return true;
+            default: return true;
         }
     }
 
@@ -231,3 +229,4 @@ private:
     }
 
 };
+}

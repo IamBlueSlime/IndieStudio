@@ -35,7 +35,7 @@ namespace IndieStudio::ECS::System {
                     for (float i = 0; i <= bombRange.explosionRangeUp; i++) {
                         if (static_cast<int>(bombPosition.z + i) == static_cast<int>(position.z)) {
                             //manager.template unsetComponent<Alive>(data);
-                            manager.template delEntity(data);
+                            manager.delEntity(data);
                             bombRange.explosionRangeUp = i;
                             break;
                         }
@@ -43,7 +43,7 @@ namespace IndieStudio::ECS::System {
                     for (float i = 0; i <= bombRange.explosionRangeDown; i++) {
                         if (static_cast<int>(bombPosition.z - i) == static_cast<int>(position.z)) {
                             //manager.template unsetComponent<Alive>(data);
-                            manager.template delEntity(data);
+                            manager.delEntity(data);
                             bombRange.explosionRangeDown = i;
                             break;
                         }
@@ -51,7 +51,7 @@ namespace IndieStudio::ECS::System {
                     for (float i = 0; i <= bombRange.explosionRangeLeft; i++) {
                         if (static_cast<int>(bombPosition.x + i) == static_cast<int>(position.x)) {
                             //manager.template unsetComponent<Alive>(data);
-                            manager.template delEntity(data);
+                            manager.delEntity(data);
                             bombRange.explosionRangeLeft = i;
                             break;
                         }
@@ -59,7 +59,7 @@ namespace IndieStudio::ECS::System {
                     for (float i = 0; i <= bombRange.explosionRangeRight; i++) {
                         if (static_cast<int>(bombPosition.x - i) == static_cast<int>(position.x)) {
                             //manager.template unsetComponent<Alive>(data);
-                            manager.template delEntity(data);
+                            manager.delEntity(data);
                             bombRange.explosionRangeRight = i;
                             break;
                         }
@@ -67,7 +67,7 @@ namespace IndieStudio::ECS::System {
                 });
             });
         }
-    
+
     protected:
     private:
     };
