@@ -198,6 +198,13 @@ namespace IndieStudio::ECS::Component {
     // struct AnimatedMesh : irr::scene::IAnimatedMeshSceneNode {
     // };
 
+    struct Movement {
+        bool up = false;
+        bool down = false;
+        bool left = false;
+        bool right = false;
+    };
+
     template<typename ManagerType>
     struct EventCallbacks {
 
