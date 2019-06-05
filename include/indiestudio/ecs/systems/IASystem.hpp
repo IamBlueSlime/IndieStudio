@@ -11,127 +11,8 @@
 
 #include "indiestudio/ecs/Events.hpp"
 #include "indiestudio/world/MapPattern.hpp"
+#include "indiestudio/world/IWorld.hpp"
 
-namespace IndieStudio::ECS::System {
-
-    using namespace ECS::Event;
-
-    template<typename ManagerType>
-    class IASystem : public BaseSystem<ManagerType> {
-    public:
-        void process(ManagerType &manager, World *world) override {
-            (void) world;
-
-<<<<<<< HEAD
-            manager.template forEntitiesWith<IA, Speed, Position>(
-                [&manager, world, this](auto &data, auto id) {
-=======
-            manager.template forEntitiesWith<IA>(
-                [&manager, this](auto &data, [[gnu::unused]] auto id) {
->>>>>>> 280d8a92f669cb70911c54e4177769fa5df07179
-                    auto &ia = manager.template getComponent<IA>(data);
-                    auto &speed = manager.template getComponent<Speed>(data);
-                    auto &position = manager.template getComponent<Position>(data);
-
-                    if (this->emergency_move()) {
-                        // cancel current action
-                        ia.current_action = IA::Action::NOTHING;
-                    } else {
-                        if (ia.current_action == IA::Action::NOTHING) {
-                            ia.current_action = this->select_action();
-                        }
-                        // executer la current action
-                        while (!this->execute_action(ia.current_action)) {
-                            ia.current_action = this->select_action();
-                        }
-                    }
-                }
-            );
-        }
-
-        bool emergency_move() {
-            // dodge les cases en explosions
-            // dodge le rayon d action des bombes "endormies"
-            // renvoie true si il y a quelque chose à eviter
-            // renvoie false sinon
-
-            // This removes a warning
-            return false;
-        }
-
-        IA::Action select_action() {
-            int rand = std::rand() % 3;
-
-            switch (rand) {
-                case 0: return IA::Action::ATK;
-                case 1: return IA::Action::WALL;
-                case 2: return IA::Action::PICKUP;
-            }
-        }
-
-        bool execute_action(IA::Action action) {
-            switch (action) {
-                case IA::Action::ATK: return atk_player();
-                case IA::Action::WALL: return destroy_wall();
-                case IA::Action::PICKUP: return pick_powerup();
-                default: return false;
-            }
-        }
-
-        bool atk_player() {
-            return true;
-        }
-
-        bool destroy_wall() {
-            Poti poti();
-            std::optional<Poti::PathData> path;
-
-            path = poti.search_for(MapPattern:TileType::BREAKABLE_BLOCK, world->getPattern(), position.x, position.y);
-            if (path == std::nullopt)
-                return false;
-            if (path.pathLen == 1) {
-                //pose la bombe
-                AI.current_action = IA::Action::NOTHING;
-            } else
-                moveAI(path.dir);
-            return true;
-            return false;
-        }
-
-        bool pick_powerup() {
-            Poti poti();
-            std::optional<Poti::PathData> path;
-
-            path = poti.search_for(MapPattern:TileType::POWER_UP, world->getPattern(), position.x, position.y);
-            if (path == std::nullopt)
-                return false;
-            UpdatePosition(path.dir);
-            if (world->getPattern()->get(position.x, 1, position.y) == MapPattern::TileType::POWER_UP) {
-                pickupPowerUp();
-                AI.current_action = IA::Action::NOTHING;
-            }
-            moveAI(path.dir);
-            world->getPattern()->set(position.x, 1, position.y, MapPattern::TileType::PLAYER);
-            return true;
-        }
-
-        void pickupPowerUp() {
-            //applique l'effet du PowerUp
-        }
-
-        void UpdatePosition(Poti::Direction dir) {
-            switch (dir) {
-                case Poti::Direction::LEFT: position.x -= 1;
-                case Poti::Direction::RIGHT: position.x += 1; 
-                case Poti::Direction::TOP: position.y += 1;
-                case Poti::Direction::BOT: position.y -= 1;
-            }
-        }
-
-    protected:
-    private:
-    };
-}
 
 namespace IndieStudio {
 struct Tile {
@@ -142,6 +23,7 @@ struct Tile {
 using Hitmap = std::vector<std::vector<Tile>>;
 
 class Poti {
+public:
 
     enum class Direction {
         LEFT,
@@ -160,19 +42,17 @@ class Poti {
         std::size_t pathLen;
     };
 
-    std::optional<PathData> search_for(MapPattern::TileType target, MapPattern *map, std::size_t x, std::size_t y) {
-        PathData pathData;
+
+    std::optional<Direction> search_for(MapPattern::TileType target, MapPattern *map, std::size_t x, std::size_t y) {
         Hitmap hitmap = this->init_hitmap(map);
         this->fill_hitmap(hitmap, {x, y}, 0);
-        std::optional<std::pair<Direction, std::size_t>> target_coord = this->find_nearest_target(target, hitmap);
+        std::optional<Coord> target_coord = this->find_nearest_target(target, hitmap);
         if (target_coord == std::nullopt) {
             return std::nullopt;
         }
         this->reset_hitmap(hitmap);
-        this->fill_hitmap(hitmap, {target_coord.value().first.x, target_coord.value().first.y}, 0);
-        pathData.dir = this->get_direction(hitmap, {x, y});
-        pathData.pathLen = target_coord.value().second;
-        return std::make_optional(pathData);
+        this->fill_hitmap(hitmap, {target_coord.value().x, target_coord.value().y}, 0);
+        return std::make_optional(this->get_direction(hitmap, {x, y}));
     }
 
 private:
@@ -222,7 +102,7 @@ private:
         }
     }
 
-    std::optional<std::pair<Direction, std::size_t>> find_nearest_target(MapPattern::TileType target, const Hitmap &hitmap) {
+    std::optional<Coord> find_nearest_target(MapPattern::TileType target, const Hitmap &hitmap) {
         std::size_t nearest = -1;
         Coord nearest_target = {0, 0};
 
@@ -236,8 +116,26 @@ private:
         if (nearest == static_cast<std::size_t>(-1)) {
             return std::nullopt;
         }
-        return std::make_optional(std::make_pair(nearest_target, nearest));
+        return std::make_optional(nearest_target);
     }
+
+
+    // std::optional<std::pair<Direction, std::size_t>> find_nearest_target(MapPattern::TileType target, const Hitmap &hitmap) {
+    //     std::size_t nearest = -1;
+    //     Coord nearest_target = {0, 0};
+
+    //     for (std::size_t y = 0 ; y < hitmap.size() ; y++) {
+    //         for (std::size_t x = 0 ; x < hitmap[y].size() ; x++) {
+    //             if (hitmap[y][x].type == target) {
+    //                 is_nearest(hitmap, nearest, nearest_target, {x, y});
+    //             }
+    //         }
+    //     }
+    //     if (nearest == static_cast<std::size_t>(-1)) {
+    //         return std::nullopt;
+    //     }
+    //     return std::make_optional(std::make_pair(nearest_target, nearest));
+    // }
 
     void is_nearest(const Hitmap &hitmap, std::size_t &nearest, Coord &nearest_target, Coord current_coord) {
         if (current_coord.x > 0 && hitmap[current_coord.y][current_coord.x - 1].delta < nearest) {
@@ -282,4 +180,99 @@ private:
     }
 
 };
+}
+
+namespace IndieStudio::ECS::System {
+
+    using namespace ECS::Event;
+
+    template<typename ManagerType>
+    class IASystem : public BaseSystem<ManagerType> {
+    public:
+        void process(ManagerType &manager, World *world) override {
+            (void) world;
+
+            manager.template forEntitiesWith<IA>(
+                [&manager, world, this](auto &data, [[gnu::unused]] auto id) {
+                    auto &ia = manager.template getComponent<IA>(data);
+                    auto &speed = manager.template getComponent<Speed>(data);
+                    auto &position = manager.template getComponent<Position>(data);
+
+                    if (this->emergency_move()) {
+                        ia.current_action = IA::Action::NOTHING;
+                    } else {
+                        if (ia.current_action == IA::Action::NOTHING) {
+                            ia.current_action = this->select_action();
+                        }
+                        while (!this->execute_action(ia.current_action, position, world)) {
+                            ia.current_action = this->select_action();
+                        }
+                    }
+                }
+            );
+        }
+
+        bool emergency_move() {
+            // dodge les cases en explosions
+            // dodge le rayon d action des bombes "endormies"
+            // renvoie true si il y a quelque chose à eviter
+            // renvoie false sinon
+
+            // This removes a warning
+            return false;
+        }
+
+        IA::Action select_action() {
+            int rand = std::rand() % 3;
+
+            switch (rand) {
+                case 0: return IA::Action::ATK;
+                case 1: return IA::Action::WALL;
+                case 2: return IA::Action::PICKUP;
+                default: return IA::Action::NOTHING;
+            }
+        }
+
+        bool execute_action(IA::Action action, Position position, IWorld *world) {
+            switch (action) {
+                case IA::Action::ATK: return atk_player(position, world);
+                case IA::Action::WALL: return destroy_wall(position, world);
+                case IA::Action::PICKUP: return pick_powerup(position, world);
+                default: return false;
+            }
+        }
+
+        bool atk_player(Position position, IWorld *world) {
+            return true;
+        }
+
+        bool destroy_wall(Position position, IWorld *world) {
+//    std::optional<Direction> search_for(MapPattern::TileType target, MapPattern *map, std::size_t x, std::size_t y) {
+
+            this->poti.search_for(MapPattern::TileType::BREAKABLE_BLOCK, world->getPattern(), static_cast<std::size_t>(position.x), static_cast<std::size_t>(position.y));
+
+
+
+            // Poti poti;
+            // std::optional<Poti::PathData> path;
+
+            // path = poti.search_for(MapPattern:TileType::BREAKABLE_BLOCK, world->getPattern(), position.x, position.y);
+            // if (path == std::nullopt)
+            //     return false;
+            // if (path.pathLen == 1) {
+            //     //pose la bombe
+            //     AI.current_action = IA::Action::NOTHING;
+            // } else
+            //     moveAI(path.dir);
+            return true;
+//            return false;
+        }
+
+        bool pick_powerup(Position position, IWorld *world) {
+        }
+
+    protected:
+    private:
+        Poti poti;
+    };
 }

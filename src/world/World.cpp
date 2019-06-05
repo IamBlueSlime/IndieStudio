@@ -118,6 +118,7 @@ namespace IndieStudio {
 		node->setMaterialFlag(irr::video::EMF_LIGHTING, true);
 		node->setScale(irr::core::vector3df(20.0, 20.0, 20.0));
 		node->setPosition(irr::core::vector3df(0.5, 50, 0.5));
+        node->addShadowVolumeSceneNode(node->getMesh());
 
         auto &bomb = ecs.addEntity();
 
