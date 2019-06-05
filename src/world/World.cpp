@@ -17,7 +17,8 @@ namespace IndieStudio {
     World::World(WorldSettings settings)
         : settings(settings),
         pattern(std::make_unique<MapPattern>(settings.width, settings.height)),
-        scene(Game::INSTANCE->getSceneManager().getScene(SceneManager::PLAY_ID))
+        scene(Game::INSTANCE->getSceneManager().getScene(SceneManager::PLAY_ID)),
+        meta(this->scene.scene->createMetaTriangleSelector())
     {}
 
     World::World() : World(WorldSettings())
@@ -89,9 +90,17 @@ namespace IndieStudio {
 	    	if (tileType == MapPattern::TileType::EMPTY)
 	    		return;
 
-            auto &newBlock = ecs.addEntity();
+            // auto animator = scenemg->createCollisionResponseAnimator(meta, player1, {1, 1, 1}, {0, 0, 0});
+            // player1->addAnimator(animator)
+            // animator->drop();
 
+            auto &newBlock = ecs.addEntity();
             ecs.setComponent(newBlock, Node(static_cast<irr::scene::IAnimatedMeshSceneNode *>(node->clone())));
+            auto node = ecs.getComponent<Node>(newBlock).node;
+            auto selector = scenemg->createTriangleSelectorFromBoundingBox(node);
+            node->setTriangleSelector(selector);
+            this->meta->addTriangleSelector(selector);
+
             ecs.setComponent(newBlock, Position(
                 node->getPosition().X + node->getScale().X * x,
                 node->getPosition().Y + node->getScale().Y * (y == 1 ? 1 : 0),

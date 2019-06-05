@@ -157,13 +157,13 @@ namespace IndieStudio::ECS::Component {
         bool present;
     };
 
-    // struct TriangleSelector {
-    //     TriangleSelector(irr::scene::ITriangleSelector *_selector = nullptr)
-    //     :
-    //     selector(_selector) {}
+    struct TriangleSelector {
+        TriangleSelector(irr::scene::ITriangleSelector *_selector = nullptr)
+        :
+        selector(_selector) {}
 
-    //     irr::scene::ITriangleSelector *selector;
-    // };
+        irr::scene::ITriangleSelector *selector;
+    };
 
     struct MeshPath {
         MeshPath(std::string _meshPath = "assets/models/cube.obj")
