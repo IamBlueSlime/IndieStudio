@@ -115,7 +115,6 @@ namespace IndieStudio {
             {origin.X, origin.Y},
             {origin.X + 225, origin.Y + 20}
         ), guiRoot, 42 + (idx * 10));
-        std::cout << "idx=" << idx << std::endl;
 
         playerTypeBox->addItem(L"Keyboard");
         playerTypeBox->addItem(L"Controller");
@@ -252,10 +251,8 @@ namespace IndieStudio {
             if (comboBox->getID() < 42)
                 return false;
 
-            std::cout << comboBox->getID() << std::endl;
-            if (comboBox->getSelected() != -1) {
+            if (comboBox->getSelected() != -1)
                 settings.players[(comboBox->getID() - 42) / 10].controlType = static_cast<WorldSettings::Player::ControlType>(comboBox->getSelected());
-            }
             updateKeyboardButtons(scene);
             return true;
         } else if (event.EventType == irr::EET_KEY_INPUT_EVENT
@@ -275,7 +272,6 @@ namespace IndieStudio {
                         scene.gui->getElementFromId(42 + (i * 10) + j));
 
                     if (button->isPressed()) {
-                        std::cout << "line 274" << std::endl;
                         *codes[j - 1] = event.KeyInput.Key;
                         button->setPressed(false);
                         updateKeyboardButtons(scene);

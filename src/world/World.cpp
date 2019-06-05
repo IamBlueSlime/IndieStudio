@@ -99,8 +99,6 @@ namespace IndieStudio {
             event.keyInput.Key = this->settings.players[playerId].keyboardRight;
             std::cout << "player" << playerId << " :" << this->settings.players[playerId].keyboardRight << std::endl;
             eventCB.addCallback(event, move(direction[3], pos, speed, nodeEcs));
-        } else {
-            std::cout << "cheh" << playerId << std::endl;
         }
 
         ecs.setComponent(player, eventCB);
