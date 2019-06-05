@@ -6,6 +6,7 @@
 */
 
 #include "indiestudio/Game.hpp"
+#include "indiestudio/common/Scheduler.hpp"
 #include "indiestudio/scene/PlayScene.hpp"
 #include "indiestudio/Singleton.hpp"
 
@@ -30,6 +31,7 @@ namespace IndieStudio {
         setupLight(scene);
         setupTravelling(scene);
         setupOverlay(scene);
+        setupCountdown(scene);
 
         scene.onEvent = [&](const irr::SEvent &event) {
             return onEvent(scene, event);
@@ -101,7 +103,6 @@ namespace IndieStudio {
         auto guiRoot = scene.gui;
 
         int w = 1280;
-        int h = 720;
 
         irr::gui::IGUIImage *timer = guiEnv->addImage(irr::core::recti(
             {1280 / 2 - (300 / 2), 20}, {(1280 / 2 + (300 / 2)), 20 + 80 }
@@ -149,6 +150,47 @@ namespace IndieStudio {
             banner->setImage(bannerTexture);
             banner->setScaleImage(true);
         }
+    }
+
+    void PlayScene::setupCountdown(SceneManager::Scene &scene)
+    {
+        auto guiEnv = scene.scene->getGUIEnvironment();
+        auto guiRoot = scene.gui;
+
+        int w = 1280;
+        int h = 720;
+
+        irr::gui::IGUIStaticText *countdown = guiEnv->addStaticText(L"3", irr::core::recti(
+            {w / 2 - 10, h / 2 - 10}, { w / 2 + 10, h / 2 + 10}
+        ), false, true, guiRoot, 4242);
+        countdown->setOverrideColor(irr::video::SColor(255, 255, 255, 255));
+
+        Scheduler::schedule(1000, [&]() {
+            irr::gui::IGUIStaticText *countdownRef = static_cast<irr::gui::IGUIStaticText *>
+                (scene.gui->getElementFromId(4242));
+
+            if (std::wstring(countdownRef->getText()) == L"0") {
+                scene.gui->removeChild(countdownRef);
+
+                Scheduler::schedule(1000, []() {
+                    World *world = static_cast<WorldManager &>(
+                        Game::INSTANCE->getWorldManager()).getLoadedWorld();
+
+                    world->getSettings().elapsedSeconds += 1;
+                    std::cout << world->getSettings().elapsedSeconds << std::endl;
+
+                    return true;
+                });
+
+                return false;
+            }
+
+            std::wstring newText;
+            newText += countdownRef->getText()[0] - 1;
+            countdownRef->setText(newText.c_str());
+
+            return true;        
+        });
     }
 
     bool PlayScene::onEvent(SceneManager::Scene &scene, const irr::SEvent &event)

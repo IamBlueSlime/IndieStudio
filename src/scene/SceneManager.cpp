@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include "indiestudio/Game.hpp"
+#include "indiestudio/common/Scheduler.hpp"
 #include "indiestudio/scene/MainMenuScene.hpp"
 #include "indiestudio/scene/NewGameScene.hpp"
 #include "indiestudio/scene/PlayScene.hpp"
@@ -135,6 +136,7 @@ namespace IndieStudio {
             scene.scene->drawAll();
         if (scene.gui)
             scene.gui->draw();
+        Scheduler::tick();
         return true;
     }
 

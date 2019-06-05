@@ -27,7 +27,11 @@ namespace IndieStudio {
                 buffer << this->players[i].keyboardRight;
                 buffer << this->players[i].keyboardDrop;
             }
+
+            buffer << this->players[i].kills;
         }
+
+        buffer << this->elapsedSeconds;
     }
 
     void WorldSettings::unpack(ByteBuffer &buffer)
@@ -47,7 +51,11 @@ namespace IndieStudio {
                 buffer >> this->players[i].keyboardRight;
                 buffer >> this->players[i].keyboardDrop;
             }
+
+            buffer >> this->players[i].kills;
         }
+
+        buffer >> this->elapsedSeconds;
     }
 
 }
