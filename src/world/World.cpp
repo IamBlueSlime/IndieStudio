@@ -86,7 +86,7 @@ static irr::core::vector3df try_move(irr::scene::ISceneNode *node, const irr::co
         };
 
         auto node_p = scenemg->addAnimatedMeshSceneNode(scenemg->getMesh("assets/models/player.md3"));
-        node_p->addShadowVolumeSceneNode();
+//        node_p->addShadowVolumeSceneNode();
         ecs.setComponent(player, Node(node_p));
         ecs.setComponent(player, MaterialTexture(0, "assets/textures/player_" + texture[playerId] + ".png"));
         ecs.setComponent(player, MaterialFlag(irr::video::EMF_LIGHTING, false));
@@ -195,12 +195,15 @@ static irr::core::vector3df try_move(irr::scene::ISceneNode *node, const irr::co
             ));
 
 	    	if (tileType == MapPattern::TileType::FLOOR_FIRST) {
+                ecs.getComponent<Node>(newBlock).node->addShadowVolumeSceneNode();
 	    		ecs.setComponent(newBlock, MaterialTexture(0, "assets/textures/block_ground_1.png"));
                 ecs.setComponent(newBlock, Scale(20.0, 20.0, 20.0));
 	    	} else if (tileType == MapPattern::TileType::FLOOR_SECOND) {
+                ecs.getComponent<Node>(newBlock).node->addShadowVolumeSceneNode();
 	    	    ecs.setComponent(newBlock, MaterialTexture(0, "assets/textures/block_ground_2.png"));
                 ecs.setComponent(newBlock, Scale(20.0, 20.0, 20.0));
 	    	} else if (tileType == MapPattern::TileType::BORDER_WALL_BLOCK) {
+                ecs.getComponent<Node>(newBlock).node->addShadowVolumeSceneNode();
 	    		ecs.setComponent(newBlock, MaterialTexture(0, "assets/textures/block_wall.png"));
                 ecs.setComponent(newBlock, Scale(20.0, 20.0, 20.0));
 	    	} else if (tileType == MapPattern::TileType::INNER_WALL_BLOCK) {
