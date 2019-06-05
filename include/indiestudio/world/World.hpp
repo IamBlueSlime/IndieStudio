@@ -39,6 +39,7 @@ namespace IndieStudio {
         ECS::Component::Scale,
         ECS::Component::MaterialTexture,
         ECS::Component::MaterialFlag,
+        ECS::Component::TriangleSelector,
         ECS::Component::MeshPath,
         ECS::Component::NodeCreate,
         ECS::Component::Node,
@@ -99,6 +100,7 @@ namespace IndieStudio {
         std::unique_ptr<MapPattern> pattern;
         WorldECS ecs;
         SceneManager::Scene &scene;
+        irr::scene::IMetaTriangleSelector *meta;
     };
 
 }
