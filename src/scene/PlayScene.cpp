@@ -15,6 +15,8 @@ namespace IndieStudio {
     const int PlayScene::SQUARED_SIZE = 20;
     const float PlayScene::FLOOR_Y = 50.0f;
 
+    sf::Sound PlayScene::COUNTDOWN_SOUND = sf::Sound();
+
     void PlayScene::initialize(SceneManager::Scene &scene)
     {
         // auto guiEnv = scene.scene->getGUIEnvironment();
@@ -160,7 +162,11 @@ namespace IndieStudio {
         int w = 1280;
         int h = 720;
 
-        irr::gui::IGUIStaticText *countdown = guiEnv->addStaticText(L"3", irr::core::recti(
+        COUNTDOWN_SOUND.setBuffer(static_cast<SoundManager &>(
+            Game::INSTANCE->getSoundManager()).getSound("assets/sounds/countdown.ogg").buffer);
+        COUNTDOWN_SOUND.play();
+
+        irr::gui::IGUIStaticText *countdown = guiEnv->addStaticText(L"5", irr::core::recti(
             {w / 2 - 10, h / 2 - 10}, { w / 2 + 10, h / 2 + 10}
         ), false, true, guiRoot, 4242);
         countdown->setOverrideColor(irr::video::SColor(255, 255, 255, 255));
@@ -169,7 +175,7 @@ namespace IndieStudio {
             irr::gui::IGUIStaticText *countdownRef = static_cast<irr::gui::IGUIStaticText *>
                 (scene.gui->getElementFromId(4242));
 
-            if (std::wstring(countdownRef->getText()) == L"0") {
+            if (countdownRef->getText()[0] == L'0') {
                 scene.gui->removeChild(countdownRef);
 
                 Scheduler::schedule(1000, []() {

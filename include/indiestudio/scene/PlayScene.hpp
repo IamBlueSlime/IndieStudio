@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <SFML/Audio.hpp>
 #include "indiestudio/scene/SceneManager.hpp"
 #include "indiestudio/world/MapPattern.hpp"
 #include "indiestudio/world/World.hpp"
@@ -21,6 +22,7 @@ namespace IndieStudio {
 	private:
         static const int SQUARED_SIZE;
         static const float FLOOR_Y;
+        static sf::Sound COUNTDOWN_SOUND;
 
         static void setupWaterBackground(SceneManager::Scene &scene);
         static void setupLight(SceneManager::Scene &scene);
