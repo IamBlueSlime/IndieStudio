@@ -32,11 +32,11 @@ set(INDIE_SRC
     ${INDIE_SRC_DIR}/common/Configuration.cpp
     ${INDIE_SRC_DIR}/common/Logger.cpp
     ${INDIE_SRC_DIR}/common/SoundManager.cpp
+    ${INDIE_SRC_DIR}/common/FontManager.cpp
     ${INDIE_SRC_DIR}/common/TextureManager.cpp
     ${INDIE_SRC_DIR}/common/MeshManager.cpp
     ${INDIE_SRC_DIR}/common/Scheduler.cpp
     ${INDIE_SRC_DIR}/ecs/Signature.cpp
-    ${INDIE_SRC_DIR}/ecs/UUID.cpp
     ${INDIE_SRC_DIR}/ecs/systems/ApplyExplosionSystem.cpp
     ${INDIE_SRC_DIR}/ecs/systems/MovePlayerSystem.cpp
     ${INDIE_SRC_DIR}/mod/LibraryWrapper.cpp

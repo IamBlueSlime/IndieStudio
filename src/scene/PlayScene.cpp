@@ -5,6 +5,8 @@
 ** scene PlayScene.cpp
 */
 
+#include <iomanip>
+#include <sstream>
 #include "indiestudio/Game.hpp"
 #include "indiestudio/common/Scheduler.hpp"
 #include "indiestudio/scene/PlayScene.hpp"
@@ -113,6 +115,11 @@ namespace IndieStudio {
         timer->setImage(scene.manager->textureManager.getTexture("assets/textures/timer.png").content);
         timer->setScaleImage(true);
 
+        irr::gui::IGUIStaticText *timerText = guiEnv->addStaticText(L"0:00",
+            timer->getAbsolutePosition(), false, true, guiRoot, 4243);
+        timerText->setOverrideColor(irr::video::SColor(255, 255, 255, 255));
+        updateTimer(scene);
+
         irr::video::ITexture *iconTextures[4] = {
             scene.manager->textureManager.getTexture("assets/textures/player_black_icon.png").content,
             scene.manager->textureManager.getTexture("assets/textures/player_red_icon.png").content,
@@ -185,13 +192,12 @@ namespace IndieStudio {
 
                 BACKGROUND_MUSIC.play();
 
-                Scheduler::schedule(1000, []() {
+                Scheduler::schedule(1000, [&]() {
                     World *world = static_cast<WorldManager &>(
                         Game::INSTANCE->getWorldManager()).getLoadedWorld();
 
                     world->getSettings().elapsedSeconds += 1;
-                    std::cout << world->getSettings().elapsedSeconds << std::endl;
-
+                    updateTimer(scene);
                     return true;
                 });
 
@@ -206,10 +212,39 @@ namespace IndieStudio {
         });
     }
 
+    void PlayScene::updateTimer(SceneManager::Scene &scene)
+    {
+         World *world = static_cast<WorldManager &>(
+            Game::INSTANCE->getWorldManager()).getLoadedWorld();
+
+        irr::gui::IGUIStaticText *timerRef = static_cast<irr::gui::IGUIStaticText *>
+            (scene.gui->getElementFromId(4243));
+
+        int minutes = std::floor(world->getSettings().elapsedSeconds / 60);
+        int seconds = world->getSettings().elapsedSeconds % 60;
+
+        std::stringstream timerText;
+        timerText << std::setfill('0') << std::setw(2);
+        timerText << minutes << ":";
+        timerText << std::setfill('0') << std::setw(2);
+        timerText << seconds;
+        std::string timerTextDone = timerText.str();
+
+        timerRef->setText(std::wstring(timerTextDone.begin(), timerTextDone.end()).c_str());
+
+        irr::core::recti pos = timerRef->getRelativePosition();
+        timerRef->setRelativePosition(irr::core::recti(
+            {1280 / 2 - (timerRef->getTextWidth() / 2), pos.UpperLeftCorner.Y},
+            {1280 / 2 + (timerRef->getTextWidth() / 2), pos.LowerRightCorner.Y}
+        ));
+    }
+
     bool PlayScene::onEvent(SceneManager::Scene &scene, const irr::SEvent &event)
     {
         if (event.EventType == irr::EET_KEY_INPUT_EVENT) {
             if (event.KeyInput.Key == irr::KEY_ESCAPE && event.KeyInput.PressedDown) {
+                COUNTDOWN_SOUND.stop();
+                BACKGROUND_MUSIC.stop();
                 scene.manager->setActiveScene(SceneManager::MAIN_MENU_ID);
                 return true;
             }

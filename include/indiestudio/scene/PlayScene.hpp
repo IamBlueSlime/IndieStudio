@@ -31,6 +31,8 @@ namespace IndieStudio {
         static void setupOverlay(SceneManager::Scene &scene);
         static void setupCountdown(SceneManager::Scene &scene);
 
+        static void updateTimer(SceneManager::Scene &scene);
+
         static bool onEvent(SceneManager::Scene &scene, const irr::SEvent &event);
     };
 
