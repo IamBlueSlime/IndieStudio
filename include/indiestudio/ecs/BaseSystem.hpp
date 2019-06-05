@@ -56,7 +56,7 @@ namespace IndieStudio::ECS {
 
             void process() final {
                 TypeList<SystemTypes...>::forEach([this](auto ref, [[gnu::unused]] std::size_t idx) {
-                    std::get<typeof(ref)>(this->systems).process(this->manager, world);
+                    std::get<decltype(ref)>(this->systems).process(this->manager, world);
                 });
             }
 

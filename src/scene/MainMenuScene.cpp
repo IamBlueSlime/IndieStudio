@@ -62,13 +62,13 @@ namespace IndieStudio {
     {
 
         irr::scene::IAnimatedMeshSceneNode* jesusModel = scene.scene->addAnimatedMeshSceneNode(
-            scene.scene->getMesh("asset_deprecated/models/Jesus/Jesus.MD3"), 0, 666);
+            scene.scene->getMesh("assets/models/jesus.md3"), 0, 666);
 
         if (!jesusModel)
             throw std::runtime_error("Failed to load player.md3");
 
         jesusModel->setMaterialFlag(irr::video::EMF_LIGHTING, false);
-        jesusModel->setMaterialTexture(0, scene.manager->textureManager.getTexture("asset_deprecated/models/Jesus/Jesus.png").content);
+        jesusModel->setMaterialTexture(0, scene.manager->textureManager.getTexture("assets/textures/jesus.png").content);
         jesusModel->setAnimationSpeed(30);
         jesusModel->setScale(irr::core::vector3df(0.7f ,0.7f ,0.7f));
         jesusModel->setPosition(irr::core::vector3df(0, -5, 0));
