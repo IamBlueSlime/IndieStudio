@@ -16,8 +16,8 @@ namespace IndieStudio {
 
     void PlayScene::initialize(SceneManager::Scene &scene)
     {
-        auto guiEnv = scene.scene->getGUIEnvironment();
-        auto guiRoot = scene.gui;
+        // auto guiEnv = scene.scene->getGUIEnvironment();
+        // auto guiRoot = scene.gui;
 
         WorldSettings &settings = static_cast<WorldManager &>(
             Game::INSTANCE->getWorldManager()).getLoadedWorld()->getSettings();
@@ -109,13 +109,13 @@ namespace IndieStudio {
                 data.keyInput = event.KeyInput;
                 world->forwardEvent(data);
                 return true;
-            
+
             case irr::EEVENT_TYPE::EET_JOYSTICK_INPUT_EVENT:
                 data.type = ECS::Event::EventType::INDIE_JOYSTICK_EVENT;
                 data.joystickEvent = event.JoystickEvent;
                 world->forwardEvent(data);
                 return true;
-            
+
             case irr::EEVENT_TYPE::EET_MOUSE_INPUT_EVENT:
                 data.type = ECS::Event::EventType::INDIE_MOUSE_EVENT;
                 data.mouseInput = event.MouseInput;

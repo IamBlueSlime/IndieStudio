@@ -40,6 +40,9 @@ namespace IndieStudio {
     {
         return [&] (const EventData &event, std::size_t id, WorldECS &ecs)
             {
+                (void)event;
+                (void)id;
+                (void)ecs;
                 irr::core::vector3df newPos(
                     try_move(node.node, direction, irr::core::vector3df(speed.x, speed.y, speed.z))
                 );
@@ -51,6 +54,7 @@ namespace IndieStudio {
 
     void World::initPlayer(WorldManager &manager, irr::scene::ISceneManager *scenemg, int playerId)
     {
+        (void)manager;
         auto &player = ecs.addEntity();
         irr::core::vector3df position[4] = {
             {30, 70, 23},

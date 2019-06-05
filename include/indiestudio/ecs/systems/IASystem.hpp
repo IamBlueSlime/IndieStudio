@@ -22,13 +22,8 @@ namespace IndieStudio::ECS::System {
         void process(ManagerType &manager, World *world) override {
             (void) world;
 
-<<<<<<< HEAD
-            manager.template forEntitiesWith<IA, Speed, Position>(
-                [&manager, world, this](auto &data, auto id) {
-=======
             manager.template forEntitiesWith<IA>(
                 [&manager, this](auto &data, [[gnu::unused]] auto id) {
->>>>>>> 280d8a92f669cb70911c54e4177769fa5df07179
                     auto &ia = manager.template getComponent<IA>(data);
                     auto &speed = manager.template getComponent<Speed>(data);
                     auto &position = manager.template getComponent<Position>(data);
@@ -122,7 +117,7 @@ namespace IndieStudio::ECS::System {
         void UpdatePosition(Poti::Direction dir) {
             switch (dir) {
                 case Poti::Direction::LEFT: position.x -= 1;
-                case Poti::Direction::RIGHT: position.x += 1; 
+                case Poti::Direction::RIGHT: position.x += 1;
                 case Poti::Direction::TOP: position.y += 1;
                 case Poti::Direction::BOT: position.y -= 1;
             }
