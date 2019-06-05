@@ -202,18 +202,19 @@ namespace IndieStudio {
         Initializer<WorldECS>::initAllEntities(ecs, scenemg);
     }
 
-    void World::focusECS(irr::scene::ISceneManager *sceneManager)
+    void World::focusECS(SceneManager::Scene &scene)
     {
         auto systems = WorldECSSystems(this->ecs, this);
 
         while (Game::INSTANCE->getSceneManager().getActive() == SceneManager::PLAY_ID
         && Singleton::getDevice()->run()) {
             this->ecs.getEventManager().switch_event_queue();
-            sceneManager->getVideoDriver()->beginScene(true, true);
+            scene.scene->getVideoDriver()->beginScene(true, true);
             systems.process();
             this->ecs.getEventManager().clear_event_queue();
-            sceneManager->drawAll();
-            sceneManager->getVideoDriver()->endScene();
+            scene.scene->drawAll();
+            scene.gui->draw();
+            scene.scene->getVideoDriver()->endScene();
         }
     }
 
