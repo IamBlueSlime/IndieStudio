@@ -44,7 +44,8 @@ namespace IndieStudio {
         ECS::Component::NodeCreate,
         ECS::Component::Node,
         ECS::Component::ID,
-        ECS::Component::Setup
+        ECS::Component::Setup,
+        ECS::Component::Movement
     >;
 
     using WorldECSSystems = ECS::SystemsImpl<
@@ -77,8 +78,7 @@ namespace IndieStudio {
         void forwardEvent(ECS::Event::EventData event);
 
         void initPlayer(WorldManager &manager, irr::scene::ISceneManager *scenemg, int playerId);
-        std::function<void(const ECS::EventData&, std::size_t, WorldECS &)> move(
-            const irr::core::vector3df &direction, ECS::Position &pos, ECS::Speed &speed, ECS::Node &node);
+        void move(const irr::core::vector3df &direction, ECS::Position &pos, ECS::Speed &speed, ECS::Node &node);
 
         /* ISerializable implementation */
         void pack(ByteBuffer &buffer) const override;

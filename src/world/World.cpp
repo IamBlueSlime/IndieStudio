@@ -22,11 +22,14 @@ namespace IndieStudio {
     {}
 
     World::World() : World(WorldSettings())
-    {}
+    {
+        srand(std::time(nullptr));
+    }
 
-    static irr::core::vector3df try_move(irr::scene::ISceneNode *node, const irr::core::vector3df &vector, const irr::core::vector3df &velocity)
+static irr::core::vector3df try_move(irr::scene::ISceneNode *node, const irr::core::vector3df &vector, const irr::core::vector3df &velocity)
     {
         irr::core::vector3df actPos(node->getAbsolutePosition());
+
         if (vector.X == -1) {
             node->setRotation(irr::core::vector3df(0, 90, 0));
         } else if (vector.X == 1) {
@@ -45,21 +48,24 @@ namespace IndieStudio {
         return newPos;
     }
 
-    std::function<void(const ECS::EventData&, std::size_t, WorldECS &)> World::move(
-        const irr::core::vector3df &direction, ECS::Position &pos, ECS::Speed &speed, ECS::Node &node)
+    void World::move(const irr::core::vector3df &direction, ECS::Position &pos, ECS::Speed &speed, ECS::Node &node)
     {
-        return [&] (const EventData &event, std::size_t id, WorldECS &ecs)
-            {
-                (void)event;
-                (void)id;
-                (void)ecs;
-                irr::core::vector3df newPos(
-                    try_move(node.node, direction, irr::core::vector3df(speed.x, speed.y, speed.z))
-                );
-                pos.x = newPos.X;
-                pos.y = newPos.Y;
-                pos.z = newPos.Z;
-            };
+        irr::core::vector3df newPos(
+            try_move(node.node, direction, irr::core::vector3df(speed.x, speed.y, speed.z))
+        );
+        pos.x = newPos.X;
+        pos.y = newPos.Y;
+        pos.z = newPos.Z;
+    }
+
+    static irr::core::vector2di updateTilePos(const irr::core::vector3df &pos)
+    {
+        int x, y;
+
+        x = pos.X / 20;
+        y = pos.Z / 20;
+        std::cout << "{" << x << ", " << y << "}" << std::endl;
+        return {x, y};
     }
 
     void World::initPlayer(WorldManager &manager, irr::scene::ISceneManager *scenemg, int playerId)
@@ -87,6 +93,7 @@ namespace IndieStudio {
         ecs.setComponent(player, Scale(20, 20, 20));
         ecs.setComponent(player, Position(position[playerId].X, position[playerId].Y, position[playerId].Z));
         ecs.setComponent(player, Speed(1, 1, 1));
+        ecs.setComponent(player, Movement());
         auto animator = scenemg->createCollisionResponseAnimator(this->meta, node_p, {5, 5, 5}, {0, 0, 0});
         node_p->addAnimator(animator);
         animator->drop();
@@ -98,16 +105,33 @@ namespace IndieStudio {
         auto &pos = ecs.getComponent<Position>(player);
         auto &speed = ecs.getComponent<Speed>(player);
         auto &nodeEcs = ecs.getComponent<Node>(player);
+        auto &mov = ecs.getComponent<Movement>(player);
 
         if (this->settings.players[playerId].controlType == WorldSettings::Player::ControlType::KEYBOARD) {
             event.keyInput.Key = this->settings.players[playerId].keyboardUp;
-            eventCB.addCallback(event, move(direction[0], pos, speed, nodeEcs));
+            eventCB.addCallback(event,
+                [&] (const EventData &event, std::size_t id, WorldECS &ecs)
+                {
+                    mov.up = event.keyInput.PressedDown;
+                });
             event.keyInput.Key = this->settings.players[playerId].keyboardDown;
-            eventCB.addCallback(event, move(direction[1], pos, speed, nodeEcs));
+            eventCB.addCallback(event,
+                [&] (const EventData &event, std::size_t id, WorldECS &ecs)
+                {
+                    mov.down = event.keyInput.PressedDown;
+                });
             event.keyInput.Key = this->settings.players[playerId].keyboardLeft;
-            eventCB.addCallback(event, move(direction[2], pos, speed, nodeEcs));
+            eventCB.addCallback(event,
+                [&] (const EventData &event, std::size_t id, WorldECS &ecs)
+                {
+                    mov.left = event.keyInput.PressedDown;
+                });
             event.keyInput.Key = this->settings.players[playerId].keyboardRight;
-            eventCB.addCallback(event, move(direction[3], pos, speed, nodeEcs));
+            eventCB.addCallback(event,
+                [&] (const EventData &event, std::size_t id, WorldECS &ecs)
+                {
+                    mov.right = event.keyInput.PressedDown;
+                });
         }
 
         ecs.setComponent(player, eventCB);
@@ -180,11 +204,11 @@ namespace IndieStudio {
 	    		ecs.setComponent(newBlock, MaterialTexture(0, "assets/textures/block_wall.png"));
                 ecs.setComponent(newBlock, Scale(20.0, 20.0, 20.0));
 	    	} else if (tileType == MapPattern::TileType::INNER_WALL_BLOCK) {
-                // ecs.getComponent<Node>(newBlock).node->addShadowVolumeSceneNode();
+                ecs.getComponent<Node>(newBlock).node->addShadowVolumeSceneNode();
 	    		ecs.setComponent(newBlock, MaterialTexture(0, "assets/textures/block_wall.png"));
                 ecs.setComponent(newBlock, Scale(20.0 * 0.9, 20.0 * 0.9, 20.0 * 0.9));
             } else if (tileType == MapPattern::TileType::BREAKABLE_BLOCK) {
-                // ecs.getComponent<Node>(newBlock).node->addShadowVolumeSceneNode();
+                ecs.getComponent<Node>(newBlock).node->addShadowVolumeSceneNode();
 	    		ecs.setComponent(newBlock, MaterialTexture(0, "assets/textures/block_brick.png"));
                 ecs.setComponent(newBlock, Scale(20.0 * 0.9, 20.0 * 0.9, 20.0 * 0.9));
                 ecs.setComponent(newBlock, Alive());
@@ -211,6 +235,37 @@ namespace IndieStudio {
             this->ecs.getEventManager().switch_event_queue();
             sceneManager->getVideoDriver()->beginScene(true, true);
             systems.process();
+            this->ecs.forEntitiesWith<Movement>(
+                [&](auto &data, [[gnu::unused]] std::size_t id)
+                {
+                    Movement &mov = this->ecs.getComponent<Movement>(data);
+                    auto &speed = this->ecs.getComponent<Speed>(data);
+                    auto &pos = this->ecs.getComponent<Position>(data);
+                    auto &node = this->ecs.getComponent<Node>(data);
+
+                    bool did = false;
+                    if (mov.up) {
+                        move(direction[0], pos, speed, node);
+                        did = true;
+                    } if (mov.down) {
+                        move(direction[1], pos, speed, node);
+                        did = true;
+                    } if (mov.left) {
+                        move(direction[2], pos, speed, node);
+                        did = true;
+                    } if (mov.right) {
+                        move(direction[3], pos, speed, node);
+                        did = true;
+                    }
+                    if (!did) {
+                        if (node.node->getFrameNr() == 76 || node.node->getFrameNr() <= 27)
+                            node.node->setFrameLoop(27, 76);
+                        return;
+                    }
+                    if (node.node->getFrameNr() > 27)
+		                node.node->setFrameLoop(0, 27);
+                }
+            );
             this->ecs.getEventManager().clear_event_queue();
             sceneManager->drawAll();
             sceneManager->getVideoDriver()->endScene();

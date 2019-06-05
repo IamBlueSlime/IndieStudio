@@ -224,12 +224,15 @@ namespace IndieStudio::ECS::System {
         }
 
         bool atk_player(Position position, IWorld *world) {
+            (void)world;
+            (void)position;
             return true;
         }
 
         bool destroy_wall(Position position, IWorld *world) {
 
-
+            (void)world;
+            (void)position;
 
             // Poti poti;
             // std::optional<Poti::PathData> path;
@@ -268,6 +271,7 @@ namespace IndieStudio::ECS::System {
         }
 
         Poti::Coord convert_position(Position position) {
+            (void)position;
             // TODO: converting float position to x / y coord
         }
 

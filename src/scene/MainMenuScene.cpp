@@ -72,8 +72,8 @@ namespace IndieStudio {
         jesusModel->setAnimationSpeed(30);
         jesusModel->setScale(irr::core::vector3df(0.7f ,0.7f ,0.7f));
         jesusModel->setPosition(irr::core::vector3df(0, -5, 0));
-
-        irr::scene::ISceneNodeAnimator *anim = scene.scene->createFlyCircleAnimator({15, 15 ,15}, 100, 0.001, {15, 15, 15});
+        jesusModel->setRotation(irr::core::vector3df(0, 180, 0));
+        irr::scene::ISceneNodeAnimator *anim = scene.scene->createFlyCircleAnimator({(float)15 + (rand() % 10), (float)15 + (rand() % 10), (float)15 + (rand() % 10)}, 100, 0.001, {15, 15, 15});
         jesusModel->addAnimator(anim);
         anim->drop();
 

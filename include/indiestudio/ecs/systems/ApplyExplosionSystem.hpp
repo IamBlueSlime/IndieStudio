@@ -18,6 +18,7 @@ namespace IndieStudio::ECS::System {
     class ApplyExplosion : public BaseSystem<ManagerType> {
     public:
         void process(ManagerType &manager, World *world) override {
+            (void)world;
             manager.template forEntitiesWith<IsBomb, Position, IsExploding, ExplosionRange>(
             [&manager](auto &data, [[gnu::unused]] auto id) {
 
