@@ -60,36 +60,43 @@ namespace IndieStudio {
         };
         std::string texture[4] = {
             "black",
+            "red",
             "pink",
-            "white",
-            "red"
+            "white"
         };
 
         auto node_p = scenemg->addAnimatedMeshSceneNode(scenemg->getMesh("assets/models/player.md3"));
         ecs.setComponent(player, Node(node_p));
-	    ecs.setComponent(player, MaterialTexture(0, "assets/textures/player_" + texture[playerId] + ".png"));
-		ecs.setComponent(player, MaterialFlag(irr::video::EMF_LIGHTING, false));
-		ecs.setComponent(player, Scale(20, 20, 20));
-		ecs.setComponent(player, Position(position[playerId].X, position[playerId].Y, position[playerId].Z));
+        ecs.setComponent(player, MaterialTexture(0, "assets/textures/player_" + texture[playerId] + ".png"));
+        ecs.setComponent(player, MaterialFlag(irr::video::EMF_LIGHTING, false));
+        ecs.setComponent(player, Scale(20, 20, 20));
+        ecs.setComponent(player, Position(position[playerId].X, position[playerId].Y, position[playerId].Z));
         ecs.setComponent(player, Speed(1, 1, 1));
 
         auto eventCB = EventCallbacks<WorldECS>();
         IndieStudio::ECS::Event::EventData event;
-		event.type = ECS::Event::EventType::INDIE_KEYBOARD_EVENT;
+        event.type = ECS::Event::EventType::INDIE_KEYBOARD_EVENT;
 
         auto &pos = ecs.getComponent<Position>(player);
         auto &speed = ecs.getComponent<Speed>(player);
         auto &nodeEcs = ecs.getComponent<Node>(player);
 
+        std::cout << "player" << playerId << " :" << (int)this->settings.players[playerId].controlType << std::endl;
         if (this->settings.players[playerId].controlType == WorldSettings::Player::ControlType::KEYBOARD) {
             event.keyInput.Key = this->settings.players[playerId].keyboardUp;
+            std::cout << "player" << playerId << " :" << this->settings.players[playerId].keyboardUp << std::endl;
             eventCB.addCallback(event, move(direction[0], pos, speed, nodeEcs));
             event.keyInput.Key = this->settings.players[playerId].keyboardDown;
+            std::cout << "player" << playerId << " :" << this->settings.players[playerId].keyboardDown << std::endl;
             eventCB.addCallback(event, move(direction[1], pos, speed, nodeEcs));
             event.keyInput.Key = this->settings.players[playerId].keyboardLeft;
+            std::cout << "player" << playerId << " :" << this->settings.players[playerId].keyboardLeft << std::endl;
             eventCB.addCallback(event, move(direction[2], pos, speed, nodeEcs));
             event.keyInput.Key = this->settings.players[playerId].keyboardRight;
+            std::cout << "player" << playerId << " :" << this->settings.players[playerId].keyboardRight << std::endl;
             eventCB.addCallback(event, move(direction[3], pos, speed, nodeEcs));
+        } else {
+            std::cout << "cheh" << playerId << std::endl;
         }
 
         ecs.setComponent(player, eventCB);

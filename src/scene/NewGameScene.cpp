@@ -35,7 +35,7 @@ namespace IndieStudio {
 
         guiEnv->addImage(
             scene.manager->textureManager.getTexture("assets/textures/title.png").content, irr::core::position2di(350, 75), true, guiRoot);
-        
+
         irr::core::vector2di origin(410, 250);
 
         guiEnv->addStaticText(L"World size:", irr::core::recti(
@@ -115,6 +115,7 @@ namespace IndieStudio {
             {origin.X, origin.Y},
             {origin.X + 225, origin.Y + 20}
         ), guiRoot, 42 + (idx * 10));
+        std::cout << "idx=" << idx << std::endl;
 
         playerTypeBox->addItem(L"Keyboard");
         playerTypeBox->addItem(L"Controller");
@@ -149,7 +150,7 @@ namespace IndieStudio {
         for (int i = 0; i < 4; i += 1) {
             irr::gui::IGUIComboBox *comboBox = static_cast<irr::gui::IGUIComboBox *>(
                 scene.gui->getElementFromId(42 + (i * 10)));
-            
+
             bool visible = comboBox->getSelected() == 0;
 
             irr::EKEY_CODE *codes[5] = {
@@ -173,7 +174,7 @@ namespace IndieStudio {
     {
         if (code < irr::KEY_KEY_0 || code > irr::KEY_KEY_Z)
             return false;
-        
+
         for (int i = 0; i < 4; i += 1) {
             irr::EKEY_CODE *codes[5] = {
                 &settings.players[i].keyboardUp,
@@ -247,10 +248,14 @@ namespace IndieStudio {
         && event.GUIEvent.EventType == irr::gui::EGET_COMBO_BOX_CHANGED) {
             irr::gui::IGUIComboBox *comboBox = static_cast<irr::gui::IGUIComboBox *>(
                 event.GUIEvent.Caller);
-            
+
             if (comboBox->getID() < 42)
                 return false;
-            
+
+            std::cout << comboBox->getID() << std::endl;
+            if (comboBox->getSelected() != -1) {
+                settings.players[(comboBox->getID() - 42) / 10].controlType = static_cast<WorldSettings::Player::ControlType>(comboBox->getSelected());
+            }
             updateKeyboardButtons(scene);
             return true;
         } else if (event.EventType == irr::EET_KEY_INPUT_EVENT
@@ -270,6 +275,7 @@ namespace IndieStudio {
                         scene.gui->getElementFromId(42 + (i * 10) + j));
 
                     if (button->isPressed()) {
+                        std::cout << "line 274" << std::endl;
                         *codes[j - 1] = event.KeyInput.Key;
                         button->setPressed(false);
                         updateKeyboardButtons(scene);
