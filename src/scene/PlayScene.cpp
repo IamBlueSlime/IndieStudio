@@ -16,6 +16,7 @@ namespace IndieStudio {
     const float PlayScene::FLOOR_Y = 50.0f;
 
     sf::Sound PlayScene::COUNTDOWN_SOUND = sf::Sound();
+    sf::Sound PlayScene::BACKGROUND_MUSIC = sf::Sound();
 
     void PlayScene::initialize(SceneManager::Scene &scene)
     {
@@ -166,6 +167,10 @@ namespace IndieStudio {
             Game::INSTANCE->getSoundManager()).getSound("assets/sounds/countdown.ogg").buffer);
         COUNTDOWN_SOUND.play();
 
+        BACKGROUND_MUSIC.setBuffer(static_cast<SoundManager &>(
+            Game::INSTANCE->getSoundManager()).getSound("assets/sounds/bg_music_1.wav").buffer);
+        BACKGROUND_MUSIC.setLoop(true);
+
         irr::gui::IGUIStaticText *countdown = guiEnv->addStaticText(L"5", irr::core::recti(
             {w / 2 - 10, h / 2 - 10}, { w / 2 + 10, h / 2 + 10}
         ), false, true, guiRoot, 4242);
@@ -177,6 +182,8 @@ namespace IndieStudio {
 
             if (countdownRef->getText()[0] == L'0') {
                 scene.gui->removeChild(countdownRef);
+
+                BACKGROUND_MUSIC.play();
 
                 Scheduler::schedule(1000, []() {
                     World *world = static_cast<WorldManager &>(

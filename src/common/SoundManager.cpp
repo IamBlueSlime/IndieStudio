@@ -16,6 +16,7 @@ namespace IndieStudio {
     {
         this->registerSound("assets/sounds/shooting_stars.ogg");
         this->registerSound("assets/sounds/countdown.ogg");
+        this->registerSound("assets/sounds/bg_music_1.wav");
     }
 
     void SoundManager::registerSound(std::string id)

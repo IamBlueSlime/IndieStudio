@@ -23,6 +23,7 @@ namespace IndieStudio {
         static const int SQUARED_SIZE;
         static const float FLOOR_Y;
         static sf::Sound COUNTDOWN_SOUND;
+        static sf::Sound BACKGROUND_MUSIC;
 
         static void setupWaterBackground(SceneManager::Scene &scene);
         static void setupLight(SceneManager::Scene &scene);
