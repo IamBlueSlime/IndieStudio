@@ -77,6 +77,9 @@ namespace IndieStudio {
         ecs.setComponent(player, Scale(20, 20, 20));
         ecs.setComponent(player, Position(position[playerId].X, position[playerId].Y, position[playerId].Z));
         ecs.setComponent(player, Speed(1, 1, 1));
+        auto animator = scenemg->createCollisionResponseAnimator(this->meta, node_p, {5, 5, 5}, {0, 0, 0});
+        node_p->addAnimator(animator);
+        animator->drop();
 
         auto eventCB = EventCallbacks<WorldECS>();
         IndieStudio::ECS::Event::EventData event;
@@ -142,10 +145,6 @@ namespace IndieStudio {
 	    this->pattern->forEach([&](int x, int y, int z, MapPattern::TileType tileType) {
 	    	if (tileType == MapPattern::TileType::EMPTY)
 	    		return;
-
-            // auto animator = scenemg->createCollisionResponseAnimator(meta, player1, {1, 1, 1}, {0, 0, 0});
-            // player1->addAnimator(animator)
-            // animator->drop();
 
             auto &newBlock = ecs.addEntity();
             ecs.setComponent(newBlock, Node(static_cast<irr::scene::IAnimatedMeshSceneNode *>(node->clone())));
