@@ -22,9 +22,16 @@ namespace IndieStudio::ECS::System {
         void process(ManagerType &manager, World *world) override {
             (void) world;
 
+<<<<<<< HEAD
+            manager.template forEntitiesWith<IA, Speed, Position>(
+                [&manager, world, this](auto &data, auto id) {
+=======
             manager.template forEntitiesWith<IA>(
                 [&manager, this](auto &data, [[gnu::unused]] auto id) {
+>>>>>>> 280d8a92f669cb70911c54e4177769fa5df07179
                     auto &ia = manager.template getComponent<IA>(data);
+                    auto &speed = manager.template getComponent<Speed>(data);
+                    auto &position = manager.template getComponent<Position>(data);
 
                     if (this->emergency_move()) {
                         // cancel current action
@@ -76,11 +83,49 @@ namespace IndieStudio::ECS::System {
         }
 
         bool destroy_wall() {
+            Poti poti();
+            std::optional<Poti::PathData> path;
+
+            path = poti.search_for(MapPattern:TileType::BREAKABLE_BLOCK, world->getPattern(), position.x, position.y);
+            if (path == std::nullopt)
+                return false;
+            if (path.pathLen == 1) {
+                //pose la bombe
+                AI.current_action = IA::Action::NOTHING;
+            } else
+                moveAI(path.dir);
             return true;
+            return false;
         }
 
         bool pick_powerup() {
+            Poti poti();
+            std::optional<Poti::PathData> path;
+
+            path = poti.search_for(MapPattern:TileType::POWER_UP, world->getPattern(), position.x, position.y);
+            if (path == std::nullopt)
+                return false;
+            UpdatePosition(path.dir);
+            if (world->getPattern()->get(position.x, 1, position.y) == MapPattern::TileType::POWER_UP) {
+                pickupPowerUp();
+                AI.current_action = IA::Action::NOTHING;
+            }
+            moveAI(path.dir);
+            world->getPattern()->set(position.x, 1, position.y, MapPattern::TileType::PLAYER);
             return true;
+        }
+
+        void pickupPowerUp() {
+            //applique l'effet du PowerUp
+        }
+
+        void UpdatePosition(Poti::Direction dir) {
+            switch (dir) {
+                case Poti::Direction::LEFT: position.x -= 1;
+                case Poti::Direction::RIGHT: position.x += 1; 
+                case Poti::Direction::TOP: position.y += 1;
+                case Poti::Direction::BOT: position.y -= 1;
+            }
         }
 
     protected:
@@ -110,16 +155,24 @@ class Poti {
         std::size_t y;
     };
 
-    std::optional<Direction> search_for(MapPattern::TileType target, MapPattern *map, std::size_t x, std::size_t y) {
+    struct PathData {
+        Direction dir;
+        std::size_t pathLen;
+    };
+
+    std::optional<PathData> search_for(MapPattern::TileType target, MapPattern *map, std::size_t x, std::size_t y) {
+        PathData pathData;
         Hitmap hitmap = this->init_hitmap(map);
         this->fill_hitmap(hitmap, {x, y}, 0);
-        std::optional<Coord> target_coord = this->find_nearest_target(target, hitmap);
+        std::optional<std::pair<Direction, std::size_t>> target_coord = this->find_nearest_target(target, hitmap);
         if (target_coord == std::nullopt) {
             return std::nullopt;
         }
         this->reset_hitmap(hitmap);
-        this->fill_hitmap(hitmap, {target_coord.value().x, target_coord.value().y}, 0);
-        return std::make_optional(this->get_direction(hitmap, {x, y}));
+        this->fill_hitmap(hitmap, {target_coord.value().first.x, target_coord.value().first.y}, 0);
+        pathData.dir = this->get_direction(hitmap, {x, y});
+        pathData.pathLen = target_coord.value().second;
+        return std::make_optional(pathData);
     }
 
 private:
@@ -169,7 +222,7 @@ private:
         }
     }
 
-    std::optional<Coord> find_nearest_target(MapPattern::TileType target, const Hitmap &hitmap) {
+    std::optional<std::pair<Direction, std::size_t>> find_nearest_target(MapPattern::TileType target, const Hitmap &hitmap) {
         std::size_t nearest = -1;
         Coord nearest_target = {0, 0};
 
@@ -183,7 +236,7 @@ private:
         if (nearest == static_cast<std::size_t>(-1)) {
             return std::nullopt;
         }
-        return std::make_optional(nearest_target);
+        return std::make_optional(std::make_pair(nearest_target, nearest));
     }
 
     void is_nearest(const Hitmap &hitmap, std::size_t &nearest, Coord &nearest_target, Coord current_coord) {
