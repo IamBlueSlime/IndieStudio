@@ -16,6 +16,8 @@
 #include "indiestudio/ecs/TypeList.hpp"
 #include "indiestudio/ecs/Entity.hpp"
 
+#include "indiestudio/common/ISerializable.hpp"
+
 namespace IndieStudio {
     class World;
 }
@@ -32,7 +34,7 @@ namespace IndieStudio::ECS {
             BaseSystem() {}
             virtual ~BaseSystem() = default;
 
-            virtual void process([[gnu::unused]] ManagerType &manager) {}
+            virtual void process([[gnu::unused]] ManagerType &manager, [[gnu::unused]] World *world) {}
         };
 
         struct ISyst {
@@ -54,7 +56,7 @@ namespace IndieStudio::ECS {
 
             void process() final {
                 TypeList<SystemTypes...>::forEach([this](auto ref, [[gnu::unused]] std::size_t idx) {
-                    std::get<typeof(ref)>(this->systems).process(this->manager, world);
+                    std::get<decltype(ref)>(this->systems).process(this->manager, world);
                 });
             }
 

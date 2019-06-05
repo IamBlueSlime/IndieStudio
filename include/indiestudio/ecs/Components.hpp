@@ -157,13 +157,13 @@ namespace IndieStudio::ECS::Component {
         bool present;
     };
 
-    // struct TriangleSelector {
-    //     TriangleSelector(irr::scene::ITriangleSelector *_selector = nullptr)
-    //     :
-    //     selector(_selector) {}
+    struct TriangleSelector {
+        TriangleSelector(irr::scene::ITriangleSelector *_selector = nullptr)
+        :
+        selector(_selector) {}
 
-    //     irr::scene::ITriangleSelector *selector;
-    // };
+        irr::scene::ITriangleSelector *selector;
+    };
 
     struct MeshPath {
         MeshPath(std::string _meshPath = "assets/models/cube.obj")
@@ -197,6 +197,13 @@ namespace IndieStudio::ECS::Component {
 
     // struct AnimatedMesh : irr::scene::IAnimatedMeshSceneNode {
     // };
+
+    struct Movement {
+        bool up = false;
+        bool down = false;
+        bool left = false;
+        bool right = false;
+    };
 
     template<typename ManagerType>
     struct EventCallbacks {

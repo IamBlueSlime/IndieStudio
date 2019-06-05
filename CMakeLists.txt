@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.11)
 
+set(CMAKE_CXX_COMPILER clang++)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/mods)
@@ -35,6 +36,8 @@ set(INDIE_SRC
     ${INDIE_SRC_DIR}/common/MeshManager.cpp
     ${INDIE_SRC_DIR}/ecs/Signature.cpp
     ${INDIE_SRC_DIR}/ecs/UUID.cpp
+    ${INDIE_SRC_DIR}/ecs/systems/ApplyExplosionSystem.cpp
+    ${INDIE_SRC_DIR}/ecs/systems/MovePlayerSystem.cpp
     ${INDIE_SRC_DIR}/mod/LibraryWrapper.cpp
     ${INDIE_SRC_DIR}/mod/ModManager.cpp
     ${INDIE_SRC_DIR}/scene/MainMenuScene.cpp

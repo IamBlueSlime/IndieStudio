@@ -17,7 +17,7 @@ namespace IndieStudio {
     public:
         struct Player {
             enum class ControlType {
-                KEYBOARD,
+                KEYBOARD = 0,
                 CONTROLLER,
                 AI
             };

@@ -9,6 +9,7 @@
 
 #include <functional>
 #include <memory>
+#include <utility>
 #include "indiestudio/common/ISerializable.hpp"
 
 namespace IndieStudio {
@@ -31,7 +32,7 @@ namespace IndieStudio {
             FLOOR_SECOND
         };
 
-		MapPattern(unsigned short width, unsigned short height) : width(width), height(height)
+        MapPattern(unsigned short width, unsigned short height) : width(width), height(height)
         {
             this->ground = std::make_unique<TileType[]>(width * height);
             this->walls = std::make_unique<TileType[]>(width * height);
@@ -39,11 +40,11 @@ namespace IndieStudio {
             for (unsigned short x = 1; x < this->width - 1; x += 1)
                 for (unsigned short z = 1; z < this->height - 1; z += 1)
                     this->set(x, 0, z, TileType::FLOOR_FIRST);
-            
+
             for (unsigned short x = 1; x < this->width - 1; x += 1)
                 for (unsigned short z = 1; z < this->height - 1; z += 1)
                     this->set(x, 1, z, TileType::BREAKABLE_BLOCK);
-            
+
             // This code generate the horizontal walls
             for (unsigned short x = 0; x < this->width; x += 1) {
                 this->set(x, 1, 0, TileType::BORDER_WALL_BLOCK);
@@ -87,6 +88,27 @@ namespace IndieStudio {
                 || tileType == TileType::PLAYER || tileType == TileType::POWER_UP;
         }
 
+        std::pair<short, short> positionstoTile(short x, short z) {
+            std::pair<short, short> values;
+            short factor = 20; // 30 23 - 50 23
+
+            if (x % factor > factor / 2) {
+                values.first = x + factor - (x % factor);
+            } else {
+                values.first = x - (x % factor);
+            }
+            if (z % factor > factor / 2) {
+                values.second = z + factor - (z % factor);
+            } else {
+                values.second = z - (z % factor);
+            }
+            --values.first;
+            --values.second;
+            values.first /= 20;
+            values.second /= 20;
+            return values;
+        }
+
         unsigned short getWidth() const { return this->width; }
         unsigned short getHeight() const { return this->height; }
 
@@ -94,8 +116,8 @@ namespace IndieStudio {
         void pack(ByteBuffer &buffer) const override;
         void unpack(ByteBuffer &buffer) override;
 
-	protected:
-	private:
+    protected:
+    private:
         const unsigned short width;
         const unsigned short height;
         std::unique_ptr<TileType[]> ground;

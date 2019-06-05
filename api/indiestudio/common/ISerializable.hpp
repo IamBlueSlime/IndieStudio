@@ -16,6 +16,6 @@ namespace IndieStudio {
         virtual ~ISerializable() = default;
         virtual void pack(ByteBuffer &buffer) const = 0;
         virtual void unpack(ByteBuffer &buffer) = 0;
-    };
+   };
 
 }

@@ -15,6 +15,7 @@
 #include "indiestudio/world/MapPattern.hpp"
 #include "indiestudio/world/WorldSettings.hpp"
 #include "indiestudio/utils/Packed.hpp"
+#include "indiestudio/world/IWorld.hpp"
 
 namespace IndieStudio {
 
@@ -38,15 +39,18 @@ namespace IndieStudio {
         ECS::Component::Scale,
         ECS::Component::MaterialTexture,
         ECS::Component::MaterialFlag,
+        ECS::Component::TriangleSelector,
         ECS::Component::MeshPath,
         ECS::Component::NodeCreate,
         ECS::Component::Node,
         ECS::Component::ID,
-        ECS::Component::Setup
+        ECS::Component::Setup,
+        ECS::Component::Movement
     >;
 
     using WorldECSSystems = ECS::SystemsImpl<
         WorldECS,
+        ECS::System::EventSystem<WorldECS>,
         ECS::System::ApplyExplosion<WorldECS>,
         ECS::System::ExplosionDuration<WorldECS>,
         ECS::System::MovePlayer<WorldECS>,
@@ -56,7 +60,7 @@ namespace IndieStudio {
 
     class WorldManager;
 
-    class World : public ISerializable {
+    class World : public IWorld, public ISerializable {
     public:
         PACKED(struct FileHeader {
             unsigned char magic[4];
@@ -70,23 +74,33 @@ namespace IndieStudio {
 
         void create(WorldManager &manager);
 
-        void focusECS(irr::scene::ISceneManager *sceneManager);
-        void forwardEvent(ECS::Event::EventData &event);
+        void focusECS(SceneManager::Scene &scene);
+        void forwardEvent(ECS::Event::EventData event);
+
+        void initPlayer(WorldManager &manager, irr::scene::ISceneManager *scenemg, int playerId);
+        void move(const irr::core::vector3df &direction, ECS::Position &pos, ECS::Speed &speed, ECS::Node &node);
 
         /* ISerializable implementation */
         void pack(ByteBuffer &buffer) const override;
         void unpack(ByteBuffer &buffer) override;
 
         WorldSettings &getSettings() { return this->settings; }
-        MapPattern *getPattern() { return this->pattern.get(); }
+        MapPattern *getPattern() override { return this->pattern.get(); }
         const WorldSettings &getSettings() const { return this->settings; }
 
     protected:
     private:
+        irr::core::vector3df direction[4] = {
+            {0, 0, 1},
+            {0, 0, -1},
+            {-1, 0, 0},
+            {1, 0, 0}
+        };
         WorldSettings settings;
         std::unique_ptr<MapPattern> pattern;
         WorldECS ecs;
         SceneManager::Scene &scene;
+        irr::scene::IMetaTriangleSelector *meta;
     };
 
 }

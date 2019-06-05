@@ -17,11 +17,126 @@ namespace IndieStudio {
     World::World(WorldSettings settings)
         : settings(settings),
         pattern(std::make_unique<MapPattern>(settings.width, settings.height)),
-        scene(Game::INSTANCE->getSceneManager().getScene(SceneManager::PLAY_ID))
+        scene(Game::INSTANCE->getSceneManager().getScene(SceneManager::PLAY_ID)),
+        meta(this->scene.scene->createMetaTriangleSelector())
     {}
 
     World::World() : World(WorldSettings())
-    {}
+    {
+        srand(std::time(nullptr));
+    }
+
+static irr::core::vector3df try_move(irr::scene::ISceneNode *node, const irr::core::vector3df &vector, const irr::core::vector3df &velocity)
+    {
+        irr::core::vector3df actPos(node->getAbsolutePosition());
+
+        if (vector.X == -1) {
+            node->setRotation(irr::core::vector3df(0, 90, 0));
+        } else if (vector.X == 1) {
+            node->setRotation(irr::core::vector3df(0, 270, 0));
+        } else if (vector.Z == 1) {
+            node->setRotation(irr::core::vector3df(0, 180, 0));
+        } else if (vector.Z == -1) {
+            node->setRotation(irr::core::vector3df(0, 0, 0));
+        }
+        irr::core::vector3df newPos(
+            actPos.X + (vector.X * velocity.X),
+            actPos.Y + (vector.Y * velocity.Y),
+            actPos.Z + (vector.Z * velocity.Z));
+        //TODO: check boundingbox at newPos, if can't move return actPos
+        node->setPosition(newPos);
+        return newPos;
+    }
+
+    void World::move(const irr::core::vector3df &direction, ECS::Position &pos, ECS::Speed &speed, ECS::Node &node)
+    {
+        irr::core::vector3df newPos(
+            try_move(node.node, direction, irr::core::vector3df(speed.x, speed.y, speed.z))
+        );
+        pos.x = newPos.X;
+        pos.y = newPos.Y;
+        pos.z = newPos.Z;
+    }
+
+    static irr::core::vector2di updateTilePos(const irr::core::vector3df &pos)
+    {
+        int x, y;
+
+        x = pos.X / 20;
+        y = pos.Z / 20;
+        std::cout << "{" << x << ", " << y << "}" << std::endl;
+        return {x, y};
+    }
+
+    void World::initPlayer(WorldManager &manager, irr::scene::ISceneManager *scenemg, int playerId)
+    {
+        (void)manager;
+        auto &player = ecs.addEntity();
+        irr::core::vector3df position[4] = {
+            {30, 70, 23},
+            {50, 70, 23},
+            {70, 70, 23},
+            {90, 70, 23}
+        };
+        std::string texture[4] = {
+            "black",
+            "red",
+            "pink",
+            "white"
+        };
+
+        auto node_p = scenemg->addAnimatedMeshSceneNode(scenemg->getMesh("assets/models/player.md3"));
+//        node_p->addShadowVolumeSceneNode();
+        ecs.setComponent(player, Node(node_p));
+        ecs.setComponent(player, MaterialTexture(0, "assets/textures/player_" + texture[playerId] + ".png"));
+        ecs.setComponent(player, MaterialFlag(irr::video::EMF_LIGHTING, false));
+        ecs.setComponent(player, Scale(20, 20, 20));
+        ecs.setComponent(player, Position(position[playerId].X, position[playerId].Y, position[playerId].Z));
+        ecs.setComponent(player, Speed(1, 1, 1));
+        ecs.setComponent(player, Movement());
+        auto animator = scenemg->createCollisionResponseAnimator(this->meta, node_p, {5, 5, 5}, {0, 0, 0});
+        node_p->addAnimator(animator);
+        animator->drop();
+
+        auto eventCB = EventCallbacks<WorldECS>();
+        IndieStudio::ECS::Event::EventData event;
+        event.type = ECS::Event::EventType::INDIE_KEYBOARD_EVENT;
+
+        auto &pos = ecs.getComponent<Position>(player);
+        auto &speed = ecs.getComponent<Speed>(player);
+        auto &nodeEcs = ecs.getComponent<Node>(player);
+        auto &mov = ecs.getComponent<Movement>(player);
+
+        if (this->settings.players[playerId].controlType == WorldSettings::Player::ControlType::KEYBOARD) {
+            event.keyInput.Key = this->settings.players[playerId].keyboardUp;
+            eventCB.addCallback(event,
+                [&] (const EventData &event, std::size_t id, WorldECS &ecs)
+                {
+                    mov.up = event.keyInput.PressedDown;
+                });
+            event.keyInput.Key = this->settings.players[playerId].keyboardDown;
+            eventCB.addCallback(event,
+                [&] (const EventData &event, std::size_t id, WorldECS &ecs)
+                {
+                    mov.down = event.keyInput.PressedDown;
+                });
+            event.keyInput.Key = this->settings.players[playerId].keyboardLeft;
+            eventCB.addCallback(event,
+                [&] (const EventData &event, std::size_t id, WorldECS &ecs)
+                {
+                    mov.left = event.keyInput.PressedDown;
+                });
+            event.keyInput.Key = this->settings.players[playerId].keyboardRight;
+            eventCB.addCallback(event,
+                [&] (const EventData &event, std::size_t id, WorldECS &ecs)
+                {
+                    mov.right = event.keyInput.PressedDown;
+                });
+        }
+
+        ecs.setComponent(player, eventCB);
+        ecs.setComponent(player, Setup());
+    }
 
     void World::create(WorldManager &manager)
     {
@@ -41,10 +156,12 @@ namespace IndieStudio {
         auto scenemg = this->scene.scene;
 
         auto node = scenemg->addAnimatedMeshSceneNode(scenemg->getMesh("assets/models/cube.obj"));
+        node->addShadowVolumeSceneNode();
         node->setMaterialTexture(0, driver->getTexture("assets/textures/block_ground_1.png"));
 		node->setMaterialFlag(irr::video::EMF_LIGHTING, true);
 		node->setScale(irr::core::vector3df(20.0, 20.0, 20.0));
 		node->setPosition(irr::core::vector3df(0.5, 50, 0.5));
+        node->addShadowVolumeSceneNode(node->getMesh());
 
         auto &bomb = ecs.addEntity();
 
@@ -53,9 +170,9 @@ namespace IndieStudio {
         ecs.setComponent(bomb, MaterialTexture(0, "assets/textures/bomb.png"));
 		ecs.setComponent(bomb, MaterialFlag(irr::video::EMF_LIGHTING, true));
 		ecs.setComponent(bomb, Scale(3.5, 3.5, 3.5));
-		ecs.setComponent(bomb, Position(30, 70, 20.5));
-        ecs.setComponent(bomb, ExplosionRange(5.0f));
+		ecs.setComponent(bomb, Position(40.5, 70, 100.5));
         ecs.setComponent(bomb, IsBomb());
+        ecs.setComponent(bomb, ExplosionRange());
         ecs.setComponent(bomb, LifeTime());
         ecs.setComponent(bomb, Setup());
 
@@ -65,8 +182,12 @@ namespace IndieStudio {
 	    		return;
 
             auto &newBlock = ecs.addEntity();
-
             ecs.setComponent(newBlock, Node(static_cast<irr::scene::IAnimatedMeshSceneNode *>(node->clone())));
+            auto node = ecs.getComponent<Node>(newBlock).node;
+            auto selector = scenemg->createTriangleSelectorFromBoundingBox(node);
+            node->setTriangleSelector(selector);
+            this->meta->addTriangleSelector(selector);
+
             ecs.setComponent(newBlock, Position(
                 node->getPosition().X + node->getScale().X * x,
                 node->getPosition().Y + node->getScale().Y * (y == 1 ? 1 : 0),
@@ -74,45 +195,89 @@ namespace IndieStudio {
             ));
 
 	    	if (tileType == MapPattern::TileType::FLOOR_FIRST) {
+                ecs.getComponent<Node>(newBlock).node->addShadowVolumeSceneNode();
 	    		ecs.setComponent(newBlock, MaterialTexture(0, "assets/textures/block_ground_1.png"));
                 ecs.setComponent(newBlock, Scale(20.0, 20.0, 20.0));
 	    	} else if (tileType == MapPattern::TileType::FLOOR_SECOND) {
+                ecs.getComponent<Node>(newBlock).node->addShadowVolumeSceneNode();
 	    	    ecs.setComponent(newBlock, MaterialTexture(0, "assets/textures/block_ground_2.png"));
                 ecs.setComponent(newBlock, Scale(20.0, 20.0, 20.0));
 	    	} else if (tileType == MapPattern::TileType::BORDER_WALL_BLOCK) {
+                ecs.getComponent<Node>(newBlock).node->addShadowVolumeSceneNode();
 	    		ecs.setComponent(newBlock, MaterialTexture(0, "assets/textures/block_wall.png"));
                 ecs.setComponent(newBlock, Scale(20.0, 20.0, 20.0));
 	    	} else if (tileType == MapPattern::TileType::INNER_WALL_BLOCK) {
+                ecs.getComponent<Node>(newBlock).node->addShadowVolumeSceneNode();
 	    		ecs.setComponent(newBlock, MaterialTexture(0, "assets/textures/block_wall.png"));
                 ecs.setComponent(newBlock, Scale(20.0 * 0.9, 20.0 * 0.9, 20.0 * 0.9));
             } else if (tileType == MapPattern::TileType::BREAKABLE_BLOCK) {
+                ecs.getComponent<Node>(newBlock).node->addShadowVolumeSceneNode();
 	    		ecs.setComponent(newBlock, MaterialTexture(0, "assets/textures/block_brick.png"));
                 ecs.setComponent(newBlock, Alive());
                 ecs.setComponent(newBlock, Scale(20.0 * 0.9, 20.0 * 0.9, 20.0 * 0.9));
+                ecs.setComponent(newBlock, Alive());
             }
 
             ecs.setComponent(newBlock, MaterialFlag(irr::video::EMF_LIGHTING, true));
             ecs.setComponent(newBlock, Setup());
-	    });
+        });
+
+        initPlayer(manager, scenemg, 0);
+        initPlayer(manager, scenemg, 1);
+        initPlayer(manager, scenemg, 2);
+        initPlayer(manager, scenemg, 3);
 
         Initializer<WorldECS>::initAllEntities(ecs, scenemg);
     }
 
-    void World::focusECS(irr::scene::ISceneManager *sceneManager)
+    void World::focusECS(SceneManager::Scene &scene)
     {
-        auto systems = WorldECSSystems(this->ecs);
+        auto systems = WorldECSSystems(this->ecs, this);
 
         while (Game::INSTANCE->getSceneManager().getActive() == SceneManager::PLAY_ID
         && Singleton::getDevice()->run()) {
-            sceneManager->getVideoDriver()->beginScene(true, true);
+            this->ecs.getEventManager().switch_event_queue();
+            scene.scene->getVideoDriver()->beginScene(true, true);
             systems.process();
+            this->ecs.forEntitiesWith<Movement>(
+                [&](auto &data, [[gnu::unused]] std::size_t id)
+                {
+                    Movement &mov = this->ecs.getComponent<Movement>(data);
+                    auto &speed = this->ecs.getComponent<Speed>(data);
+                    auto &pos = this->ecs.getComponent<Position>(data);
+                    auto &node = this->ecs.getComponent<Node>(data);
+
+                    bool did = false;
+                    if (mov.up) {
+                        move(direction[0], pos, speed, node);
+                        did = true;
+                    } if (mov.down) {
+                        move(direction[1], pos, speed, node);
+                        did = true;
+                    } if (mov.left) {
+                        move(direction[2], pos, speed, node);
+                        did = true;
+                    } if (mov.right) {
+                        move(direction[3], pos, speed, node);
+                        did = true;
+                    }
+                    if (!did) {
+                        if (node.node->getFrameNr() == 76 || node.node->getFrameNr() <= 27)
+                            node.node->setFrameLoop(27, 76);
+                        return;
+                    }
+                    if (node.node->getFrameNr() > 27)
+		                node.node->setFrameLoop(0, 27);
+                }
+            );
             this->ecs.getEventManager().clear_event_queue();
-            sceneManager->drawAll();
-            sceneManager->getVideoDriver()->endScene();
+            scene.scene->drawAll();
+            scene.gui->draw();
+            scene.scene->getVideoDriver()->endScene();
         }
     }
 
-    void World::forwardEvent(ECS::Event::EventData &event)
+    void World::forwardEvent(ECS::Event::EventData event)
     {
         this->ecs.getEventManager().push_event(event);
     }

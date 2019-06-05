@@ -62,5 +62,4 @@ namespace IndieStudio {
             this->set(x, y, z, tileType);
         }
     }
-
 }

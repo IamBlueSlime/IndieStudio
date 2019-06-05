@@ -26,39 +26,40 @@ namespace IndieStudio::ECS::System {
                 auto &bombPosition = manager.template getComponent<Position>(data);
                 auto &bombRange = manager.template getComponent<ExplosionRange>(data);
 
-                manager.template forEntitiesWith<Position, Alive>(
+                manager.template forEntitiesWith<Node, Position, Alive>(
                 [&manager, &bombPosition, &bombRange](auto &data, [[gnu::unused]] auto id) {
 
                     auto &position = manager.template getComponent<Position>(data);
+                    auto &node = manager.template getComponent<Node>(data);
 
-                    for (float i = 0; i <= bombRange.explosionRangeUp; i++) {
-                        if (static_cast<int>(bombPosition.z + i) == static_cast<int>(position.z)) {
-                            //manager.template unsetComponent<Alive>(data);
-                            manager.template delEntity(data);
+                    for (float i = 0; i <= bombRange.explosionRangeUp; i += 1.0) {
+                        if (static_cast<int>(bombPosition.z + (i * 20)) == static_cast<int>(position.z) &&
+                            static_cast<int>(bombPosition.x) == static_cast<int>(position.x)) {
+                            node.node->setVisible(false);
                             bombRange.explosionRangeUp = i;
                             break;
                         }
                     }
-                    for (float i = 0; i <= bombRange.explosionRangeDown; i++) {
-                        if (static_cast<int>(bombPosition.z - i) == static_cast<int>(position.z)) {
-                            //manager.template unsetComponent<Alive>(data);
-                            manager.template delEntity(data);
+                    for (float i = 0; i <= bombRange.explosionRangeDown; i += 1.0) {
+                        if (static_cast<int>(bombPosition.z - (i * 20)) == static_cast<int>(position.z) &&
+                            static_cast<int>(bombPosition.x) == static_cast<int>(position.x)) {
+                            node.node->setVisible(false);
                             bombRange.explosionRangeDown = i;
                             break;
                         }
                     }
-                    for (float i = 0; i <= bombRange.explosionRangeLeft; i++) {
-                        if (static_cast<int>(bombPosition.x + i) == static_cast<int>(position.x)) {
-                            //manager.template unsetComponent<Alive>(data);
-                            manager.template delEntity(data);
+                    for (float i = 0; i <= bombRange.explosionRangeLeft; i += 1.0) {
+                        if (static_cast<int>(bombPosition.x - (i * 20)) == static_cast<int>(position.x) &&
+                            static_cast<int>(bombPosition.z) == static_cast<int>(position.z)) {
+                            node.node->setVisible(false);
                             bombRange.explosionRangeLeft = i;
                             break;
                         }
                     }
-                    for (float i = 0; i <= bombRange.explosionRangeRight; i++) {
-                        if (static_cast<int>(bombPosition.x - i) == static_cast<int>(position.x)) {
-                            //manager.template unsetComponent<Alive>(data);
-                            manager.template delEntity(data);
+                    for (float i = 0; i <= bombRange.explosionRangeRight; i += 1.0) {
+                        if (static_cast<int>(bombPosition.x + (i * 20)) == static_cast<int>(position.x) &&
+                            static_cast<int>(bombPosition.z) == static_cast<int>(position.z)) {
+                            node.node->setVisible(false);
                             bombRange.explosionRangeRight = i;
                             break;
                         }

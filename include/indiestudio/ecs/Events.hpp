@@ -86,12 +86,15 @@ namespace IndieStudio::ECS::Event {
             }
         }
 
-        void clear_event_queue(void) {
+        void clear_event_queue() {
             this->getEventQueue().clear();
+        }
+
+        void switch_event_queue() {
             this->event_queue_switch = !this->event_queue_switch;
         }
 
-        void push_event(const EventData &event) {
+        void push_event(const EventData event) {
             if (this->event_queue_switch) {
                 this->event_queue1[event] = true;
             } else {
@@ -102,30 +105,7 @@ namespace IndieStudio::ECS::Event {
     private:
         std::unordered_map<EventData, bool> event_queue1;
         std::unordered_map<EventData, bool> event_queue2;
-        bool event_queue_switch;
+        bool event_queue_switch = false;
     };
-
-    // class IrrlichEventReceiver : public irr::IEventReceiver {
-    // public:
-    //     IrrlichEventReceiver(EventManager &event_manager_)
-    //     :
-    //     event_manager(event_manager_) {}
-
-    //     bool OnEvent(const irr::SEvent& event) override {
-    //         EventData data;
-    //         switch (event.EventType) {
-    //             case irr::EEVENT_TYPE::EET_KEY_INPUT_EVENT:
-    //                 data.type = EventType::KEYBOARD_EVENT;
-    //                 data.keyInput = event.KeyInput;
-    //                 this->event_manager.push_event(data);
-    //                 break;
-    //             default: break;
-    //         }
-    //         return true;
-    //     }
-
-    // private:
-    //     EventManager &event_manager;
-    // };
 
 }
