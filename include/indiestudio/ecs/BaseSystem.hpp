@@ -16,6 +16,8 @@
 #include "indiestudio/ecs/TypeList.hpp"
 #include "indiestudio/ecs/Entity.hpp"
 
+#include "indiestudio/common/ISerializable.hpp"
+
 namespace IndieStudio {
     class World;
 }

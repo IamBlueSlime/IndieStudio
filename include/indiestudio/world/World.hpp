@@ -15,6 +15,7 @@
 #include "indiestudio/world/MapPattern.hpp"
 #include "indiestudio/world/WorldSettings.hpp"
 #include "indiestudio/utils/Packed.hpp"
+#include "indiestudio/world/IWorld.hpp"
 
 namespace IndieStudio {
 
@@ -51,13 +52,13 @@ namespace IndieStudio {
         ECS::System::ApplyExplosion<WorldECS>,
         ECS::System::ExplosionDuration<WorldECS>,
         ECS::System::MovePlayer<WorldECS>,
-        ECS::System::SetupExplosion<WorldECS>
-        // ECS::System::IASystem<WorldECS>
+        ECS::System::SetupExplosion<WorldECS>,
+        ECS::System::IASystem<WorldECS>
     >;
 
     class WorldManager;
 
-    class World : public ISerializable {
+    class World : public IWorld, public ISerializable {
     public:
         PACKED(struct FileHeader {
             unsigned char magic[4];
@@ -83,7 +84,7 @@ namespace IndieStudio {
         void unpack(ByteBuffer &buffer) override;
 
         WorldSettings &getSettings() { return this->settings; }
-        MapPattern *getPattern() { return this->pattern.get(); }
+        MapPattern *getPattern() override { return this->pattern.get(); }
         const WorldSettings &getSettings() const { return this->settings; }
 
     protected:
