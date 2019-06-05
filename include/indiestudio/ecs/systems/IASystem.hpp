@@ -42,16 +42,16 @@ public:
     };
 
 
-    std::optional<Direction> search_for(MapPattern::TileType target, MapPattern *map, std::size_t x, std::size_t y) {
+    std::optional<std::pair<Direction, std::size_t>> search_for(MapPattern::TileType target, MapPattern *map, std::size_t x, std::size_t y) {
         Hitmap hitmap = this->init_hitmap(map);
         this->fill_hitmap(hitmap, {x, y}, 0);
-        std::optional<Coord> target_coord = this->find_nearest_target(target, hitmap);
+        std::optional<std::pair<Coord, std::size_t>> target_coord = this->find_nearest_target(target, hitmap);
         if (target_coord == std::nullopt) {
             return std::nullopt;
         }
         this->reset_hitmap(hitmap);
-        this->fill_hitmap(hitmap, {target_coord.value().x, target_coord.value().y}, 0);
-        return std::make_optional(this->get_direction(hitmap, {x, y}));
+        this->fill_hitmap(hitmap, {target_coord.value().first.x, target_coord.value().first.y}, 0);
+        return std::make_optional(std::make_pair(this->get_direction(hitmap, {x, y}), target_coord.value().second));
     }
 
 private:
@@ -101,7 +101,7 @@ private:
         }
     }
 
-    std::optional<Coord> find_nearest_target(MapPattern::TileType target, const Hitmap &hitmap) {
+    std::optional<std::pair<Coord, std::size_t>> find_nearest_target(MapPattern::TileType target, const Hitmap &hitmap) {
         std::size_t nearest = -1;
         Coord nearest_target = {0, 0};
 
@@ -115,7 +115,7 @@ private:
         if (nearest == static_cast<std::size_t>(-1)) {
             return std::nullopt;
         }
-        return std::make_optional(nearest_target);
+        return std::make_optional(std::make_pair(nearest_target, nearest));
     }
 
     void is_nearest(const Hitmap &hitmap, std::size_t &nearest, Coord &nearest_target, Coord current_coord) {
@@ -226,27 +226,47 @@ namespace IndieStudio::ECS::System {
         bool atk_player(Position position, IWorld *world) {
             (void)world;
             (void)position;
+            MapPattern *tilemap = world->getPattern();
+
+            Poti::Coord coord = convert_position(position);
+
+            std::optional<std::pair<Poti::Direction, std::size_t>> decision = this->marron.search_for(MapPattern::TileType::PLAYER, tilemap, coord.x, coord.y);
+
+            if (decision == std::nullopt) {
+                return false;
+            }
+
+            if (decision.value().second <= 3) {
+                // TODO: poser bombe
+                // TODO: ajouter du bruit aléatoire, et prendre en compte les stats du player
+                return false;
+            }
+
+            // TODO: move dans la bonne direction
             return true;
         }
 
         bool destroy_wall(Position position, IWorld *world) {
+            MapPattern *tilemap = world->getPattern();
 
             (void)world;
             (void)position;
+            Poti::Coord coord = convert_position(position);
 
-            // Poti poti;
-            // std::optional<Poti::PathData> path;
+            std::optional<std::pair<Poti::Direction, std::size_t>> decision = this->marron.search_for(MapPattern::TileType::BREAKABLE_BLOCK, tilemap, coord.x, coord.y);
 
-            // path = poti.search_for(MapPattern:TileType::BREAKABLE_BLOCK, world->getPattern(), position.x, position.y);
-            // if (path == std::nullopt)
-            //     return false;
-            // if (path.pathLen == 1) {
-            //     //pose la bombe
-            //     AI.current_action = IA::Action::NOTHING;
-            // } else
-            //     moveAI(path.dir);
+            if (decision == std::nullopt) {
+                return false;
+            }
+
+            if (decision.value().second == 1) {
+                // TODO: poser bombe
+                // l'action sera reroll, mais cancel immédiatement à l iteration suivante pour échapper à sa propre bombe
+                return false;
+            }
+
+            // TODO: move dans la bonne direction
             return true;
-//            return false;
         }
 
         bool pick_powerup(Position position, IWorld *world) {
@@ -255,28 +275,30 @@ namespace IndieStudio::ECS::System {
             Poti::Coord coord = convert_position(position);
 
             if (tilemap->get(coord.y, 1, coord.x) == MapPattern::TileType::POWER_UP) {
-                //TODO: apply powerup effect
-                //TODO: delete le powerup
-                //TODO: update la tilemap
+                // TODO: apply powerup effect
+                // TODO: delete le powerup
+                // TODO: update la tilemap
                 return false;
             }
 
-            std::optional<Poti::Direction> decision = this->poti.search_for(MapPattern::TileType::POWER_UP, tilemap, static_cast<std::size_t>(position.x), static_cast<std::size_t>(position.y));
+            std::optional<std::pair<Poti::Direction, std::size_t>> decision = this->marron.search_for(MapPattern::TileType::POWER_UP, tilemap, coord.x, coord.y);
             if (decision == std::nullopt) {
                 return false;
             }
 
             // TODO: move dans la bonne direction
+            return true;
 
         }
 
         Poti::Coord convert_position(Position position) {
             (void)position;
             // TODO: converting float position to x / y coord
+            return {static_cast<std::size_t>(position.x), static_cast<std::size_t>(position.y)};
         }
 
     protected:
     private:
-        Poti poti;
+        Poti marron;
     };
 }
