@@ -54,14 +54,14 @@ namespace IndieStudio {
 
     void PlayScene::setupLight(SceneManager::Scene &scene)
     {
-        irr::scene::ISceneNode* light = scene.scene->addLightSceneNode(
-            0, irr::core::vector3df(160, 100, 100),
+        irr::scene::ISceneNode* lightnode = scene.scene->addLightSceneNode(
+            0, irr::core::vector3df(160, 150, 100),
 		    irr::video::SColorf(1.0f, 1.0f, 1.0f, 1.0f), 10000.0f);
-        light = scene.scene->addBillboardSceneNode(light, irr::core::dimension2d<irr::f32>(50, 50));
+        irr::scene::ISceneNode* light = scene.scene->addBillboardSceneNode(lightnode, irr::core::dimension2d<irr::f32>(50, 50));
         light->setMaterialFlag(irr::video::EMF_LIGHTING, false);
         light->setMaterialType(irr::video::EMT_TRANSPARENT_ADD_COLOR);
         light->setMaterialTexture(0, scene.manager->textureManager.getTexture("assets/textures/particlewhite.bmp").content);
-        light->addAnimator(scene.scene->createFlyCircleAnimator({0, 15, 0}, 200));
+        lightnode->addAnimator(scene.scene->createFlyCircleAnimator(lightnode->getAbsolutePosition(), 150, 0.0001));
         // scene.scene->addLightSceneNode(0, irr::core::vector3df(0, -50, 0),
             // irr::video::SColorf(1.0f, 1.0f, 1.0f, 1.0f), 5000.0f);
     }

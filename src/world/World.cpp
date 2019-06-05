@@ -85,19 +85,14 @@ namespace IndieStudio {
         auto &speed = ecs.getComponent<Speed>(player);
         auto &nodeEcs = ecs.getComponent<Node>(player);
 
-        std::cout << "player" << playerId << " :" << (int)this->settings.players[playerId].controlType << std::endl;
         if (this->settings.players[playerId].controlType == WorldSettings::Player::ControlType::KEYBOARD) {
             event.keyInput.Key = this->settings.players[playerId].keyboardUp;
-            std::cout << "player" << playerId << " :" << this->settings.players[playerId].keyboardUp << std::endl;
             eventCB.addCallback(event, move(direction[0], pos, speed, nodeEcs));
             event.keyInput.Key = this->settings.players[playerId].keyboardDown;
-            std::cout << "player" << playerId << " :" << this->settings.players[playerId].keyboardDown << std::endl;
             eventCB.addCallback(event, move(direction[1], pos, speed, nodeEcs));
             event.keyInput.Key = this->settings.players[playerId].keyboardLeft;
-            std::cout << "player" << playerId << " :" << this->settings.players[playerId].keyboardLeft << std::endl;
             eventCB.addCallback(event, move(direction[2], pos, speed, nodeEcs));
             event.keyInput.Key = this->settings.players[playerId].keyboardRight;
-            std::cout << "player" << playerId << " :" << this->settings.players[playerId].keyboardRight << std::endl;
             eventCB.addCallback(event, move(direction[3], pos, speed, nodeEcs));
         }
 
@@ -179,20 +174,6 @@ namespace IndieStudio {
         initPlayer(manager, scenemg, 1);
         initPlayer(manager, scenemg, 2);
         initPlayer(manager, scenemg, 3);
-
-        // eventCB.addCallback(event,
-        //     [&] (const EventData& event, std::size_t id, WorldECS &ecs)
-        //     {
-        //         auto &pos = ecs.getComponent<Position>(player1);
-        //         auto &speed = ecs.getComponent<Speed>(player1);
-        //         auto &node = ecs.getComponent<Node>(player1).node;
-        //         irr::core::vector3df newPos(
-        //             move_player(node, irr::core::vector3df(0, 0, 1), irr::core::vector3df(speed.x, speed.y, speed.z))
-        //         );
-        //         pos.x = newPos.X;
-        //         pos.y = newPos.Y;
-        //         pos.z = newPos.Z;
-        //     });
 
         Initializer<WorldECS>::initAllEntities(ecs, scenemg);
     }
