@@ -19,7 +19,6 @@ namespace IndieStudio::ECS::System {
     public:
         void process(ManagerType &manager, World *world) override {
             (void) world;
-
             manager.template forEntitiesWith<IsBomb, LifeTime>(
                 [&manager](auto &data, [[gnu::unused]] auto id) {
                     auto &Lifetime = manager.template getComponent<LifeTime>(data);
