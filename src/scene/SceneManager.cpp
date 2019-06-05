@@ -77,6 +77,9 @@ namespace IndieStudio {
         meshManager.registerMesh("assets/models/player.md3");
         meshManager.registerMesh("assets/models/jesus.md3");
 
+        irr::gui::IGUIFont *font = this->guiRoot->getFont("assets/fonts/roboto_regular.png");
+        this->guiRoot->getSkin()->setFont(font);
+
         MainMenuScene::initialize(this->createScene(MAIN_MENU_ID));
         NewGameScene::initialize(this->createScene(NEW_GAME_ID));
         this->createScene(PLAY_ID);
