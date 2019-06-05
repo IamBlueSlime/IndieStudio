@@ -25,8 +25,8 @@ namespace IndieStudio::ECS::System {
                     auto &Lifetime = manager.template getComponent<LifeTime>(data);
 
                     if (std::time(nullptr) - Lifetime.lifeTime >= 5) {
-                        manager.template setComponent(data, IsExploding());
-                        manager.template setComponent(data, ExplosionLifeTime());
+                        manager.setComponent(data, IsExploding());
+                        manager.setComponent(data, ExplosionLifeTime());
                         manager.template unsetComponent<LifeTime>(data);
                     }
             });

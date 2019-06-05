@@ -269,6 +269,7 @@ namespace IndieStudio::ECS::System {
 
         Poti::Coord convert_position(Position position) {
             // TODO: converting float position to x / y coord
+			return { 0, 0 };
         }
 
     protected:

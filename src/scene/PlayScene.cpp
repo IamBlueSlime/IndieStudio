@@ -50,18 +50,29 @@ namespace IndieStudio {
         scene.scene->addSkyDomeSceneNode(scene.manager->textureManager.getTexture("assets/textures/skydome.jpg").content);
         //node->setMaterialFlag(irr::video::EMF_NORMALIZE_NORMALS, true);
         scene.scene->setShadowColor(irr::video::SColor(150, 0, 0, 0));
+        water->setMaterialFlag(irr::video::EMF_LIGHTING, true);
     }
 
     void PlayScene::setupLight(SceneManager::Scene &scene)
     {
         irr::scene::ISceneNode* lightnode = scene.scene->addLightSceneNode(
             0, irr::core::vector3df(160, 150, 100),
-		    irr::video::SColorf(1.0f, 1.0f, 1.0f, 1.0f), 10000.0f);
+		    irr::video::SColorf(1.0f, 1.0f, 1.0f, 0.5f), 5000.0f);
         irr::scene::ISceneNode* light = scene.scene->addBillboardSceneNode(lightnode, irr::core::dimension2d<irr::f32>(50, 50));
         light->setMaterialFlag(irr::video::EMF_LIGHTING, false);
         light->setMaterialType(irr::video::EMT_TRANSPARENT_ADD_COLOR);
         light->setMaterialTexture(0, scene.manager->textureManager.getTexture("assets/textures/particlewhite.bmp").content);
-        lightnode->addAnimator(scene.scene->createFlyCircleAnimator(lightnode->getAbsolutePosition(), 150, 0.0001));
+        lightnode->addAnimator(scene.scene->createFlyCircleAnimator(lightnode->getAbsolutePosition(), 120, 0.0001));
+
+        // lightnode = scene.scene->addLightSceneNode(
+        //     0, irr::core::vector3df(160, 150, 100),
+		//     irr::video::SColorf(1.0f, 1.0f, 1.0f, 0.5f), 2000.0f);
+        // light = scene.scene->addBillboardSceneNode(lightnode, irr::core::dimension2d<irr::f32>(50, 50));
+        // light->setMaterialFlag(irr::video::EMF_LIGHTING, false);
+        // light->setMaterialType(irr::video::EMT_TRANSPARENT_ADD_COLOR);
+        // light->setMaterialTexture(0, scene.manager->textureManager.getTexture("assets/textures/particlewhite.bmp").content);
+        // lightnode->addAnimator(scene.scene->createFlyCircleAnimator(lightnode->getAbsolutePosition(), 150, 0.0001, {0, -1, 0}));
+
         // scene.scene->addLightSceneNode(0, irr::core::vector3df(0, -50, 0),
             // irr::video::SColorf(1.0f, 1.0f, 1.0f, 1.0f), 5000.0f);
     }

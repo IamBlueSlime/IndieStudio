@@ -65,10 +65,11 @@ namespace IndieStudio {
         textureManager.registerTexture("assets/textures/water_stones.jpg");
         textureManager.registerTexture("assets/textures/water.jpg");
         textureManager.registerTexture("assets/textures/particlewhite.bmp");
-        textureManager.registerTexture("asset_deprecated/models/Jesus/Jesus.png");
+        textureManager.registerTexture("assets/textures/jesus.png");
 
         meshManager.registerMesh("assets/models/cube.obj");
         meshManager.registerMesh("assets/models/player.md3");
+	meshManager.registerMesh("assets/models/jesus.md3");
 
         MainMenuScene::initialize(this->createScene(MAIN_MENU_ID));
         NewGameScene::initialize(this->createScene(NEW_GAME_ID));
