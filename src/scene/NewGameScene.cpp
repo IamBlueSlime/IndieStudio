@@ -226,7 +226,7 @@ namespace IndieStudio {
                 World *world = manager.create(settings);
                 PlayScene::initialize(playScene);
                 scene.manager->setActiveScene(SceneManager::PLAY_ID);
-                world->focusECS(playScene.scene);
+                world->focusECS(playScene);
 
                 return true;
             } else if (event.GUIEvent.Caller->getID() > 42) {

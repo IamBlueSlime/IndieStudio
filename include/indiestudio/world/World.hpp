@@ -74,7 +74,7 @@ namespace IndieStudio {
 
         void create(WorldManager &manager);
 
-        void focusECS(irr::scene::ISceneManager *sceneManager);
+        void focusECS(SceneManager::Scene &scene);
         void forwardEvent(ECS::Event::EventData event);
 
         void initPlayer(WorldManager &manager, irr::scene::ISceneManager *scenemg, int playerId);

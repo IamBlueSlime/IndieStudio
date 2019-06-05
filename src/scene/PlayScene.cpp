@@ -29,6 +29,7 @@ namespace IndieStudio {
         setupWaterBackground(scene);
         setupLight(scene);
         setupTravelling(scene);
+        setupOverlay(scene);
 
         scene.onEvent = [&](const irr::SEvent &event) {
             return onEvent(scene, event);
@@ -92,6 +93,62 @@ namespace IndieStudio {
             Singleton::getDevice()->getTimer()->getTime(), points, 0.3F, 0.5F, false);
         cam->addAnimator(sa);
         sa->drop();
+    }
+
+    void PlayScene::setupOverlay(SceneManager::Scene &scene)
+    {
+        auto guiEnv = scene.scene->getGUIEnvironment();
+        auto guiRoot = scene.gui;
+
+        int w = 1280;
+        int h = 720;
+
+        irr::gui::IGUIImage *timer = guiEnv->addImage(irr::core::recti(
+            {1280 / 2 - (300 / 2), 20}, {(1280 / 2 + (300 / 2)), 20 + 80 }
+        ), guiRoot);
+        timer->setImage(scene.manager->textureManager.getTexture("assets/textures/timer.png").content);
+        timer->setScaleImage(true);
+
+        irr::video::ITexture *iconTextures[4] = {
+            scene.manager->textureManager.getTexture("assets/textures/player_black_icon.png").content,
+            scene.manager->textureManager.getTexture("assets/textures/player_red_icon.png").content,
+            scene.manager->textureManager.getTexture("assets/textures/player_pink_icon.png").content,
+            scene.manager->textureManager.getTexture("assets/textures/player_white_icon.png").content
+        };
+
+        int wi = 114 / 1.5;
+        int hi = 126 / 1.5;
+        irr::core::vector2di iconPositions[4] {
+            {20, 250}, {w - wi - 20, 250}, {20, 450}, {w - wi - 20, 450}
+        };
+
+        for (int i = 0; i < 4; i += 1) {
+            irr::gui::IGUIImage *icon = guiEnv->addImage(irr::core::recti(
+                iconPositions[i], {iconPositions[i].X + wi, iconPositions[i].Y + hi}
+            ), guiRoot);
+            icon->setImage(iconTextures[i]);
+            icon->setScaleImage(true);
+
+            irr::core::recti bannerRect = irr::core::recti(
+                { iconPositions[i].X, iconPositions[i].Y + hi + 10 },
+                { iconPositions[i].X + 200, iconPositions[i].Y + hi + 10 + 40 }
+            );
+
+            if (i % 2 != 0) {
+                bannerRect.UpperLeftCorner.X -= 200 - wi;
+                bannerRect.LowerRightCorner.X -= 200 - wi;
+            }
+
+            irr::gui::IGUIImage *banner = guiEnv->addImage(bannerRect, guiRoot);
+
+            irr::video::ITexture *bannerTexture = (i % 2 == 0
+                ? scene.manager->textureManager.getTexture("assets/textures/player_banner.png").content
+                : scene.manager->textureManager.getTexture("assets/textures/player_banner_inverse.png").content
+            );
+
+            banner->setImage(bannerTexture);
+            banner->setScaleImage(true);
+        }
     }
 
     bool PlayScene::onEvent(SceneManager::Scene &scene, const irr::SEvent &event)

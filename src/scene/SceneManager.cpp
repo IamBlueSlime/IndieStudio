@@ -58,18 +58,24 @@ namespace IndieStudio {
     {
         textureManager.registerTexture("assets/textures/skydome.jpg");
         textureManager.registerTexture("assets/textures/title.png");
-        textureManager.registerTexture("assets/textures/player_black.png");
-        textureManager.registerTexture("assets/textures/player_pink.png");
-        textureManager.registerTexture("assets/textures/player_red.png");
-        textureManager.registerTexture("assets/textures/player_white.png");
         textureManager.registerTexture("assets/textures/water_stones.jpg");
         textureManager.registerTexture("assets/textures/water.jpg");
         textureManager.registerTexture("assets/textures/particlewhite.bmp");
         textureManager.registerTexture("assets/textures/jesus.png");
 
+        std::string colors[4] = {"black", "pink", "red", "white"};
+        for (std::string &color : colors) {
+            textureManager.registerTexture("assets/textures/player_" + color + ".png");
+            textureManager.registerTexture("assets/textures/player_" + color + "_icon.png");
+        }
+
+        textureManager.registerTexture("assets/textures/player_banner.png");
+        textureManager.registerTexture("assets/textures/player_banner_inverse.png");
+        textureManager.registerTexture("assets/textures/timer.png");
+
         meshManager.registerMesh("assets/models/cube.obj");
         meshManager.registerMesh("assets/models/player.md3");
-	meshManager.registerMesh("assets/models/jesus.md3");
+        meshManager.registerMesh("assets/models/jesus.md3");
 
         MainMenuScene::initialize(this->createScene(MAIN_MENU_ID));
         NewGameScene::initialize(this->createScene(NEW_GAME_ID));
