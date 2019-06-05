@@ -40,6 +40,9 @@ namespace IndieStudio {
     {
         return [&] (const EventData &event, std::size_t id, WorldECS &ecs)
             {
+                (void)event;
+                (void)id;
+                (void)ecs;
                 irr::core::vector3df newPos(
                     try_move(node.node, direction, irr::core::vector3df(speed.x, speed.y, speed.z))
                 );
@@ -51,6 +54,7 @@ namespace IndieStudio {
 
     void World::initPlayer(WorldManager &manager, irr::scene::ISceneManager *scenemg, int playerId)
     {
+        (void)manager;
         auto &player = ecs.addEntity();
         irr::core::vector3df position[4] = {
             {30, 70, 23},
@@ -60,22 +64,22 @@ namespace IndieStudio {
         };
         std::string texture[4] = {
             "black",
+            "red",
             "pink",
-            "white",
-            "red"
+            "white"
         };
 
         auto node_p = scenemg->addAnimatedMeshSceneNode(scenemg->getMesh("assets/models/player.md3"));
         ecs.setComponent(player, Node(node_p));
-	    ecs.setComponent(player, MaterialTexture(0, "assets/textures/player_" + texture[playerId] + ".png"));
-		ecs.setComponent(player, MaterialFlag(irr::video::EMF_LIGHTING, false));
-		ecs.setComponent(player, Scale(20, 20, 20));
-		ecs.setComponent(player, Position(position[playerId].X, position[playerId].Y, position[playerId].Z));
+        ecs.setComponent(player, MaterialTexture(0, "assets/textures/player_" + texture[playerId] + ".png"));
+        ecs.setComponent(player, MaterialFlag(irr::video::EMF_LIGHTING, false));
+        ecs.setComponent(player, Scale(20, 20, 20));
+        ecs.setComponent(player, Position(position[playerId].X, position[playerId].Y, position[playerId].Z));
         ecs.setComponent(player, Speed(1, 1, 1));
 
         auto eventCB = EventCallbacks<WorldECS>();
         IndieStudio::ECS::Event::EventData event;
-		event.type = ECS::Event::EventType::INDIE_KEYBOARD_EVENT;
+        event.type = ECS::Event::EventType::INDIE_KEYBOARD_EVENT;
 
         auto &pos = ecs.getComponent<Position>(player);
         auto &speed = ecs.getComponent<Speed>(player);
@@ -171,20 +175,6 @@ namespace IndieStudio {
         initPlayer(manager, scenemg, 1);
         initPlayer(manager, scenemg, 2);
         initPlayer(manager, scenemg, 3);
-
-        // eventCB.addCallback(event,
-        //     [&] (const EventData& event, std::size_t id, WorldECS &ecs)
-        //     {
-        //         auto &pos = ecs.getComponent<Position>(player1);
-        //         auto &speed = ecs.getComponent<Speed>(player1);
-        //         auto &node = ecs.getComponent<Node>(player1).node;
-        //         irr::core::vector3df newPos(
-        //             move_player(node, irr::core::vector3df(0, 0, 1), irr::core::vector3df(speed.x, speed.y, speed.z))
-        //         );
-        //         pos.x = newPos.X;
-        //         pos.y = newPos.Y;
-        //         pos.z = newPos.Z;
-        //     });
 
         Initializer<WorldECS>::initAllEntities(ecs, scenemg);
     }

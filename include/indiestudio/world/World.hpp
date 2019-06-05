@@ -52,8 +52,8 @@ namespace IndieStudio {
         ECS::System::ApplyExplosion<WorldECS>,
         ECS::System::ExplosionDuration<WorldECS>,
         ECS::System::MovePlayer<WorldECS>,
-        ECS::System::SetupExplosion<WorldECS>,
-        ECS::System::IASystem<WorldECS>
+        ECS::System::SetupExplosion<WorldECS>
+        // ECS::System::IASystem<WorldECS>
     >;
 
     class WorldManager;

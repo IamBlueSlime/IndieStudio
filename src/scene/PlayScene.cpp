@@ -16,8 +16,8 @@ namespace IndieStudio {
 
     void PlayScene::initialize(SceneManager::Scene &scene)
     {
-        auto guiEnv = scene.scene->getGUIEnvironment();
-        auto guiRoot = scene.gui;
+        // auto guiEnv = scene.scene->getGUIEnvironment();
+        // auto guiRoot = scene.gui;
 
         WorldSettings &settings = static_cast<WorldManager &>(
             Game::INSTANCE->getWorldManager()).getLoadedWorld()->getSettings();
@@ -54,15 +54,16 @@ namespace IndieStudio {
 
     void PlayScene::setupLight(SceneManager::Scene &scene)
     {
-        irr::scene::ISceneNode* light = scene.scene->addLightSceneNode(
-            0, irr::core::vector3df(355, 250, 50),
-		    irr::video::SColorf(1.0f, 1.0f, 1.0f, 1.0f), 5000.0f);
-        light = scene.scene->addBillboardSceneNode(light, irr::core::dimension2d<irr::f32>(50, 50));
+        irr::scene::ISceneNode* lightnode = scene.scene->addLightSceneNode(
+            0, irr::core::vector3df(160, 150, 100),
+		    irr::video::SColorf(1.0f, 1.0f, 1.0f, 1.0f), 10000.0f);
+        irr::scene::ISceneNode* light = scene.scene->addBillboardSceneNode(lightnode, irr::core::dimension2d<irr::f32>(50, 50));
         light->setMaterialFlag(irr::video::EMF_LIGHTING, false);
         light->setMaterialType(irr::video::EMT_TRANSPARENT_ADD_COLOR);
         light->setMaterialTexture(0, scene.manager->textureManager.getTexture("assets/textures/particlewhite.bmp").content);
-        scene.scene->addLightSceneNode(0, irr::core::vector3df(0, -50, 0),
-            irr::video::SColorf(1.0f, 1.0f, 1.0f, 1.0f), 5000.0f);
+        lightnode->addAnimator(scene.scene->createFlyCircleAnimator(lightnode->getAbsolutePosition(), 150, 0.0001));
+        // scene.scene->addLightSceneNode(0, irr::core::vector3df(0, -50, 0),
+            // irr::video::SColorf(1.0f, 1.0f, 1.0f, 1.0f), 5000.0f);
     }
 
     void PlayScene::setupTravelling(SceneManager::Scene &scene)
@@ -75,14 +76,6 @@ namespace IndieStudio {
         y = 450;
         points.push_back(irr::core::vector3df(pos.X + y, pos.Y + y, pos.Z + y));
         points.push_back(irr::core::vector3df(pos.X, pos.Y, pos.Z));
-
-        // for (y = 450; y >= 0; y -= 15) {
-        //     points.push_back(irr::core::vector3df(pos.X + y, pos.Y + y, pos.Z + y));
-        //     // points.push_back(irr::core::vector3df(pos.X, -y, pos.Z - std::sqrt(std::abs(std::pow(y, 2) - std::pow(250, 2)))));
-        // }
-
-        // cam->setPosition(irr::core::vector3df(pos.X, -300, pos.Z - 250));
-        // points.push_back(pos);
 
         irr::scene::ISceneNodeAnimator* sa = scene.scene->createFollowSplineAnimator(
             Singleton::getDevice()->getTimer()->getTime(), points, 0.3F, 0.5F, false);
@@ -109,13 +102,13 @@ namespace IndieStudio {
                 data.keyInput = event.KeyInput;
                 world->forwardEvent(data);
                 return true;
-            
+
             case irr::EEVENT_TYPE::EET_JOYSTICK_INPUT_EVENT:
                 data.type = ECS::Event::EventType::INDIE_JOYSTICK_EVENT;
                 data.joystickEvent = event.JoystickEvent;
                 world->forwardEvent(data);
                 return true;
-            
+
             case irr::EEVENT_TYPE::EET_MOUSE_INPUT_EVENT:
                 data.type = ECS::Event::EventType::INDIE_MOUSE_EVENT;
                 data.mouseInput = event.MouseInput;

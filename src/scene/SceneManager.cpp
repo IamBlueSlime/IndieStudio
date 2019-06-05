@@ -65,6 +65,7 @@ namespace IndieStudio {
         textureManager.registerTexture("assets/textures/water_stones.jpg");
         textureManager.registerTexture("assets/textures/water.jpg");
         textureManager.registerTexture("assets/textures/particlewhite.bmp");
+        textureManager.registerTexture("asset_deprecated/models/Jesus/Jesus.png");
 
         meshManager.registerMesh("assets/models/cube.obj");
         meshManager.registerMesh("assets/models/player.md3");

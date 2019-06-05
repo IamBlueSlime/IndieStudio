@@ -13,6 +13,121 @@
 #include "indiestudio/world/MapPattern.hpp"
 #include "indiestudio/world/IWorld.hpp"
 
+namespace IndieStudio::ECS::System {
+
+    using namespace ECS::Event;
+
+    template<typename ManagerType>
+    class IASystem : public BaseSystem<ManagerType> {
+    public:
+        void process(ManagerType &manager, World *world) override {
+            (void) world;
+
+            manager.template forEntitiesWith<IA>(
+                [&manager, this](auto &data, [[gnu::unused]] auto id) {
+                    auto &ia = manager.template getComponent<IA>(data);
+                    auto &speed = manager.template getComponent<Speed>(data);
+                    auto &position = manager.template getComponent<Position>(data);
+
+                    if (this->emergency_move()) {
+                        // cancel current action
+                        ia.current_action = IA::Action::NOTHING;
+                    } else {
+                        if (ia.current_action == IA::Action::NOTHING) {
+                            ia.current_action = this->select_action();
+                        }
+                        // executer la current action
+                        while (!this->execute_action(ia.current_action)) {
+                            ia.current_action = this->select_action();
+                        }
+                    }
+                }
+            );
+        }
+
+        bool emergency_move() {
+            // dodge les cases en explosions
+            // dodge le rayon d action des bombes "endormies"
+            // renvoie true si il y a quelque chose à eviter
+            // renvoie false sinon
+
+            // This removes a warning
+            return false;
+        }
+
+        IA::Action select_action() {
+            int rand = std::rand() % 3;
+
+            switch (rand) {
+                case 0: return IA::Action::ATK;
+                case 1: return IA::Action::WALL;
+                case 2: return IA::Action::PICKUP;
+            }
+        }
+
+        bool execute_action(IA::Action action) {
+            switch (action) {
+                case IA::Action::ATK: return atk_player();
+                case IA::Action::WALL: return destroy_wall();
+                case IA::Action::PICKUP: return pick_powerup();
+                default: return false;
+            }
+        }
+
+        bool atk_player() {
+            return true;
+        }
+
+        bool destroy_wall() {
+            Poti poti();
+            std::optional<Poti::PathData> path;
+
+            path = poti.search_for(MapPattern:TileType::BREAKABLE_BLOCK, world->getPattern(), position.x, position.y);
+            if (path == std::nullopt)
+                return false;
+            if (path.pathLen == 1) {
+                //pose la bombe
+                AI.current_action = IA::Action::NOTHING;
+            } else
+                moveAI(path.dir);
+            return true;
+            return false;
+        }
+
+        bool pick_powerup() {
+            Poti poti();
+            std::optional<Poti::PathData> path;
+
+            path = poti.search_for(MapPattern:TileType::POWER_UP, world->getPattern(), position.x, position.y);
+            if (path == std::nullopt)
+                return false;
+            UpdatePosition(path.dir);
+            if (world->getPattern()->get(position.x, 1, position.y) == MapPattern::TileType::POWER_UP) {
+                pickupPowerUp();
+                AI.current_action = IA::Action::NOTHING;
+            }
+            moveAI(path.dir);
+            world->getPattern()->set(position.x, 1, position.y, MapPattern::TileType::PLAYER);
+            return true;
+        }
+
+        void pickupPowerUp() {
+            //applique l'effet du PowerUp
+        }
+
+        void UpdatePosition(Poti::Direction dir) {
+            switch (dir) {
+                case Poti::Direction::LEFT: position.x -= 1;
+                case Poti::Direction::RIGHT: position.x += 1;
+                case Poti::Direction::TOP: position.y += 1;
+                case Poti::Direction::BOT: position.y -= 1;
+            }
+        }
+
+    protected:
+    private:
+    };
+}
 
 namespace IndieStudio {
 struct Tile {
