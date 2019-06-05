@@ -39,6 +39,7 @@ namespace IndieStudio {
         ECS::Component::Scale,
         ECS::Component::MaterialTexture,
         ECS::Component::MaterialFlag,
+        ECS::Component::TriangleSelector,
         ECS::Component::MeshPath,
         ECS::Component::NodeCreate,
         ECS::Component::Node,
@@ -78,6 +79,7 @@ namespace IndieStudio {
         void initPlayer(WorldManager &manager, irr::scene::ISceneManager *scenemg, int playerId);
         std::function<void(const ECS::EventData&, std::size_t, WorldECS &)> move(
             const irr::core::vector3df &direction, ECS::Position &pos, ECS::Speed &speed, ECS::Node &node);
+        irr::core::vector3df try_move(irr::scene::ISceneNode *node, const irr::core::vector3df &vector, const irr::core::vector3df &velocity);
 
         /* ISerializable implementation */
         void pack(ByteBuffer &buffer) const override;
@@ -99,6 +101,7 @@ namespace IndieStudio {
         std::unique_ptr<MapPattern> pattern;
         WorldECS ecs;
         SceneManager::Scene &scene;
+        irr::scene::IMetaTriangleSelector *meta;
     };
 
 }
