@@ -39,11 +39,11 @@ namespace IndieStudio {
             for (unsigned short x = 1; x < this->width - 1; x += 1)
                 for (unsigned short z = 1; z < this->height - 1; z += 1)
                     this->set(x, 0, z, TileType::FLOOR_FIRST);
-            
+
             for (unsigned short x = 1; x < this->width - 1; x += 1)
                 for (unsigned short z = 1; z < this->height - 1; z += 1)
                     this->set(x, 1, z, TileType::BREAKABLE_BLOCK);
-            
+
             // This code generate the horizontal walls
             for (unsigned short x = 0; x < this->width; x += 1) {
                 this->set(x, 1, 0, TileType::BORDER_WALL_BLOCK);
