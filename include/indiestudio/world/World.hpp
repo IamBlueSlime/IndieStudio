@@ -46,7 +46,8 @@ namespace IndieStudio {
         ECS::Component::Node,
         ECS::Component::ID,
         ECS::Component::Setup,
-        ECS::Component::Movement
+        ECS::Component::Movement,
+        ECS::Component::Particle
     >;
 
     using WorldECSSystems = ECS::SystemsImpl<
@@ -79,6 +80,7 @@ namespace IndieStudio {
         void focusECS(SceneManager::Scene &scene);
         void forwardEvent(ECS::Event::EventData event);
 
+        void initParticle(WorldManager &manager, irr::scene::ISceneManager *scenemg);
         void initPlayer(WorldManager &manager, irr::scene::ISceneManager *scenemg, int playerId);
         void move(const irr::core::vector3df &direction, ECS::Position &pos, ECS::Speed &speed, ECS::Node &node);
 
