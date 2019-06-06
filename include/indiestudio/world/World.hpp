@@ -48,7 +48,8 @@ namespace IndieStudio {
         ECS::Component::ID,
         ECS::Component::Setup,
         ECS::Component::Movement,
-        ECS::Component::Particle
+        ECS::Component::Particle,
+        ECS::Component::Stat
     >;
 
     using WorldECSSystems = ECS::SystemsImpl<
