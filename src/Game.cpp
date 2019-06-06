@@ -20,6 +20,7 @@ namespace IndieStudio {
         this->logger.info("Starting game...");
         this->statisticManager.load();
         this->soundManager.init();
+        this->fontManager.init();
         this->worldManager.init();
         this->modManager.init();
         this->sceneManager.init();

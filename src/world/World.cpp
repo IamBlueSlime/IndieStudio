@@ -6,6 +6,7 @@
 */
 
 #include "indiestudio/Game.hpp"
+#include "indiestudio/common/Scheduler.hpp"
 #include "indiestudio/ecs/Events.hpp"
 #include "indiestudio/world/World.hpp"
 #include "indiestudio/world/WorldManager.hpp"
@@ -242,6 +243,9 @@ static irr::core::vector3df try_move(irr::scene::ISceneNode *node, const irr::co
             this->ecs.forEntitiesWith<Movement>(
                 [&](auto &data, [[gnu::unused]] std::size_t id)
                 {
+                    if (settings.elapsedSeconds == 0)
+                        return;
+
                     Movement &mov = this->ecs.getComponent<Movement>(data);
                     auto &speed = this->ecs.getComponent<Speed>(data);
                     auto &pos = this->ecs.getComponent<Position>(data);
@@ -274,6 +278,7 @@ static irr::core::vector3df try_move(irr::scene::ISceneNode *node, const irr::co
             scene.scene->drawAll();
             scene.gui->draw();
             scene.scene->getVideoDriver()->endScene();
+            Scheduler::tick();
         }
     }
 
