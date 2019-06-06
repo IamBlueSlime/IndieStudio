@@ -135,6 +135,16 @@ namespace IndieStudio::ECS::Component {
         int direction;
     };
 
+    struct Stat {
+        Stat()
+        :
+        bomb(0), range(1), kill(0) {}
+
+        std::size_t bomb;
+        std::size_t range;
+        std::size_t kill;
+    };
+
     struct Scale {
         Scale(float _x = 1.0f, float _y = 1.0f, float _z = 1.0f)
         :
