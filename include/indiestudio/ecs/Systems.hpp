@@ -14,3 +14,4 @@
 #include "indiestudio/ecs/systems/DrawEntitiesSystem.hpp"
 #include "indiestudio/ecs/systems/MovePlayerSystem.hpp"
 #include "indiestudio/ecs/systems/IASystem.hpp"
+#include "indiestudio/ecs/systems/PickUpPowerUp.hpp"
