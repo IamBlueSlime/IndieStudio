@@ -126,7 +126,7 @@ namespace IndieStudio {
         int wi = 114 / 1.5;
         int hi = 126 / 1.5;
         irr::core::vector2di iconPositions[4] {
-            {20, 250}, {w - wi - 20, 250}, {20, 450}, {w - wi - 20, 450}
+            {20, 250}, {20, 450}, {w - wi - 20, 250}, {w - wi - 20, 450}
         };
 
         for (int i = 0; i < 4; i += 1) {
@@ -142,20 +142,46 @@ namespace IndieStudio {
                 { iconPositions[i].X + 200, iconPositions[i].Y + hi + 10 + 40 }
             );
 
-            if (i % 2 != 0) {
+            if (i >= 2) {
                 bannerRect.UpperLeftCorner.X -= 200 - wi;
                 bannerRect.LowerRightCorner.X -= 200 - wi;
             }
 
             irr::gui::IGUIImage *banner = guiEnv->addImage(bannerRect, guiRoot);
 
-            irr::video::ITexture *bannerTexture = (i % 2 == 0
-                ? scene.manager->textureManager.getTexture("assets/textures/player_banner.png").content
-                : scene.manager->textureManager.getTexture("assets/textures/player_banner_inverse.png").content
+            irr::video::ITexture *bannerTexture = (i >= 2
+                ? scene.manager->textureManager.getTexture("assets/textures/player_banner_inverse.png").content
+                : scene.manager->textureManager.getTexture("assets/textures/player_banner.png").content
             );
 
             banner->setImage(bannerTexture);
             banner->setScaleImage(true);
+
+            irr::gui::IGUIImage *killIcon = guiEnv->addImage(irr::core::recti(
+                {bannerRect.UpperLeftCorner.X + 30, bannerRect.UpperLeftCorner.Y + 8},
+                {bannerRect.UpperLeftCorner.X + 30 + 24, bannerRect.UpperLeftCorner.Y + 8 + 24}
+            ), guiRoot);
+            killIcon->setImage(scene.manager->textureManager.getTexture("assets/textures/icons/bomberman.png").content);
+            killIcon->setScaleImage(true);
+
+            irr::gui::IGUIStaticText *killCount = guiEnv->addStaticText(L"0", irr::core::recti(
+                {bannerRect.UpperLeftCorner.X + 60, bannerRect.UpperLeftCorner.Y + 12},
+                {bannerRect.UpperLeftCorner.X + 60 + 42, bannerRect.UpperLeftCorner.Y + 12 + 24}
+            ), false, true, guiRoot, 424242 + (i * 10));
+            killCount->setOverrideColor(irr::video::SColor(255, 255, 255, 255));
+
+            irr::gui::IGUIImage *bombIcon = guiEnv->addImage(irr::core::recti(
+                {bannerRect.UpperLeftCorner.X + 110, bannerRect.UpperLeftCorner.Y + 8},
+                {bannerRect.UpperLeftCorner.X + 110 + 24, bannerRect.UpperLeftCorner.Y + 8 + 24}
+            ), guiRoot);
+            bombIcon->setImage(scene.manager->textureManager.getTexture("assets/textures/icons/bomb.png").content);
+            bombIcon->setScaleImage(true);
+
+            irr::gui::IGUIStaticText *bombCount = guiEnv->addStaticText(L"0", irr::core::recti(
+                {bannerRect.UpperLeftCorner.X + 140, bannerRect.UpperLeftCorner.Y + 12},
+                {bannerRect.UpperLeftCorner.X + 140 + 42, bannerRect.UpperLeftCorner.Y + 12 + 24}
+            ), false, true, guiRoot, 424242 + (i * 10) + 1);
+            bombCount->setOverrideColor(irr::video::SColor(255, 255, 255, 255));
         }
     }
 
