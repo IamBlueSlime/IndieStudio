@@ -42,7 +42,7 @@ namespace IndieStudio::ECS::System {
             void process(ManagerType &manager, World *world) override {
                 manager.template forEntitiesWith<IsPlayer, Position>(
                 [&manager, world, this](auto &data, [[gnu::unused]] auto id) {
-                    std::cout << "PICKUP POWER UP TRIGGER" << std::endl;
+                    //std::cout << "PICKUP POWER UP TRIGGER" << std::endl;
                     auto &playerPos = manager.template getComponent<Position>(data);
                     MapPattern *tilemap = getWorld(world)->getPattern();
 
@@ -53,7 +53,7 @@ namespace IndieStudio::ECS::System {
   
                             if (this->isOnPowerUp(tilePlayerPos, this->convertPosition(powerupPos), tilemap)) {
                                 tilemap->set(tilePlayerPos.x, 1, tilePlayerPos.y, MapPattern::TileType::PLAYER);
-                                std::cout << "POWER UP APPLIED !" << std::endl;
+                                //std::cout << "POWER UP APPLIED !" << std::endl;
                                 manager.delEntity(data);
                             }    
                     });

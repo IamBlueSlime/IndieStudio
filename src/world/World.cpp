@@ -247,8 +247,10 @@ namespace IndieStudio {
             ecs.setComponent(newBlock, MaterialFlag(irr::video::EMF_LIGHTING, true));
             ecs.setComponent(newBlock, Setup());
 
+            if (y == 1) {
             this->breakableBlockMapping.insert(std::make_pair(newBlock.id,
                 std::make_pair(x, z)));
+            }
         });
 
         initPlayer(manager, scenemg, 0);
