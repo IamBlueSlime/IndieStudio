@@ -27,7 +27,7 @@ namespace IndieStudio {
         srand(std::time(nullptr));
     }
 
-static irr::core::vector3df try_move(irr::scene::ISceneNode *node, const irr::core::vector3df &vector, const irr::core::vector3df &velocity)
+static irr::core::vector3df tryMove(irr::scene::ISceneNode *node, const irr::core::vector3df &vector, const irr::core::vector3df &velocity)
     {
         irr::core::vector3df actPos(node->getAbsolutePosition());
 
@@ -52,7 +52,7 @@ static irr::core::vector3df try_move(irr::scene::ISceneNode *node, const irr::co
     void World::move(const irr::core::vector3df &direction, ECS::Position &pos, ECS::Speed &speed, ECS::Node &node)
     {
         irr::core::vector3df newPos(
-            try_move(node.node, direction, irr::core::vector3df(speed.x, speed.y, speed.z))
+            tryMove(node.node, direction, irr::core::vector3df(speed.x, speed.y, speed.z))
         );
         pos.x = newPos.X;
         pos.y = newPos.Y;
