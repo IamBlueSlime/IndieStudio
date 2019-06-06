@@ -28,6 +28,8 @@ namespace IndieStudio {
             irr::EKEY_CODE keyboardDown;
             irr::EKEY_CODE keyboardRight;
             irr::EKEY_CODE keyboardDrop;
+
+            unsigned short kills = 0;
         };
 
         WorldSettings()
@@ -55,6 +57,7 @@ namespace IndieStudio {
         unsigned short height = 11;
         std::string worldGenerator = "Basic";
         Player players[4];
+        unsigned long elapsedSeconds = 0;
 
         /* ISerializable implementation */
         void pack(ByteBuffer &buffer) const override;

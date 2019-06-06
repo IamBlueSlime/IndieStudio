@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include "indiestudio/Game.hpp"
+#include "indiestudio/common/Scheduler.hpp"
 #include "indiestudio/scene/MainMenuScene.hpp"
 #include "indiestudio/scene/NewGameScene.hpp"
 #include "indiestudio/scene/PlayScene.hpp"
@@ -77,6 +78,10 @@ namespace IndieStudio {
         meshManager.registerMesh("assets/models/player.md3");
         meshManager.registerMesh("assets/models/jesus.md3");
 
+        irr::gui::IGUIFont *font = static_cast<FontManager &>(
+            Game::INSTANCE->getFontManager()).getFont("assets/fonts/roboto_regular.png").content;
+        this->guiRoot->getSkin()->setFont(font);
+
         MainMenuScene::initialize(this->createScene(MAIN_MENU_ID));
         NewGameScene::initialize(this->createScene(NEW_GAME_ID));
         this->createScene(PLAY_ID);
@@ -132,6 +137,7 @@ namespace IndieStudio {
             scene.scene->drawAll();
         if (scene.gui)
             scene.gui->draw();
+        Scheduler::tick();
         return true;
     }
 
