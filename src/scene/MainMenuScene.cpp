@@ -42,9 +42,11 @@ namespace IndieStudio {
         auto guiRoot = scene.gui;
 
         guiEnv->addImage(
-            scene.manager->textureManager.getTexture("assets/textures/title.png").content, irr::core::position2di(350, 75), true, guiRoot);
+            scene.manager->textureManager.getTexture("assets/textures/title.png").content,
+            irr::core::position2di(300, 75), true, guiRoot
+        );
 
-        irr::core::vector2di pos(515, 450);
+        irr::core::vector2di pos(515, 500);
         guiEnv->addButton(irr::core::recti(pos, {pos.X + 225, pos.Y + 50}),
             guiRoot, BUTTON_ID_PLAY_NEW, L"New Game");
         pos.Y += 60;
@@ -52,15 +54,11 @@ namespace IndieStudio {
             guiRoot, BUTTON_ID_PLAY_LOAD, L"Load Game");
         pos.Y += 60;
         guiEnv->addButton(irr::core::recti(pos, {pos.X + 225, pos.Y + 50}),
-            guiRoot, BUTTON_ID_SETTING, L"Settings");
-        pos.Y += 60;
-        guiEnv->addButton(irr::core::recti(pos, {pos.X + 225, pos.Y + 50}),
             guiRoot, BUTTON_ID_QUIT, L"Quit");
     }
 
     void MainMenuScene::setupCharacterExplosion(SceneManager::Scene &scene)
     {
-
         irr::scene::IAnimatedMeshSceneNode* jesusModel = scene.scene->addAnimatedMeshSceneNode(
             scene.scene->getMesh("assets/models/jesus.md3"), 0, 666);
 
@@ -90,7 +88,7 @@ namespace IndieStudio {
         anms->setAnimationSpeed(30);
         anms->setScale(irr::core::vector3df(8.f,8.f,8.f));
         anms->setAnimationSpeed(18);
-        anms->setPosition(irr::core::vector3df(0, -5, 0));
+        anms->setPosition(irr::core::vector3df(0, -7, 0));
 
         for (int i = 0; i < 150; i++) {
             int randX = rand() % 10 * (!(rand() % 2) ? 1 : -1) * rand() % 100 * 15;

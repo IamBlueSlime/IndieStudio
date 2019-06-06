@@ -190,6 +190,15 @@ namespace IndieStudio::ECS::Component {
         irr::scene::IAnimatedMeshSceneNode *node;
     };
 
+        struct Particle {
+        Particle(irr::scene::IParticleSystemSceneNode *_particle = nullptr)
+        :
+        particle(_particle) {}
+
+        irr::scene::IParticleSystemSceneNode *particle;
+    };
+
+
     struct ID {
         ID(int _id = 0)
         :

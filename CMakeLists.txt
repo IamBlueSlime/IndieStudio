@@ -29,6 +29,7 @@ set(INDIE_SRC_DIR ${CMAKE_SOURCE_DIR}/src)
 set(INDIE_SRC
     ${INDIE_SRC_DIR}/Bootstraper.cpp
     ${INDIE_SRC_DIR}/Game.cpp
+    ${INDIE_SRC_DIR}/Constants.cpp
     ${INDIE_SRC_DIR}/common/Configuration.cpp
     ${INDIE_SRC_DIR}/common/Logger.cpp
     ${INDIE_SRC_DIR}/common/SoundManager.cpp

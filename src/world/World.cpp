@@ -6,6 +6,7 @@
 */
 
 #include "indiestudio/Game.hpp"
+#include "indiestudio/Constants.hpp"
 #include "indiestudio/common/Scheduler.hpp"
 #include "indiestudio/ecs/Events.hpp"
 #include "indiestudio/world/World.hpp"
@@ -27,7 +28,7 @@ namespace IndieStudio {
         srand(std::time(nullptr));
     }
 
-static irr::core::vector3df tryMove(irr::scene::ISceneNode *node, const irr::core::vector3df &vector, const irr::core::vector3df &velocity)
+    static irr::core::vector3df tryMove(irr::scene::ISceneNode *node, const irr::core::vector3df &vector, const irr::core::vector3df &velocity)
     {
         irr::core::vector3df actPos(node->getAbsolutePosition());
 
@@ -59,40 +60,24 @@ static irr::core::vector3df tryMove(irr::scene::ISceneNode *node, const irr::cor
         pos.z = newPos.Z;
     }
 
-    static irr::core::vector2di updateTilePos(const irr::core::vector3df &pos)
-    {
-        int x, y;
-
-        x = pos.X / 20;
-        y = pos.Z / 20;
-        std::cout << "{" << x << ", " << y << "}" << std::endl;
-        return {x, y};
-    }
-
     void World::initPlayer(WorldManager &manager, irr::scene::ISceneManager *scenemg, int playerId)
     {
-        (void)manager;
+        (void) manager;
+
         auto &player = ecs.addEntity();
-        irr::core::vector3df position[4] = {
-            {30, 70, 23},
-            {50, 70, 23},
-            {70, 70, 23},
-            {90, 70, 23}
-        };
-        std::string texture[4] = {
-            "black",
-            "red",
-            "pink",
-            "white"
+        std::pair<short, short> positions[4] = {
+            std::make_pair(1 * Constants::TILE_SIZE_FACTOR, (this->settings.height - 2) * Constants::TILE_SIZE_FACTOR),
+            std::make_pair(1 * Constants::TILE_SIZE_FACTOR, 1 * Constants::TILE_SIZE_FACTOR),
+            std::make_pair((this->settings.width - 2) * Constants::TILE_SIZE_FACTOR, (this->settings.height - 2) * Constants::TILE_SIZE_FACTOR),
+            std::make_pair((this->settings.width - 2) * Constants::TILE_SIZE_FACTOR, 1 * Constants::TILE_SIZE_FACTOR)
         };
 
         auto node_p = scenemg->addAnimatedMeshSceneNode(scenemg->getMesh("assets/models/player.md3"));
-//        node_p->addShadowVolumeSceneNode();
         ecs.setComponent(player, Node(node_p));
-        ecs.setComponent(player, MaterialTexture(0, "assets/textures/player_" + texture[playerId] + ".png"));
+        ecs.setComponent(player, MaterialTexture(0, "assets/textures/player_" + Constants::PLAYER_COLORS[playerId] + ".png"));
         ecs.setComponent(player, MaterialFlag(irr::video::EMF_LIGHTING, false));
-        ecs.setComponent(player, Scale(20, 20, 20));
-        ecs.setComponent(player, Position(position[playerId].X, position[playerId].Y, position[playerId].Z));
+        ecs.setComponent(player, Scale(Constants::TILE_SIZE_FACTOR, Constants::TILE_SIZE_FACTOR, Constants::TILE_SIZE_FACTOR));
+        ecs.setComponent(player, Position(positions[playerId].first, 70, positions[playerId].second));
         ecs.setComponent(player, Speed(1, 1, 1));
         ecs.setComponent(player, Movement());
         auto animator = scenemg->createCollisionResponseAnimator(this->meta, node_p, {5, 5, 5}, {0, 0, 0});
@@ -103,9 +88,6 @@ static irr::core::vector3df tryMove(irr::scene::ISceneNode *node, const irr::cor
         IndieStudio::ECS::Event::EventData event;
         event.type = ECS::Event::EventType::INDIE_KEYBOARD_EVENT;
 
-        auto &pos = ecs.getComponent<Position>(player);
-        auto &speed = ecs.getComponent<Speed>(player);
-        auto &nodeEcs = ecs.getComponent<Node>(player);
         auto &mov = ecs.getComponent<Movement>(player);
 
         if (this->settings.players[playerId].controlType == WorldSettings::Player::ControlType::KEYBOARD) {
@@ -161,6 +143,8 @@ static irr::core::vector3df tryMove(irr::scene::ISceneNode *node, const irr::cor
                     mov.down = false;
                     mov.left = false;
                 });
+        } else if (this->settings.players[playerId].controlType == WorldSettings::Player::ControlType::AI) {
+            ecs.setComponent(player, IA());
         }
 
         ecs.setComponent(player, eventCB);
@@ -188,7 +172,7 @@ static irr::core::vector3df tryMove(irr::scene::ISceneNode *node, const irr::cor
         node->addShadowVolumeSceneNode();
         node->setMaterialTexture(0, driver->getTexture("assets/textures/block_ground_1.png"));
 		node->setMaterialFlag(irr::video::EMF_LIGHTING, true);
-		node->setScale(irr::core::vector3df(20.0, 20.0, 20.0));
+		node->setScale(irr::core::vector3df(Constants::TILE_SIZE_FACTOR, Constants::TILE_SIZE_FACTOR, Constants::TILE_SIZE_FACTOR));
 		node->setPosition(irr::core::vector3df(0.5, 50, 0.5));
         node->addShadowVolumeSceneNode(node->getMesh());
 
@@ -236,24 +220,24 @@ static irr::core::vector3df tryMove(irr::scene::ISceneNode *node, const irr::cor
 	    	if (tileType == MapPattern::TileType::FLOOR_FIRST) {
                 ecs.getComponent<Node>(newBlock).node->addShadowVolumeSceneNode();
 	    		ecs.setComponent(newBlock, MaterialTexture(0, "assets/textures/block_ground_1.png"));
-                ecs.setComponent(newBlock, Scale(20.0, 20.0, 20.0));
+                ecs.setComponent(newBlock, Scale(Constants::TILE_SIZE_FACTOR, Constants::TILE_SIZE_FACTOR, Constants::TILE_SIZE_FACTOR));
 	    	} else if (tileType == MapPattern::TileType::FLOOR_SECOND) {
                 ecs.getComponent<Node>(newBlock).node->addShadowVolumeSceneNode();
 	    	    ecs.setComponent(newBlock, MaterialTexture(0, "assets/textures/block_ground_2.png"));
-                ecs.setComponent(newBlock, Scale(20.0, 20.0, 20.0));
+                ecs.setComponent(newBlock, Scale(Constants::TILE_SIZE_FACTOR, Constants::TILE_SIZE_FACTOR, Constants::TILE_SIZE_FACTOR));
 	    	} else if (tileType == MapPattern::TileType::BORDER_WALL_BLOCK) {
                 ecs.getComponent<Node>(newBlock).node->addShadowVolumeSceneNode();
 	    		ecs.setComponent(newBlock, MaterialTexture(0, "assets/textures/block_wall.png"));
-                ecs.setComponent(newBlock, Scale(20.0, 20.0, 20.0));
+                ecs.setComponent(newBlock, Scale(Constants::TILE_SIZE_FACTOR, Constants::TILE_SIZE_FACTOR, Constants::TILE_SIZE_FACTOR));
 	    	} else if (tileType == MapPattern::TileType::INNER_WALL_BLOCK) {
                 ecs.getComponent<Node>(newBlock).node->addShadowVolumeSceneNode();
 	    		ecs.setComponent(newBlock, MaterialTexture(0, "assets/textures/block_wall.png"));
-                ecs.setComponent(newBlock, Scale(20.0 * 0.9, 20.0 * 0.9, 20.0 * 0.9));
+                ecs.setComponent(newBlock, Scale(Constants::TILE_SIZE_FACTOR * 0.9, Constants::TILE_SIZE_FACTOR * 0.9, Constants::TILE_SIZE_FACTOR * 0.9));
             } else if (tileType == MapPattern::TileType::BREAKABLE_BLOCK) {
                 ecs.getComponent<Node>(newBlock).node->addShadowVolumeSceneNode();
 	    		ecs.setComponent(newBlock, MaterialTexture(0, "assets/textures/block_brick.png"));
                 ecs.setComponent(newBlock, Alive());
-                ecs.setComponent(newBlock, Scale(20.0 * 0.9, 20.0 * 0.9, 20.0 * 0.9));
+                ecs.setComponent(newBlock, Scale(Constants::TILE_SIZE_FACTOR * 0.9, Constants::TILE_SIZE_FACTOR * 0.9, Constants::TILE_SIZE_FACTOR * 0.9));
                 ecs.setComponent(newBlock, Alive());
             }
 
