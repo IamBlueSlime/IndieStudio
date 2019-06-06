@@ -5,10 +5,12 @@
 ** common Scheduler.cpp
 */
 
+#include <iostream>
 #include "indiestudio/common/Scheduler.hpp"
 
 namespace IndieStudio {
 
+    std::size_t Scheduler::ID_POOL = 0;
     std::vector<Scheduler::Task> Scheduler::tasks = std::vector<Scheduler::Task>();
     std::deque<Scheduler::Task> Scheduler::waitingPush = std::deque<Scheduler::Task>();
 
@@ -31,7 +33,7 @@ namespace IndieStudio {
         }
 
         for (Task &task : toSchedule)
-            schedule(task.millis, task.callback);
+            schedule(task);
 
         while (!waitingPush.empty()) {
             tasks.push_back(waitingPush.front());
@@ -39,18 +41,36 @@ namespace IndieStudio {
         }
     }
 
-    void Scheduler::schedule(unsigned long millis, std::function<bool()> &&callback)
+    std::size_t Scheduler::schedule(unsigned long millis, std::function<bool()> &&callback)
     {
-        schedule(millis, callback);
+        return schedule(millis, callback);
     }
 
-    void Scheduler::schedule(unsigned long millis, std::function<bool()> &callback)
+    std::size_t Scheduler::schedule(unsigned long millis, std::function<bool()> &callback)
     {
-        auto delta = std::chrono::system_clock::now() + (std::chrono::milliseconds(millis));
-        Task task = { 0, millis, std::move(callback) };
-        task.expirationTime = std::chrono::system_clock::to_time_t(delta);
+        Task task = { ID_POOL++, millis, std::move(callback), 0 };
+        return schedule(task);
+    }
 
-        waitingPush.push_back(task);
+    std::size_t Scheduler::schedule(Task &task)
+    {
+        auto delta = std::chrono::system_clock::now() + (std::chrono::milliseconds(task.millis));
+        task.expirationTime = std::chrono::system_clock::to_time_t(delta);
+        waitingPush.push_back(std::move(task));
+
+        return task.id;
+    }
+
+    void Scheduler::stopTask(std::size_t id)
+    {
+        tick();
+
+        for (auto it = tasks.begin(); it != tasks.end();) {
+            if (it->id == id)
+                it = tasks.erase(it);
+            else
+                ++it;
+        }
     }
 
 }

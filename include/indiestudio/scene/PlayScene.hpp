@@ -20,10 +20,10 @@ namespace IndieStudio {
 
 	protected:
 	private:
-        static const int SQUARED_SIZE;
         static const float FLOOR_Y;
         static sf::Sound COUNTDOWN_SOUND;
         static sf::Sound BACKGROUND_MUSIC;
+        static std::size_t TIMER_TASK;
 
         static void setupWaterBackground(SceneManager::Scene &scene);
         static void setupLight(SceneManager::Scene &scene);

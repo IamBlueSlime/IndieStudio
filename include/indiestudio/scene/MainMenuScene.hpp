@@ -28,7 +28,6 @@ namespace IndieStudio {
         enum {
             BUTTON_ID_PLAY_NEW,
             BUTTON_ID_PLAY_LOAD,
-            BUTTON_ID_SETTING,
             BUTTON_ID_QUIT
         };
     };

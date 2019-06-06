@@ -11,6 +11,7 @@
 #include <functional>
 #include <memory>
 #include <utility>
+#include "indiestudio/Constants.hpp"
 #include "indiestudio/common/ISerializable.hpp"
 
 namespace IndieStudio {
@@ -89,22 +90,22 @@ namespace IndieStudio {
                 || tileType == TileType::PLAYER || tileType == TileType::POWER_UP;
         }
 
-        std::pair<short, short> positionstoTile(short x, short z) {
+        static std::pair<short, short> positionToTile(short x, short z) {
             std::pair<short, short> values;
-            short factor = 20;
+            int factor = Constants::TILE_SIZE_FACTOR;
 
-            if (x % factor > factor / 2) {
+            if (x % factor > factor / 2)
                 values.first = x + factor - (x % factor);
-            } else {
+            else
                 values.first = x - (x % factor);
-            }
-            if (z % factor > factor / 2) {
+
+            if (z % factor > factor / 2)
                 values.second = z + factor - (z % factor);
-            } else {
+            else
                 values.second = z - (z % factor);
-            }
-            values.first /= 20;
-            values.second /= 20;
+
+            values.first /= factor;
+            values.second /= factor;
             std::cout << "X : " << x << " | Z : " << z << "  -  TILES : " << values.first << " | " << values.second << std::endl;
             return values;
         }

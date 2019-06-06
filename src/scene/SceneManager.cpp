@@ -64,8 +64,7 @@ namespace IndieStudio {
         textureManager.registerTexture("assets/textures/particlewhite.bmp");
         textureManager.registerTexture("assets/textures/jesus.png");
 
-        std::string colors[4] = {"black", "pink", "red", "white"};
-        for (std::string &color : colors) {
+        for (const std::string &color : Constants::PLAYER_COLORS) {
             textureManager.registerTexture("assets/textures/player_" + color + ".png");
             textureManager.registerTexture("assets/textures/player_" + color + "_icon.png");
         }

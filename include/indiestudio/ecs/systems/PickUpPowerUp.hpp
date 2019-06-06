@@ -33,7 +33,10 @@ namespace IndieStudio::ECS::System {
         }
 
         Coord convertPosition(Position p) {
-            Coord coord = {static_cast<std::size_t>(p.x / 20), static_cast<std::size_t>(p.z / 20)};
+            Coord coord = {
+                static_cast<std::size_t>(p.x / Constants::TILE_SIZE_FACTOR), 
+                static_cast<std::size_t>(p.z / Constants::TILE_SIZE_FACTOR)
+            };
             return coord;
         }
 

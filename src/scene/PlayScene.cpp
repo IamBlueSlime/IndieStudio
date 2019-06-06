@@ -14,22 +14,25 @@
 
 namespace IndieStudio {
 
-    const int PlayScene::SQUARED_SIZE = 20;
     const float PlayScene::FLOOR_Y = 50.0f;
 
     sf::Sound PlayScene::COUNTDOWN_SOUND = sf::Sound();
     sf::Sound PlayScene::BACKGROUND_MUSIC = sf::Sound();
 
+    std::size_t PlayScene::TIMER_TASK = 0;
+
     void PlayScene::initialize(SceneManager::Scene &scene)
     {
-        // auto guiEnv = scene.scene->getGUIEnvironment();
-        // auto guiRoot = scene.gui;
+        irr::core::list<irr::gui::IGUIElement *> children = scene.gui->getChildren();
+
+        for (irr::gui::IGUIElement *element : children)
+            scene.gui->removeChild(element);
 
         WorldSettings &settings = static_cast<WorldManager &>(
             Game::INSTANCE->getWorldManager()).getLoadedWorld()->getSettings();
         irr::scene::ICameraSceneNode *camera = scene.scene->addCameraSceneNode(0,
-            irr::core::vector3df(SQUARED_SIZE * (settings.width / 2), 50 + SQUARED_SIZE * settings.width - 125, SQUARED_SIZE * 3),
-            irr::core::vector3df(SQUARED_SIZE * (settings.width / 2), 50, SQUARED_SIZE * (settings.height / 2)));
+            irr::core::vector3df(Constants::TILE_SIZE_FACTOR * (settings.width / 2), 50 + Constants::TILE_SIZE_FACTOR * settings.width - 125, Constants::TILE_SIZE_FACTOR * 3),
+            irr::core::vector3df(Constants::TILE_SIZE_FACTOR * (settings.width / 2), 50, Constants::TILE_SIZE_FACTOR * (settings.height / 2)));
 		camera->setFarValue(10000);
 
         setupWaterBackground(scene);
@@ -115,7 +118,7 @@ namespace IndieStudio {
         timer->setImage(scene.manager->textureManager.getTexture("assets/textures/timer.png").content);
         timer->setScaleImage(true);
 
-        irr::gui::IGUIStaticText *timerText = guiEnv->addStaticText(L"0:00",
+        irr::gui::IGUIStaticText *timerText = guiEnv->addStaticText(L"00:00",
             timer->getAbsolutePosition(), false, true, guiRoot, 4243);
         timerText->setOverrideColor(irr::video::SColor(255, 255, 255, 255));
         updateTimer(scene);
@@ -192,7 +195,7 @@ namespace IndieStudio {
 
                 BACKGROUND_MUSIC.play();
 
-                Scheduler::schedule(1000, [&]() {
+                TIMER_TASK = Scheduler::schedule(1000, [&]() {
                     World *world = static_cast<WorldManager &>(
                         Game::INSTANCE->getWorldManager()).getLoadedWorld();
 
@@ -241,17 +244,21 @@ namespace IndieStudio {
 
     bool PlayScene::onEvent(SceneManager::Scene &scene, const irr::SEvent &event)
     {
+        World *world = static_cast<WorldManager &>(
+            Game::INSTANCE->getWorldManager()).getLoadedWorld();
+
+        if (world->getSettings().elapsedSeconds == 0)
+            return false;
+
         if (event.EventType == irr::EET_KEY_INPUT_EVENT) {
             if (event.KeyInput.Key == irr::KEY_ESCAPE && event.KeyInput.PressedDown) {
                 COUNTDOWN_SOUND.stop();
                 BACKGROUND_MUSIC.stop();
+                Scheduler::stopTask(PlayScene::TIMER_TASK);
                 scene.manager->setActiveScene(SceneManager::MAIN_MENU_ID);
                 return true;
             }
         }
-
-        World *world = static_cast<WorldManager &>(
-            Game::INSTANCE->getWorldManager()).getLoadedWorld();
 
         ECS::Event::EventData data;
         switch (event.EventType) {

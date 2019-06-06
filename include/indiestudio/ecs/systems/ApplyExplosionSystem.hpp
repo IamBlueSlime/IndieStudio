@@ -7,9 +7,9 @@
 
 #pragma once
 
+#include "indiestudio/Constants.hpp"
 #include "indiestudio/ecs/Components.hpp"
 #include "indiestudio/ecs/BaseSystem.hpp"
-#include "unistd.h"
 
 namespace IndieStudio::ECS::System {
 
@@ -31,9 +31,10 @@ namespace IndieStudio::ECS::System {
 
                     auto &position = manager.template getComponent<Position>(data);
                     auto &node = manager.template getComponent<Node>(data);
+                    int factor = Constants::TILE_SIZE_FACTOR;
 
                     for (float i = 0; i <= bombRange.explosionRangeUp; i += 1.0) {
-                        if (static_cast<int>(bombPosition.z + (i * 20)) == static_cast<int>(position.z) &&
+                        if (static_cast<int>(bombPosition.z + (i * factor)) == static_cast<int>(position.z) &&
                             static_cast<int>(bombPosition.x) == static_cast<int>(position.x)) {
                             node.node->setVisible(false);
                             bombRange.explosionRangeUp = i;
@@ -41,7 +42,7 @@ namespace IndieStudio::ECS::System {
                         }
                     }
                     for (float i = 0; i <= bombRange.explosionRangeDown; i += 1.0) {
-                        if (static_cast<int>(bombPosition.z - (i * 20)) == static_cast<int>(position.z) &&
+                        if (static_cast<int>(bombPosition.z - (i * factor)) == static_cast<int>(position.z) &&
                             static_cast<int>(bombPosition.x) == static_cast<int>(position.x)) {
                             node.node->setVisible(false);
                             bombRange.explosionRangeDown = i;
@@ -49,7 +50,7 @@ namespace IndieStudio::ECS::System {
                         }
                     }
                     for (float i = 0; i <= bombRange.explosionRangeLeft; i += 1.0) {
-                        if (static_cast<int>(bombPosition.x - (i * 20)) == static_cast<int>(position.x) &&
+                        if (static_cast<int>(bombPosition.x - (i * factor)) == static_cast<int>(position.x) &&
                             static_cast<int>(bombPosition.z) == static_cast<int>(position.z)) {
                             node.node->setVisible(false);
                             bombRange.explosionRangeLeft = i;
@@ -57,7 +58,7 @@ namespace IndieStudio::ECS::System {
                         }
                     }
                     for (float i = 0; i <= bombRange.explosionRangeRight; i += 1.0) {
-                        if (static_cast<int>(bombPosition.x + (i * 20)) == static_cast<int>(position.x) &&
+                        if (static_cast<int>(bombPosition.x + (i * factor)) == static_cast<int>(position.x) &&
                             static_cast<int>(bombPosition.z) == static_cast<int>(position.z)) {
                             node.node->setVisible(false);
                             bombRange.explosionRangeRight = i;
