@@ -45,20 +45,20 @@ namespace IndieStudio {
 
     void PlayScene::setupWaterBackground(SceneManager::Scene &scene)
     {
-        irr::scene::IAnimatedMesh* mesh = scene.scene->addHillPlaneMesh("myHill",
-            irr::core::dimension2df(20, 20), irr::core::dimension2du(40, 40), 0, 0,
-            irr::core::dimension2df(0, 0), irr::core::dimension2df(10, 10));
+        // irr::scene::IAnimatedMesh* mesh = scene.scene->addHillPlaneMesh("myHill",
+        //     irr::core::dimension2df(20, 20), irr::core::dimension2du(40, 40), 0, 0,
+        //     irr::core::dimension2df(0, 0), irr::core::dimension2df(10, 10));
 
-        irr::scene::ISceneNode* water = scene.scene->addWaterSurfaceSceneNode(
-            mesh->getMesh(0), 1.0f, 500.0f, 10.0f);
-        water->setPosition(irr::core::vector3df(150, 7, 100));
-        water->setMaterialTexture(0, scene.manager->textureManager.getTexture("assets/textures/water_stones.jpg").content);
-        water->setMaterialTexture(1, scene.manager->textureManager.getTexture("assets/textures/water.jpg").content);
-        water->setMaterialType(irr::video::EMT_REFLECTION_2_LAYER);
+        // irr::scene::ISceneNode* water = scene.scene->addWaterSurfaceSceneNode(
+        //     mesh->getMesh(0), 1.0f, 500.0f, 10.0f);
+        // water->setPosition(irr::core::vector3df(150, 7, 100));
+        // water->setMaterialTexture(0, scene.manager->textureManager.getTexture("assets/textures/water_stones.jpg").content);
+        // water->setMaterialTexture(1, scene.manager->textureManager.getTexture("assets/textures/water.jpg").content);
+        // water->setMaterialType(irr::video::EMT_REFLECTION_2_LAYER);
         scene.scene->addSkyDomeSceneNode(scene.manager->textureManager.getTexture("assets/textures/skydome.jpg").content);
-        //node->setMaterialFlag(irr::video::EMF_NORMALIZE_NORMALS, true);
-        scene.scene->setShadowColor(irr::video::SColor(100, 0, 0, 0));
-        water->setMaterialFlag(irr::video::EMF_LIGHTING, true);
+//        //node->setMaterialFlag(irr::video::EMF_NORMALIZE_NORMALS, true);
+        // scene.scene->setShadowColor(irr::video::SColor(100, 0, 0, 0));
+        // water->setMaterialFlag(irr::video::EMF_LIGHTING, true);
     }
 
     void PlayScene::setupLight(SceneManager::Scene &scene)
@@ -208,7 +208,7 @@ namespace IndieStudio {
             newText += countdownRef->getText()[0] - 1;
             countdownRef->setText(newText.c_str());
 
-            return true;        
+            return true;
         });
     }
 

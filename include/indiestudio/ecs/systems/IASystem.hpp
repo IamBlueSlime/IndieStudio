@@ -176,19 +176,32 @@ namespace IndieStudio::ECS::System {
             manager.template forEntitiesWith<IA>(
                 [&manager, world, this](auto &data, [[gnu::unused]] auto id) {
                     auto &ia = manager.template getComponent<IA>(data);
-                    auto &speed = manager.template getComponent<Speed>(data);
+//                    auto &speed = manager.template getComponent<Speed>(data);
                     auto &position = manager.template getComponent<Position>(data);
+
+                    std::optional<Poti::Direction> decision = this->execute_action(ia.current_action, position, world);
+                    while (!decision) {
+                            ia.current_action = this->select_action();
+                            this->execute_action(ia.current_action, position, world);
+                    }
 
                     if (this->emergency_move()) {
                         ia.current_action = IA::Action::NOTHING;
-                    } else {
-                        if (ia.current_action == IA::Action::NOTHING) {
-                            ia.current_action = this->select_action();
-                        }
-                        while (!this->execute_action(ia.current_action, position, world)) {
-                            ia.current_action = this->select_action();
-                        }
                     }
+                    // TODO: move dans la bonne direction
+
+
+
+                    // if (this->emergency_move()) {
+                    //     ia.current_action = IA::Action::NOTHING;
+                    // } else {
+                    //     if (ia.current_action == IA::Action::NOTHING) {
+                    //         ia.current_action = this->select_action();
+                    //     }
+                    //     while (!this->execute_action(ia.current_action, position, world)) {
+                    //         ia.current_action = this->select_action();
+                    //     }
+                    // }
                 }
             );
         }
@@ -214,18 +227,16 @@ namespace IndieStudio::ECS::System {
             }
         }
 
-        bool execute_action(IA::Action action, Position position, IWorld *world) {
+        std::optional<Poti::Direction> execute_action(IA::Action action, Position position, IWorld *world) {
             switch (action) {
                 case IA::Action::ATK: return atk_player(position, world);
                 case IA::Action::WALL: return destroy_wall(position, world);
                 case IA::Action::PICKUP: return pick_powerup(position, world);
-                default: return false;
+                default: return std::nullopt;
             }
         }
 
-        bool atk_player(Position position, IWorld *world) {
-            (void)world;
-            (void)position;
+        std::optional<Poti::Direction> atk_player(Position position, IWorld *world) {
             MapPattern *tilemap = world->getPattern();
 
             Poti::Coord coord = convert_position(position);
@@ -233,43 +244,39 @@ namespace IndieStudio::ECS::System {
             std::optional<std::pair<Poti::Direction, std::size_t>> decision = this->marron.search_for(MapPattern::TileType::PLAYER, tilemap, coord.x, coord.y);
 
             if (decision == std::nullopt) {
-                return false;
+                return std::nullopt;
             }
 
             if (decision.value().second <= 3) {
                 // TODO: poser bombe
                 // TODO: ajouter du bruit aléatoire, et prendre en compte les stats du player
-                return false;
+                return std::nullopt;
             }
 
-            // TODO: move dans la bonne direction
-            return true;
+            return std::make_optional(decision.value().first);
         }
 
-        bool destroy_wall(Position position, IWorld *world) {
+        std::optional<Poti::Direction> destroy_wall(Position position, IWorld *world) {
             MapPattern *tilemap = world->getPattern();
 
-            (void)world;
-            (void)position;
             Poti::Coord coord = convert_position(position);
 
             std::optional<std::pair<Poti::Direction, std::size_t>> decision = this->marron.search_for(MapPattern::TileType::BREAKABLE_BLOCK, tilemap, coord.x, coord.y);
 
             if (decision == std::nullopt) {
-                return false;
+                return std::nullopt;
             }
 
             if (decision.value().second == 1) {
                 // TODO: poser bombe
                 // l'action sera reroll, mais cancel immédiatement à l iteration suivante pour échapper à sa propre bombe
-                return false;
+                return std::nullopt;
             }
 
-            // TODO: move dans la bonne direction
-            return true;
+            return std::make_optional(decision.value().first);
         }
 
-        bool pick_powerup(Position position, IWorld *world) {
+        std::optional<Poti::Direction> pick_powerup(Position position, IWorld *world) {
             MapPattern *tilemap = world->getPattern();
 
             Poti::Coord coord = convert_position(position);
@@ -278,17 +285,15 @@ namespace IndieStudio::ECS::System {
                 // TODO: apply powerup effect
                 // TODO: delete le powerup
                 // TODO: update la tilemap
-                return false;
+                return std::nullopt;
             }
 
             std::optional<std::pair<Poti::Direction, std::size_t>> decision = this->marron.search_for(MapPattern::TileType::POWER_UP, tilemap, coord.x, coord.y);
             if (decision == std::nullopt) {
-                return false;
+                return std::nullopt;
             }
 
-            // TODO: move dans la bonne direction
-            return true;
-
+            return std::make_optional(decision.value().first);
         }
 
         Poti::Coord convert_position(Position position) {
