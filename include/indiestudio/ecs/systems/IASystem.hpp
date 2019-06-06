@@ -59,14 +59,14 @@ private:
 
     Hitmap init_hitmap(MapPattern *map) {
         Hitmap hitmap;
-        std::cout << "Creating hitmap: " << std::endl;
+        //std::cout << "Creating hitmap: " << std::endl;
         for (std::size_t i = 0 ; i < map->getHeight() ; i++) {
             hitmap.push_back(std::vector<Tile>());
             for (std::size_t j = 0 ; j < map->getWidth() ; j++) {
-                std::cout << static_cast<int>(map->get(j, 1, i)) << " ";
+                //std::cout << static_cast<int>(map->get(j, 1, i)) << " ";
                 hitmap[i].push_back({static_cast<std::size_t>(-1), map->get(j, 1, i)});
             }
-            std::cout << std::endl;
+            //std::cout << std::endl;
         }
         return hitmap;
     }
@@ -204,21 +204,21 @@ namespace IndieStudio::ECS::System {
                 movement.down = false;
                 movement.left = false;
                 movement.right = false;
-                std::cout << "Moving at ";
+                //std::cout << "Moving at ";
             if (direction == Poti::Direction::BOT) {
-                std::cout << "bot" << std::endl;
+                //std::cout << "bot" << std::endl;
                 movement.down = true;
             } else if (direction == Poti::Direction::TOP) {
-                std::cout << "top" << std::endl;
+                //std::cout << "top" << std::endl;
                 movement.up = true;
             } else if (direction == Poti::Direction::LEFT) {
-                std::cout << "left" << std::endl;
+                //std::cout << "left" << std::endl;
                 movement.left = true;
             } else if (direction == Poti::Direction::RIGHT) {
-                std::cout << "right" << std::endl;
+                //std::cout << "right" << std::endl;
                 movement.right = true;
             } else {
-                std::cout << "nothing" << std::endl;
+                //std::cout << "nothing" << std::endl;
             }
         }
 
@@ -272,19 +272,19 @@ namespace IndieStudio::ECS::System {
         std::optional<Poti::Direction> atk_player(Position position, IWorld *world) {
             MapPattern *tilemap = world->getPattern();
 
-            std::cout << "Attacking!" << std::endl;
+            //std::cout << "Attacking!" << std::endl;
 //            Poti::Coord coord = convert_position(position);
             std::pair<short, short> coord = MapPattern::positionToTile(position.x, position.y);
 
             std::optional<std::pair<Poti::Direction, std::size_t>> decision = this->marron.search_for(MapPattern::TileType::PLAYER, tilemap, coord.first, coord.second);
 
             if (decision == std::nullopt) {
-                std::cout << "No player in range :(!" << std::endl;
+                //std::cout << "No player in range :(!" << std::endl;
                 return std::nullopt;
             }
 
             if (decision.value().second <= 3) {
-                std::cout << "Attacked! :D i finished my move!" << std::endl;
+                //std::cout << "Attacked! :D i finished my move!" << std::endl;
                 // TODO: poser bombe
                 // TODO: ajouter du bruit aléatoire, et prendre en compte les stats du player
                 return std::nullopt;
@@ -296,18 +296,18 @@ namespace IndieStudio::ECS::System {
         std::optional<Poti::Direction> destroy_wall(Position position, IWorld *world) {
             MapPattern *tilemap = world->getPattern();
 
-            std::cout << "Breacking wall!" << std::endl;
+            //std::cout << "Breacking wall!" << std::endl;
             std::pair<short, short> coord = MapPattern::positionToTile(position.x, position.y);
 
             std::optional<std::pair<Poti::Direction, std::size_t>> decision = this->marron.search_for(MapPattern::TileType::BREAKABLE_BLOCK, tilemap, coord.first, coord.second);
 
             if (decision == std::nullopt) {
-                std::cout << "No wall in range :(!" << std::endl;
+                //std::cout << "No wall in range :(!" << std::endl;
                 return std::nullopt;
             }
 
             if (decision.value().second == 1) {
-                std::cout << "Breacked wall!" << std::endl;
+                //std::cout << "Breacked wall!" << std::endl;
                 // TODO: poser bombe
                 // l'action sera reroll, mais cancel immédiatement à l iteration suivante pour échapper à sa propre bombe
                 return std::nullopt;
@@ -319,11 +319,11 @@ namespace IndieStudio::ECS::System {
         std::optional<Poti::Direction> pick_powerup(Position position, IWorld *world) {
             MapPattern *tilemap = world->getPattern();
 
-            std::cout << "Picking powerup!" << std::endl;
+            //std::cout << "Picking powerup!" << std::endl;
             std::pair<short, short> coord = MapPattern::positionToTile(position.x, position.y);
 
             if (tilemap->get(coord.second, 1, coord.first) == MapPattern::TileType::POWER_UP) {
-                std::cout << "Powerup picked!" << std::endl;
+                //std::cout << "Powerup picked!" << std::endl;
                 // TODO: apply powerup effect
                 // TODO: delete le powerup
                 // TODO: update la tilemap
@@ -332,7 +332,7 @@ namespace IndieStudio::ECS::System {
 
             std::optional<std::pair<Poti::Direction, std::size_t>> decision = this->marron.search_for(MapPattern::TileType::POWER_UP, tilemap, coord.first, coord.second);
             if (decision == std::nullopt) {
-                std::cout << "No powerup in range :(!" << std::endl;
+                //std::cout << "No powerup in range :(!" << std::endl;
                 return std::nullopt;
             }
 

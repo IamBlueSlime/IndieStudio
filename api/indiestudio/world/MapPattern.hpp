@@ -103,7 +103,6 @@ namespace IndieStudio {
                 values.second = z + factor - (z % factor);
             else
                 values.second = z - (z % factor);
-
             values.first /= factor;
             values.second /= factor;
 //            std::cout << "X : " << x << " | Z : " << z << "  -  TILES : " << values.first << " | " << values.second << std::endl;

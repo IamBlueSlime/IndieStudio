@@ -86,7 +86,7 @@ namespace IndieStudio {
         void initPlayer(WorldManager &manager, irr::scene::ISceneManager *scenemg, int playerId);
         void move(const irr::core::vector3df &direction, ECS::Position &pos, ECS::Speed &speed, ECS::Node &node);
 
-        std::size_t getBlockEntityIdByPos(short x, short z);
+        std::size_t getBlockEntityIdByPos(short x, short z) override;
 
         /* ISerializable implementation */
         void pack(ByteBuffer &buffer) const override;
@@ -95,6 +95,7 @@ namespace IndieStudio {
         WorldSettings &getSettings() { return this->settings; }
         MapPattern *getPattern() override { return this->pattern.get(); }
         const WorldSettings &getSettings() const { return this->settings; }
+        irr::scene::IMetaTriangleSelector *getMeta() override { return this->meta; }
 
     protected:
     private:

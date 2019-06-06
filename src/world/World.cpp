@@ -184,7 +184,7 @@ namespace IndieStudio {
         ecs.setComponent(bomb, MaterialTexture(0, "assets/textures/bomb.png"));
 		ecs.setComponent(bomb, MaterialFlag(irr::video::EMF_LIGHTING, true));
 		ecs.setComponent(bomb, Scale(3.5, 3.5, 3.5));
-		ecs.setComponent(bomb, Position(40.5, 70, 100.5));
+		ecs.setComponent(bomb, Position(20.5, 70, 160.5));
         ecs.setComponent(bomb, IsBomb());
         ecs.setComponent(bomb, ExplosionRange());
         ecs.setComponent(bomb, LifeTime());
@@ -247,8 +247,10 @@ namespace IndieStudio {
             ecs.setComponent(newBlock, MaterialFlag(irr::video::EMF_LIGHTING, true));
             ecs.setComponent(newBlock, Setup());
 
+            if (y == 1) {
             this->breakableBlockMapping.insert(std::make_pair(newBlock.id,
                 std::make_pair(x, z)));
+            }
         });
 
         initPlayer(manager, scenemg, 0);
