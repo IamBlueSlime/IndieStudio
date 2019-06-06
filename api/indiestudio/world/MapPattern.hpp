@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <iostream>
 #include <functional>
 #include <memory>
 #include <utility>
@@ -90,7 +91,7 @@ namespace IndieStudio {
 
         std::pair<short, short> positionstoTile(short x, short z) {
             std::pair<short, short> values;
-            short factor = 20; // 30 23 - 50 23
+            short factor = 20;
 
             if (x % factor > factor / 2) {
                 values.first = x + factor - (x % factor);
@@ -102,10 +103,9 @@ namespace IndieStudio {
             } else {
                 values.second = z - (z % factor);
             }
-            --values.first;
-            --values.second;
             values.first /= 20;
             values.second /= 20;
+            std::cout << "X : " << x << " | Z : " << z << "  -  TILES : " << values.first << " | " << values.second << std::endl;
             return values;
         }
 
