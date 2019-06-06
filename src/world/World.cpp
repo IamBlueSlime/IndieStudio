@@ -73,7 +73,6 @@ namespace IndieStudio {
         };
 
         auto node_p = scenemg->addAnimatedMeshSceneNode(scenemg->getMesh("assets/models/player.md3"));
-//        node_p->addShadowVolumeSceneNode();
         ecs.setComponent(player, Node(node_p));
         ecs.setComponent(player, MaterialTexture(0, "assets/textures/player_" + Constants::PLAYER_COLORS[playerId] + ".png"));
         ecs.setComponent(player, MaterialFlag(irr::video::EMF_LIGHTING, false));
@@ -89,9 +88,6 @@ namespace IndieStudio {
         IndieStudio::ECS::Event::EventData event;
         event.type = ECS::Event::EventType::INDIE_KEYBOARD_EVENT;
 
-        auto &pos = ecs.getComponent<Position>(player);
-        auto &speed = ecs.getComponent<Speed>(player);
-        auto &nodeEcs = ecs.getComponent<Node>(player);
         auto &mov = ecs.getComponent<Movement>(player);
 
         if (this->settings.players[playerId].controlType == WorldSettings::Player::ControlType::KEYBOARD) {
@@ -147,6 +143,8 @@ namespace IndieStudio {
                     mov.down = false;
                     mov.left = false;
                 });
+        } else if (this->settings.players[playerId].controlType == WorldSettings::Player::ControlType::AI) {
+            ecs.setComponent(player, IA());
         }
 
         ecs.setComponent(player, eventCB);
