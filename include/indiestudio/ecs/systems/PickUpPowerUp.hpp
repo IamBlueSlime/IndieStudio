@@ -11,6 +11,7 @@
 #include "indiestudio/world/MapPattern.hpp"
 #include "indiestudio/ecs/Components.hpp"
 #include "indiestudio/ecs/BaseSystem.hpp"
+#include "indiestudio/world/IWorld.hpp"
 
 namespace IndieStudio::ECS::System {
 
@@ -36,24 +37,27 @@ namespace IndieStudio::ECS::System {
             return coord;
         }
 
-        void process(ManagerType &manager, World *world) override {
+        IWorld *getWorld(IWorld *world) { return world; }
+
+        void process(ManagerType &manager, World *tmp_world) override {
             manager.template forEntitiesWith<IsPlayer, Position>(
-                [&manager, world, this](auto &data, [[gnu::unused]] auto id) {
+                [&manager, tmp_world, this](auto &data, [[gnu::unused]] auto id) {
+                    IWorld *world = getWorld(tmp_world);
                     auto &playerPos = manager.template getComponent<Position>(data);
-                    MapPattern *tilemap = (static_cast<IWorld*>(world))->getPattern();
+                    MapPattern *tilemap = world->getPattern();
 
                     manager.template forEntitiesWith<IsPowerUp, Position>(
                         [&manager, &playerPos, tilemap, this](auto &data, [[gnu::unused]] auto id) {
                             auto &powerupPos = manager.template getComponent<Position>(data);
                             Coord tilePlayerPos = this->convertPosition(playerPos);
-  
+
                             if (this->isOnPowerUp(tilePlayerPos, this->convertPosition(powerupPos), tilemap)) {
                                 // update tilemap
                                 tilemap->set(tilePlayerPos.x, 1, tilePlayerPos.y, MapPattern::TileType::PLAYER);
                                 // apply powerup
                                 std::cout << "POWER UP APPLIED !" << std::endl;
                                 // delete entity
-                                manager.template delEntity(data);
+                                manager.delEntity(data);
                             }
                         });
             });
