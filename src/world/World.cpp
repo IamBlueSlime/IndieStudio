@@ -243,6 +243,9 @@ namespace IndieStudio {
 
             ecs.setComponent(newBlock, MaterialFlag(irr::video::EMF_LIGHTING, true));
             ecs.setComponent(newBlock, Setup());
+
+            this->breakableBlockMapping.insert(std::make_pair(newBlock.id,
+                std::make_pair(x, z)));
         });
 
         initPlayer(manager, scenemg, 0);
@@ -275,16 +278,16 @@ namespace IndieStudio {
 
                     bool did = false;
                     if (mov.up) {
-                        move(direction[0], pos, speed, node);
+                        move({0, 0, 1}, pos, speed, node);
                         did = true;
                     } if (mov.down) {
-                        move(direction[1], pos, speed, node);
+                        move({0, 0, -1}, pos, speed, node);
                         did = true;
                     } if (mov.left) {
-                        move(direction[2], pos, speed, node);
+                        move({-1, 0, 0}, pos, speed, node);
                         did = true;
                     } if (mov.right) {
-                        move(direction[3], pos, speed, node);
+                        move({1, 0, 0}, pos, speed, node);
                         did = true;
                     }
                     if (!did) {
@@ -307,6 +310,17 @@ namespace IndieStudio {
     void World::forwardEvent(ECS::Event::EventData event)
     {
         this->ecs.getEventManager().push_event(event);
+    }
+
+    std::size_t World::getBlockEntityIdByPos(short x, short z)
+    {
+        std::pair<short, short> pos = std::make_pair(x, z);
+
+        for (auto it = this->breakableBlockMapping.begin(); it != this->breakableBlockMapping.end(); ++it)
+            if (it->second == pos)
+                return it->first;
+
+        throw std::runtime_error("wtf");
     }
 
     void World::pack(ByteBuffer &buffer) const

@@ -10,7 +10,7 @@
 namespace IndieStudio {
 
     const std::string Constants::PLAYER_COLORS[4] = {
-        "black", "pink", "red", "white"
+        "white", "pink", "red", "black"
     };
 
     const int Constants::TILE_SIZE_FACTOR = 20;

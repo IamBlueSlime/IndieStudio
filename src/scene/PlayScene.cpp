@@ -123,13 +123,6 @@ namespace IndieStudio {
         timerText->setOverrideColor(irr::video::SColor(255, 255, 255, 255));
         updateTimer(scene);
 
-        irr::video::ITexture *iconTextures[4] = {
-            scene.manager->textureManager.getTexture("assets/textures/player_black_icon.png").content,
-            scene.manager->textureManager.getTexture("assets/textures/player_red_icon.png").content,
-            scene.manager->textureManager.getTexture("assets/textures/player_pink_icon.png").content,
-            scene.manager->textureManager.getTexture("assets/textures/player_white_icon.png").content
-        };
-
         int wi = 114 / 1.5;
         int hi = 126 / 1.5;
         irr::core::vector2di iconPositions[4] {
@@ -140,7 +133,8 @@ namespace IndieStudio {
             irr::gui::IGUIImage *icon = guiEnv->addImage(irr::core::recti(
                 iconPositions[i], {iconPositions[i].X + wi, iconPositions[i].Y + hi}
             ), guiRoot);
-            icon->setImage(iconTextures[i]);
+            icon->setImage(scene.manager->textureManager.getTexture(
+                "assets/textures/player_" + Constants::PLAYER_COLORS[i] + "_icon.png").content);
             icon->setScaleImage(true);
 
             irr::core::recti bannerRect = irr::core::recti(

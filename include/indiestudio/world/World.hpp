@@ -84,6 +84,8 @@ namespace IndieStudio {
         void initPlayer(WorldManager &manager, irr::scene::ISceneManager *scenemg, int playerId);
         void move(const irr::core::vector3df &direction, ECS::Position &pos, ECS::Speed &speed, ECS::Node &node);
 
+        std::size_t getBlockEntityIdByPos(short x, short z);
+
         /* ISerializable implementation */
         void pack(ByteBuffer &buffer) const override;
         void unpack(ByteBuffer &buffer) override;
@@ -94,14 +96,9 @@ namespace IndieStudio {
 
     protected:
     private:
-        irr::core::vector3df direction[4] = {
-            {0, 0, 1},
-            {0, 0, -1},
-            {-1, 0, 0},
-            {1, 0, 0}
-        };
         WorldSettings settings;
         std::unique_ptr<MapPattern> pattern;
+        std::unordered_map<std::size_t, std::pair<short, short>> breakableBlockMapping;
         WorldECS ecs;
         SceneManager::Scene &scene;
         irr::scene::IMetaTriangleSelector *meta;
