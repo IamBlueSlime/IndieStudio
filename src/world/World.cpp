@@ -80,6 +80,7 @@ namespace IndieStudio {
         ecs.setComponent(player, Position(positions[playerId].first, 70, positions[playerId].second));
         ecs.setComponent(player, Speed(1, 1, 1));
         ecs.setComponent(player, Movement());
+        ecs.setComponent(player, IsPlayer());
         auto animator = scenemg->createCollisionResponseAnimator(this->meta, node_p, {5, 5, 5}, {0, 0, 0});
         node_p->addAnimator(animator);
         animator->drop();
@@ -198,6 +199,8 @@ namespace IndieStudio {
         ecs.setComponent(powerup, Position(28, 70, 45));
         ecs.setComponent(powerup, IsPowerUp());
         ecs.setComponent(powerup, Setup());
+
+        this->pattern->set(1, 1, 1, MapPattern::TileType::POWER_UP);
 
         generator->generate(this->pattern.get());
 	    this->pattern->forEach([&](int x, int y, int z, MapPattern::TileType tileType) {
