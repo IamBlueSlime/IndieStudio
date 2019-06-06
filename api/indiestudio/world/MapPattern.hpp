@@ -106,7 +106,7 @@ namespace IndieStudio {
 
             values.first /= factor;
             values.second /= factor;
-            std::cout << "X : " << x << " | Z : " << z << "  -  TILES : " << values.first << " | " << values.second << std::endl;
+//            std::cout << "X : " << x << " | Z : " << z << "  -  TILES : " << values.first << " | " << values.second << std::endl;
             return values;
         }
 
