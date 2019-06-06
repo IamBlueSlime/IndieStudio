@@ -60,31 +60,6 @@ namespace IndieStudio {
         pos.z = newPos.Z;
     }
 
-    void World::initParticle(WorldManager &manager, irr::scene::ISceneManager *scenemg)
-    {
-        (void)manager;
-        auto &particle = ecs.addEntity();
-
-        auto ps = scenemg->addParticleSystemSceneNode(false);
-        auto emiter = ps->createSphereEmitter({0, 0, 0}, 100, {0 , 0.3F, 0}, 5, 10, {255, 0, 0, 0}, {255, 255, 255, 255}, 2000, 4000);
-        ps->setEmitter(emiter);
-        emiter->drop();
-        auto fo = ps->createFadeOutParticleAffector();
-        ps->addAffector(fo);
-        fo->drop();
-
-        ps->setMaterialFlag(irr::video::EMF_ZWRITE_ENABLE, false);
-        ps->setMaterialFlag(irr::video::EMF_LIGHTING, false);
-        ps->setMaterialType(irr::video::EMT_TRANSPARENT_ADD_COLOR);
-        ecs.setComponent(particle, Particle(ps));
-        ecs.setComponent(particle, MaterialTexture(0, "assets/textures/fire.bmp"));
-        ecs.setComponent(particle, Scale(2, 2, 2));
-        ecs.setComponent(particle, Position(30, 100, 23));
-        ecs.setComponent(particle, Setup());
-
-    }
-
-
     void World::initPlayer(WorldManager &manager, irr::scene::ISceneManager *scenemg, int playerId)
     {
         (void) manager;
@@ -274,8 +249,6 @@ namespace IndieStudio {
         initPlayer(manager, scenemg, 1);
         initPlayer(manager, scenemg, 2);
         initPlayer(manager, scenemg, 3);
-
-        initParticle(manager, scenemg);
 
         Initializer<WorldECS>::initAllEntities(ecs, scenemg);
     }
