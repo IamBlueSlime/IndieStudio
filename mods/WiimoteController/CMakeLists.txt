@@ -1,11 +1,5 @@
 project(wiimotecontroller VERSION 1.0.0 LANGUAGES CXX)
 
-find_library(CWIID_FOUND cwiid)
-
-if (CWIID_FOUND EQUAL FALSE)
-    return ()
-endif ()
-
 add_library(wiimotecontroller SHARED
     src/WiimoteController.cpp
 )
