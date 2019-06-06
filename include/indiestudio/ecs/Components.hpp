@@ -108,6 +108,9 @@ namespace IndieStudio::ECS::Component {
     struct IsPowerUp {
     };
 
+    struct IsBlock {
+    };
+
     struct SoundID {
         SoundID(int _soundID = 0)
         :
