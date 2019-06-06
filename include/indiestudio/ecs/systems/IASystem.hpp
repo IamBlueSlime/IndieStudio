@@ -59,11 +59,14 @@ private:
 
     Hitmap init_hitmap(MapPattern *map) {
         Hitmap hitmap;
+        std::cout << "Creating hitmap: " << std::endl;
         for (std::size_t i = 0 ; i < map->getHeight() ; i++) {
             hitmap.push_back(std::vector<Tile>());
             for (std::size_t j = 0 ; j < map->getWidth() ; j++) {
+                std::cout << static_cast<int>(map->get(j, 1, i)) << " ";
                 hitmap[i].push_back({static_cast<std::size_t>(-1), map->get(j, 1, i)});
             }
+            std::cout << std::endl;
         }
         return hitmap;
     }
@@ -196,11 +199,12 @@ namespace IndieStudio::ECS::System {
             );
         }
 
-        void move(Poti::Direction direction, Movement movement) {
+        void move(Poti::Direction direction, Movement &movement) {
                 movement.up = false;
                 movement.down = false;
                 movement.left = false;
                 movement.right = false;
+                std::cout << "Moving at ";
             if (direction == Poti::Direction::BOT) {
                 std::cout << "bot" << std::endl;
                 movement.down = true;
@@ -213,6 +217,8 @@ namespace IndieStudio::ECS::System {
             } else if (direction == Poti::Direction::RIGHT) {
                 std::cout << "right" << std::endl;
                 movement.right = true;
+            } else {
+                std::cout << "nothing" << std::endl;
             }
         }
 
