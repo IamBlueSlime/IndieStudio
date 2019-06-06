@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <iostream>
 #include <functional>
 #include <memory>
 #include <utility>
@@ -104,6 +105,7 @@ namespace IndieStudio {
             }
             values.first /= 20;
             values.second /= 20;
+            std::cout << "X : " << x << " | Z : " << z << "  -  TILES : " << values.first << " | " << values.second << std::endl;
             return values;
         }
 
