@@ -37,7 +37,6 @@ set(INDIE_SRC
     ${INDIE_SRC_DIR}/ecs/Signature.cpp
     ${INDIE_SRC_DIR}/ecs/UUID.cpp
     ${INDIE_SRC_DIR}/ecs/systems/ApplyExplosionSystem.cpp
-    ${INDIE_SRC_DIR}/ecs/systems/MovePlayerSystem.cpp
     ${INDIE_SRC_DIR}/mod/LibraryWrapper.cpp
     ${INDIE_SRC_DIR}/mod/ModManager.cpp
     ${INDIE_SRC_DIR}/scene/MainMenuScene.cpp
