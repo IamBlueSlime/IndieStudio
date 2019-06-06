@@ -176,6 +176,16 @@ static irr::core::vector3df try_move(irr::scene::ISceneNode *node, const irr::co
         ecs.setComponent(bomb, LifeTime());
         ecs.setComponent(bomb, Setup());
 
+        auto &powerup = ecs.addEntity();
+
+        ecs.setComponent(powerup, Node(Node(static_cast<irr::scene::IAnimatedMeshSceneNode *>(node->clone()))));
+        ecs.setComponent(powerup, MaterialTexture(0, "assets/textures/tmp_powerUp.png"));
+        ecs.setComponent(powerup, MaterialFlag(irr::video::EMF_LIGHTING, true));
+        ecs.setComponent(powerup, Scale(9, 9, 9));
+        ecs.setComponent(powerup, Position(28, 70, 45));
+        ecs.setComponent(powerup, IsPowerUp());
+        ecs.setComponent(powerup, Setup());
+
         generator->generate(this->pattern.get());
 	    this->pattern->forEach([&](int x, int y, int z, MapPattern::TileType tileType) {
 	    	if (tileType == MapPattern::TileType::EMPTY)

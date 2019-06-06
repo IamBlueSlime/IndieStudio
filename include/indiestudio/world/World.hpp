@@ -34,6 +34,7 @@ namespace IndieStudio {
         ECS::Component::IsPlayer,
         ECS::Component::IA,
         ECS::Component::IsBomb,
+        ECS::Component::IsPowerUp,
         ECS::Component::SoundID,
         ECS::Component::Direction,
         ECS::Component::Scale,
@@ -55,6 +56,7 @@ namespace IndieStudio {
         ECS::System::ExplosionDuration<WorldECS>,
         ECS::System::MovePlayer<WorldECS>,
         ECS::System::SetupExplosion<WorldECS>,
+        ECS::System::PickUpPowerUp<WorldECS>,
         ECS::System::IASystem<WorldECS>
     >;
 
