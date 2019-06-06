@@ -66,10 +66,10 @@ namespace IndieStudio {
 
         auto &player = ecs.addEntity();
         std::pair<short, short> positions[4] = {
-            MapPattern::positionToTile(1, this->settings.height - 1),
-            MapPattern::positionToTile(this->settings.width - 1, this->settings.height - 1),
-            MapPattern::positionToTile(1, 1),
-            MapPattern::positionToTile(1, 1)
+            std::make_pair(1 * Constants::TILE_SIZE_FACTOR, (this->settings.height - 2) * Constants::TILE_SIZE_FACTOR),
+            std::make_pair(1 * Constants::TILE_SIZE_FACTOR, 1 * Constants::TILE_SIZE_FACTOR),
+            std::make_pair((this->settings.width - 2) * Constants::TILE_SIZE_FACTOR, (this->settings.height - 2) * Constants::TILE_SIZE_FACTOR),
+            std::make_pair((this->settings.width - 2) * Constants::TILE_SIZE_FACTOR, 1 * Constants::TILE_SIZE_FACTOR)
         };
 
         auto node_p = scenemg->addAnimatedMeshSceneNode(scenemg->getMesh("assets/models/player.md3"));
@@ -77,7 +77,7 @@ namespace IndieStudio {
         ecs.setComponent(player, Node(node_p));
         ecs.setComponent(player, MaterialTexture(0, "assets/textures/player_" + Constants::PLAYER_COLORS[playerId] + ".png"));
         ecs.setComponent(player, MaterialFlag(irr::video::EMF_LIGHTING, false));
-        ecs.setComponent(player, Scale(20, 20, 20));
+        ecs.setComponent(player, Scale(Constants::TILE_SIZE_FACTOR, Constants::TILE_SIZE_FACTOR, Constants::TILE_SIZE_FACTOR));
         ecs.setComponent(player, Position(positions[playerId].first, 70, positions[playerId].second));
         ecs.setComponent(player, Speed(1, 1, 1));
         ecs.setComponent(player, Movement());
