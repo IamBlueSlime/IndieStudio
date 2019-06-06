@@ -113,25 +113,53 @@ static irr::core::vector3df try_move(irr::scene::ISceneNode *node, const irr::co
             eventCB.addCallback(event,
                 [&] (const EventData &event, std::size_t id, WorldECS &ecs)
                 {
+                    if (!event.keyInput.PressedDown) {
+                        mov.up = event.keyInput.PressedDown;
+                        return;
+                    }
                     mov.up = event.keyInput.PressedDown;
+                    mov.down = false;
+                    mov.left = false;
+                    mov.right = false;
                 });
             event.keyInput.Key = this->settings.players[playerId].keyboardDown;
             eventCB.addCallback(event,
                 [&] (const EventData &event, std::size_t id, WorldECS &ecs)
                 {
+                    if (!event.keyInput.PressedDown) {
+                        mov.down = event.keyInput.PressedDown;
+                        return;
+                    }
                     mov.down = event.keyInput.PressedDown;
+                    mov.up = false;
+                    mov.left = false;
+                    mov.right = false;
                 });
             event.keyInput.Key = this->settings.players[playerId].keyboardLeft;
             eventCB.addCallback(event,
                 [&] (const EventData &event, std::size_t id, WorldECS &ecs)
                 {
+                    if (!event.keyInput.PressedDown) {
+                        mov.left = event.keyInput.PressedDown;
+                        return;
+                    }
                     mov.left = event.keyInput.PressedDown;
+                    mov.up = false;
+                    mov.down = false;
+                    mov.right = false;
                 });
             event.keyInput.Key = this->settings.players[playerId].keyboardRight;
             eventCB.addCallback(event,
                 [&] (const EventData &event, std::size_t id, WorldECS &ecs)
                 {
+                    if (!event.keyInput.PressedDown) {
+                        mov.right = event.keyInput.PressedDown;
+                        return;
+                    }
                     mov.right = event.keyInput.PressedDown;
+                    mov.up = false;
+                    mov.down = false;
+                    mov.left = false;
                 });
         }
 
