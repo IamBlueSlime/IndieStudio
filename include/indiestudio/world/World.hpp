@@ -34,6 +34,7 @@ namespace IndieStudio {
         ECS::Component::IsPlayer,
         ECS::Component::IA,
         ECS::Component::IsBomb,
+        ECS::Component::IsBlock,
         ECS::Component::IsPowerUp,
         ECS::Component::SoundID,
         ECS::Component::Direction,
