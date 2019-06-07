@@ -151,6 +151,15 @@ namespace IndieStudio::ECS::Component {
         std::string path;
     };
 
+    struct AnimTexture {
+        AnimTexture(irr::core::array<irr::video::ITexture *> _textureArray = 0, irr::scene::ISceneNodeAnimator *_anim = 0)
+        :
+        textureArray(_textureArray), anim(_anim) {}
+
+        irr::core::array<irr::video::ITexture *> textureArray;
+        irr::scene::ISceneNodeAnimator *anim;
+    };
+
     struct MaterialFlag {
         MaterialFlag(irr::video::E_MATERIAL_FLAG _flag = irr::video::EMF_LIGHTING, bool _present = false)
         :
