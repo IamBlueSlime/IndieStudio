@@ -17,13 +17,13 @@ namespace IndieStudio::ECS::System {
     template<typename ManagerType>
     class ExplosionDuration : public BaseSystem<ManagerType> {
     public:
-        void process(ManagerType &manager, IndieStudio::IWorld *world) {
+        void process(ManagerType &manager, IndieStudio::World *world) {
             manager.template forEntitiesWith<IsBomb, IsExploding, ExplosionLifeTime, ExplosionRange, Position>(
-                [&manager, &world](auto &data, [[gnu::unused]] auto id) {
+                [this, &manager, &world](auto &data, [[gnu::unused]] auto id) {
                     auto &explosionTime = manager.template getComponent<ExplosionLifeTime>(data);
                     auto &range = manager.template getComponent<ExplosionRange>(data);
                     auto &position = manager.template getComponent<Position>(data);
-                    auto pattern = world->getPattern();
+                    auto pattern = this->getWorld(world)->getPattern();
                     std::pair<short, short> posInTile;
 
                      if ((std::time(nullptr) - explosionTime.explosionLifeTime) >= 1) {
@@ -45,11 +45,12 @@ namespace IndieStudio::ECS::System {
                             posInTile = pattern->positionToTile(position.x + (i * 20), position.z);
                             pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::EMPTY);
                         }
-                        manager.template delEntity(data);
+                        manager.delEntity(data);
                      }
             });
         }
     protected:
     private:
+        IWorld *getWorld(IWorld *world) { return world; }
     };
 }

@@ -20,11 +20,11 @@ namespace IndieStudio::ECS::System {
     template<typename ManagerType>
     class ApplyExplosion : public BaseSystem<ManagerType> {
     public:
-        void process(ManagerType &manager, IndieStudio::IWorld *world) {
-            IndieStudio::MapPattern *pattern = world->getPattern();
+        void process(ManagerType &manager, IndieStudio::World *world) {
+            IndieStudio::MapPattern *pattern = getWorld(world)->getPattern();
 
             manager.template forEntitiesWith<IsBomb, Position, IsExploding, ExplosionRange>(
-            [&manager, &pattern, &world](auto &data, [[gnu::unused]] auto id) {
+            [this, &manager, &pattern, &world](auto &data, [[gnu::unused]] auto id) {
 
                 auto &bombPosition = manager.template getComponent<Position>(data);
                 auto &bombRange = manager.template getComponent<ExplosionRange>(data);
@@ -38,9 +38,9 @@ namespace IndieStudio::ECS::System {
                         bombRange.explosionRangeUp = i;
                         break;
                     } else if (tile == IndieStudio::MapPattern::TileType::BREAKABLE_BLOCK) {
-                        auto entity = world->getBlockEntityIdByPos(posInTile.first, posInTile.second);
+                        auto entity = getWorld(world)->getBlockEntityIdByPos(posInTile.first, posInTile.second);
                         auto &node = manager.template getComponent<Node>(entity);
-                        irr::scene::IMetaTriangleSelector *meta = world->getMeta();
+                        irr::scene::IMetaTriangleSelector *meta = getWorld(world)->getMeta();
                         meta->removeTriangleSelector(node.node->getTriangleSelector());
                         node.node->setVisible(false);
                         manager.delEntity(entity);
@@ -60,9 +60,9 @@ namespace IndieStudio::ECS::System {
                         bombRange.explosionRangeDown = i;
                         break;
                     } else if (tile == IndieStudio::MapPattern::TileType::BREAKABLE_BLOCK) {
-                        auto entity = world->getBlockEntityIdByPos(posInTile.first, posInTile.second);
+                        auto entity = getWorld(world)->getBlockEntityIdByPos(posInTile.first, posInTile.second);
                         auto &node = manager.template getComponent<Node>(entity);
-                        irr::scene::IMetaTriangleSelector *meta = world->getMeta();
+                        irr::scene::IMetaTriangleSelector *meta = getWorld(world)->getMeta();
                         meta->removeTriangleSelector(node.node->getTriangleSelector());
                         node.node->setVisible(false);
                         manager.delEntity(entity);
@@ -82,9 +82,9 @@ namespace IndieStudio::ECS::System {
                         bombRange.explosionRangeLeft = i;
                         break;
                     } else if (tile == IndieStudio::MapPattern::TileType::BREAKABLE_BLOCK) {
-                        auto entity = world->getBlockEntityIdByPos(posInTile.first, posInTile.second);
+                        auto entity = getWorld(world)->getBlockEntityIdByPos(posInTile.first, posInTile.second);
                         auto &node = manager.template getComponent<Node>(entity);
-                        irr::scene::IMetaTriangleSelector *meta = world->getMeta();
+                        irr::scene::IMetaTriangleSelector *meta = getWorld(world)->getMeta();
                         meta->removeTriangleSelector(node.node->getTriangleSelector());
                         node.node->setVisible(false);
                         manager.delEntity(entity);
@@ -104,9 +104,9 @@ namespace IndieStudio::ECS::System {
                         bombRange.explosionRangeRight = i;
                         break;
                     } else if (tile == IndieStudio::MapPattern::TileType::BREAKABLE_BLOCK) {
-                        auto entity = world->getBlockEntityIdByPos(posInTile.first, posInTile.second);
+                        auto entity = getWorld(world)->getBlockEntityIdByPos(posInTile.first, posInTile.second);
                         auto &node = manager.template getComponent<Node>(entity);
-                        irr::scene::IMetaTriangleSelector *meta = world->getMeta();
+                        irr::scene::IMetaTriangleSelector *meta = getWorld(world)->getMeta();
                         meta->removeTriangleSelector(node.node->getTriangleSelector());
                         node.node->setVisible(false);
                         manager.delEntity(entity);
@@ -120,5 +120,9 @@ namespace IndieStudio::ECS::System {
                 }
             });
         }
+    
+    protected:
+    private:
+        IWorld *getWorld(IWorld *world) { return world; }
     };
 }

@@ -52,7 +52,7 @@ namespace IndieStudio {
 
     void World::move(const irr::core::vector3df &direction, ECS::Position &pos, ECS::Speed &speed, ECS::Node &node)
     {
-        auto tilePos = MapPattern::positionToTile(pos.x, pos.z);
+        // auto tilePos = MapPattern::positionToTile(pos.x, pos.z);
         // std::cout << tilePos.first << ";" << tilePos.second << std::endl;
         irr::core::vector3df newPos(
             tryMove(node.node, direction, irr::core::vector3df(speed.x, speed.y, speed.z))
@@ -64,6 +64,7 @@ namespace IndieStudio {
 
     void World::initDeflagration(WorldManager &manager, irr::scene::ISceneManager *scenemg)
     {
+        (void) manager;
         irr::video::IVideoDriver *driver = Singleton::getDevice()->getVideoDriver();
 
         auto &test = ecs.addEntity();
