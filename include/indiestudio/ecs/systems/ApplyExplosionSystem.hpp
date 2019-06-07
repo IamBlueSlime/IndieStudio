@@ -45,7 +45,11 @@ namespace IndieStudio::ECS::System {
                         node.node->setVisible(false);
                         manager.delEntity(entity);
                         bombRange.explosionRangeUp = i;
+                        //TODO: add power up if it drops
+                        pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::EMPTY);
                         break;
+                    } else {
+                        pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::BOMB_EXPLOSION);
                     }
                 }
                 for (float i = 0; i < bombRange.explosionRangeDown; i += 1.0f) {
@@ -63,7 +67,11 @@ namespace IndieStudio::ECS::System {
                         node.node->setVisible(false);
                         manager.delEntity(entity);
                         bombRange.explosionRangeDown = i;
+                        //TODO: add power up if it drops
+                        pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::EMPTY);
                         break;
+                    } else {
+                        pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::BOMB_EXPLOSION);
                     }
                 }
                 for (float i = 0; i < bombRange.explosionRangeLeft; i += 1.0f) {
@@ -81,7 +89,11 @@ namespace IndieStudio::ECS::System {
                         node.node->setVisible(false);
                         manager.delEntity(entity);
                         bombRange.explosionRangeLeft = i;
+                        //TODO: add power up if it drops
+                        pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::EMPTY);
                         break;
+                    } else {
+                        pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::BOMB_EXPLOSION);
                     }
                 }
                 for (float i = 0; i < bombRange.explosionRangeRight; i += 1.0f) {
@@ -99,7 +111,11 @@ namespace IndieStudio::ECS::System {
                         node.node->setVisible(false);
                         manager.delEntity(entity);
                         bombRange.explosionRangeRight = i;
+                        //TODO: add power up if it drops
+                        pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::EMPTY);
                         break;
+                    } else {
+                        pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::BOMB_EXPLOSION);
                     }
                 }
             });

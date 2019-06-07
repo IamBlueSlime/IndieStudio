@@ -17,16 +17,35 @@ namespace IndieStudio::ECS::System {
     template<typename ManagerType>
     class ExplosionDuration : public BaseSystem<ManagerType> {
     public:
-        void process(ManagerType &manager, World *world) override {
-            (void) world;
-            manager.template forEntitiesWith<IsBomb, IsExploding, ExplosionLifeTime>(
-                [&manager](auto &data, [[gnu::unused]] auto id) {
+        void process(ManagerType &manager, IndieStudio::IWorld *world) {
+            manager.template forEntitiesWith<IsBomb, IsExploding, ExplosionLifeTime, ExplosionRange, Position>(
+                [&manager, &world](auto &data, [[gnu::unused]] auto id) {
                     auto &explosionTime = manager.template getComponent<ExplosionLifeTime>(data);
+                    auto &range = manager.template getComponent<ExplosionRange>(data);
+                    auto &position = manager.template getComponent<Position>(data);
+                    auto pattern = world->getPattern();
+                    std::pair<short, short> posInTile;
 
                      if ((std::time(nullptr) - explosionTime.explosionLifeTime) >= 1) {
                         manager.template unsetComponent<IsExploding>(data);
                         manager.template unsetComponent<ExplosionLifeTime>(data);
-//                        manager.template delEntity(data);
+                        for (float i = 0; i < range.explosionRangeUp; i++) {
+                            posInTile = pattern->positionToTile(position.x, position.z + (i * 20));
+                            pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::EMPTY);
+                        }
+                        for (float i = 0; i < range.explosionRangeDown; i++) {
+                            posInTile = pattern->positionToTile(position.x, position.z - (i * 20));
+                            pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::EMPTY);
+                        }
+                        for (float i = 0; i < range.explosionRangeLeft; i++) {
+                            posInTile = pattern->positionToTile(position.x - (i * 20), position.z);
+                            pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::EMPTY);
+                        }
+                        for (float i = 0; i < range.explosionRangeRight; i++) {
+                            posInTile = pattern->positionToTile(position.x + (i * 20), position.z);
+                            pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::EMPTY);
+                        }
+                        manager.template delEntity(data);
                      }
             });
         }
