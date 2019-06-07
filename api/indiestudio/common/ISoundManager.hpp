@@ -22,6 +22,7 @@ namespace IndieStudio {
         virtual void registerSound(std::string id) = 0;
         virtual void registerSound(std::string id, Sound &sound,
             bool overrideExisting = false) = 0;
+        virtual Sound &getSound(const std::string &id) = 0;
     };
 
 }

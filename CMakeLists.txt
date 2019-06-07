@@ -42,6 +42,9 @@ set(INDIE_SRC
     ${INDIE_SRC_DIR}/ecs/systems/PickUpPowerUp.cpp
     ${INDIE_SRC_DIR}/mod/LibraryWrapper.cpp
     ${INDIE_SRC_DIR}/mod/ModManager.cpp
+    ${INDIE_SRC_DIR}/player/AIControlProvider.cpp
+    ${INDIE_SRC_DIR}/player/ControlProviderManager.cpp
+    ${INDIE_SRC_DIR}/player/KeyboardControlProvider.cpp
     ${INDIE_SRC_DIR}/scene/MainMenuScene.cpp
     ${INDIE_SRC_DIR}/scene/NewGameScene.cpp
     ${INDIE_SRC_DIR}/scene/PlayScene.cpp

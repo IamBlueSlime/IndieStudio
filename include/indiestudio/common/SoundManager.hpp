@@ -21,7 +21,7 @@ namespace IndieStudio {
         void registerSound(std::string id) override;
         void registerSound(std::string id, Sound &sound,
             bool overrideExisting = false) override;
-        Sound &getSound(const std::string &id);
+        Sound &getSound(const std::string &id) override;
 
 	protected:
 	private:

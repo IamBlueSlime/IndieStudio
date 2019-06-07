@@ -91,8 +91,10 @@ namespace IndieStudio {
 
         auto &mov = ecs.getComponent<Movement>(player);
 
-        if (this->settings.players[playerId].controlType == WorldSettings::Player::ControlType::KEYBOARD) {
-            event.keyInput.Key = this->settings.players[playerId].keyboardUp;
+        if (this->settings.players[playerId].controlProvider == "AI") {
+            ecs.setComponent(player, IA());
+        } else {
+            event.keyInput.Key = this->settings.players[playerId].mappings.keyUp;
             eventCB.addCallback(event,
                 [&] (const EventData &event, std::size_t id, WorldECS &ecs)
                 {
@@ -105,7 +107,7 @@ namespace IndieStudio {
                     mov.left = false;
                     mov.right = false;
                 });
-            event.keyInput.Key = this->settings.players[playerId].keyboardDown;
+            event.keyInput.Key = this->settings.players[playerId].mappings.keyDown;
             eventCB.addCallback(event,
                 [&] (const EventData &event, std::size_t id, WorldECS &ecs)
                 {
@@ -118,7 +120,7 @@ namespace IndieStudio {
                     mov.left = false;
                     mov.right = false;
                 });
-            event.keyInput.Key = this->settings.players[playerId].keyboardLeft;
+            event.keyInput.Key = this->settings.players[playerId].mappings.keyLeft;
             eventCB.addCallback(event,
                 [&] (const EventData &event, std::size_t id, WorldECS &ecs)
                 {
@@ -131,7 +133,7 @@ namespace IndieStudio {
                     mov.down = false;
                     mov.right = false;
                 });
-            event.keyInput.Key = this->settings.players[playerId].keyboardRight;
+            event.keyInput.Key = this->settings.players[playerId].mappings.keyRight;
             eventCB.addCallback(event,
                 [&] (const EventData &event, std::size_t id, WorldECS &ecs)
                 {
@@ -144,8 +146,6 @@ namespace IndieStudio {
                     mov.down = false;
                     mov.left = false;
                 });
-        } else if (this->settings.players[playerId].controlType == WorldSettings::Player::ControlType::AI) {
-            ecs.setComponent(player, IA());
         }
 
         ecs.setComponent(player, eventCB);

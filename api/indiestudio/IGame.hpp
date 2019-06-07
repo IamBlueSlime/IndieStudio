@@ -9,6 +9,7 @@
 
 #include "indiestudio/common/ISoundManager.hpp"
 #include "indiestudio/common/IFontManager.hpp"
+#include "indiestudio/player/IControlProviderManager.hpp"
 #include "indiestudio/statistic/IAchievementManager.hpp"
 #include "indiestudio/statistic/IStatisticManager.hpp"
 #include "indiestudio/world/IWorldManager.hpp"
@@ -22,6 +23,7 @@ namespace IndieStudio {
         virtual IAchievementManager &getAchievementManager() = 0;
         virtual ISoundManager &getSoundManager() = 0;
         virtual IFontManager &getFontManager() = 0;
+        virtual IControlProviderManager &getControlProviderManager() = 0;
         virtual IWorldManager &getWorldManager() = 0;
     };
 
