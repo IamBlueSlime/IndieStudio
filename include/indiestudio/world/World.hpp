@@ -49,7 +49,7 @@ namespace IndieStudio {
         ECS::Component::Setup,
         ECS::Component::Movement,
         ECS::Component::Particle,
-        ECS::Component::AnimTexture,
+        ECS::Component::TextureArray,
         ECS::Component::Stat
     >;
 
@@ -83,6 +83,9 @@ namespace IndieStudio {
         void focusECS(SceneManager::Scene &scene);
         void forwardEvent(ECS::Event::EventData event);
 
+        bool createDeflagration(irr::scene::ISceneNode *node, irr::core::array<irr::video::ITexture *> &textureArray,
+            const irr::core::vector3df &position, unsigned int timeMs = 1000);
+        bool createDeflagration(const irr::core::vector3df &position, unsigned int timeMs = 1000);
         void initDeflagration(WorldManager &manager, irr::scene::ISceneManager *scenemg);
         void initPlayer(WorldManager &manager, irr::scene::ISceneManager *scenemg, int playerId);
         void move(const irr::core::vector3df &direction, ECS::Position &pos, ECS::Speed &speed, ECS::Node &node);

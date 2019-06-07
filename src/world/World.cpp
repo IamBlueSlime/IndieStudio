@@ -28,6 +28,41 @@ namespace IndieStudio {
         srand(std::time(nullptr));
     }
 
+    bool World::createDeflagration(const irr::core::vector3df &position, unsigned int timeMs)
+    {
+        bool ret = true;
+        this->ecs.forEntitiesWith<TextureArray>(
+            [&] (auto &data, auto)
+            {
+                irr::scene::ISceneNode *sceneNode = this->ecs.getComponent<Node>(data).node;
+                irr::core::array<irr::video::ITexture *> &textureArray = this->ecs.getComponent<TextureArray>(data).textureArray;
+                ret = createDeflagration(sceneNode, textureArray, position, timeMs);
+            }
+        );
+        return ret;
+    }
+
+
+    bool World::createDeflagration(irr::scene::ISceneNode *node, irr::core::array<irr::video::ITexture *> &textureArray,
+        const irr::core::vector3df &position, unsigned int timeMs)
+    {
+        if (!node)
+            return false;
+        irr::scene::ISceneNode *clone = node->clone();
+        if (!clone)
+            return false;
+        clone->setPosition(position);
+        auto del = clone->getSceneManager()->createDeleteAnimator(timeMs);
+        if (!del)
+            return false;
+        clone->addAnimator(del);
+        auto anim = clone->getSceneManager()->createTextureAnimator(textureArray, timeMs / textureArray.size(), false);
+        clone->addAnimator(anim);
+        if (!clone->isVisible())
+            clone->setVisible(true);
+        return true;
+    }
+
     static irr::core::vector3df tryMove(irr::scene::ISceneNode *node, const irr::core::vector3df &vector, const irr::core::vector3df &velocity)
     {
         irr::core::vector3df actPos(node->getAbsolutePosition());
@@ -69,28 +104,25 @@ namespace IndieStudio {
 
         auto &test = ecs.addEntity();
         auto node = scenemg->addAnimatedMeshSceneNode(scenemg->getMesh("assets/models/cube.obj"));
+        node->setVisible(false);
 
         node->setMaterialType(irr::video::EMT_TRANSPARENT_ADD_COLOR);
         ecs.setComponent(test, Node(node));
         ecs.setComponent(test, MaterialTexture(0, "assets/textures/bomb.png"));
         ecs.setComponent(test, MaterialFlag(irr::video::EMF_LIGHTING, true));
         ecs.setComponent(test, Scale(Constants::TILE_SIZE_FACTOR, Constants::TILE_SIZE_FACTOR, Constants::TILE_SIZE_FACTOR));
-        ecs.setComponent(test, Position(20.5, 70, 100.5));
+        ecs.setComponent(test, Position(20.5, 90, 100.5));
 
         irr::core::array<irr::video::ITexture *> textureArray;
         textureArray.push_back(driver->getTexture("assets/textures/flames1.png"));
         textureArray.push_back(driver->getTexture("assets/textures/flames2.png"));
-        textureArray.push_back(driver->getTexture("assets/textures/flames4.png"));
         textureArray.push_back(driver->getTexture("assets/textures/flames3.png"));
+        textureArray.push_back(driver->getTexture("assets/textures/flames4.png"));
         textureArray.push_back(driver->getTexture("assets/textures/flames5.png"));
         textureArray.push_back(driver->getTexture("assets/textures/flames6.png"));
         textureArray.push_back(driver->getTexture("assets/textures/flames7.png"));
         textureArray.push_back(driver->getTexture("assets/textures/flames8.png"));
-        auto anim = scenemg->createTextureAnimator(textureArray, 1000 / 8, false);
-        node->addAnimator(anim);
-
-        node->setVisible(true);
-        ecs.setComponent(test, AnimTexture(textureArray, anim));
+        ecs.setComponent(test, TextureArray(textureArray));
         ecs.setComponent(test, Setup());
     }
 
@@ -315,14 +347,6 @@ namespace IndieStudio {
 
                     bool did = false;
                     if (mov.up) {
-                        this->ecs.forEntitiesWith<AnimTexture>(
-                            [&](auto &data, auto)
-                            {
-                                std::cout << this->ecs.getComponent<Node>(data).node->getFrameNr() << std::endl;
-                                irr::scene::IAnimatedMeshSceneNode *tmp = this->ecs.getComponent<Node>(data).node;
-                                tmp->setVisible(!tmp->isVisible());
-                            }
-                        );
                         move({0, 0, 1}, pos, speed, node);
                         did = true;
                     } if (mov.down) {
