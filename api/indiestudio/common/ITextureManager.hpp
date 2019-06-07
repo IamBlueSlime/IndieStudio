@@ -22,6 +22,7 @@ namespace IndieStudio {
         virtual void registerTexture(std::string id) = 0;
         virtual void registerTexture(std::string id, Texture &Texture,
             bool overrideExisting = false) = 0;
+        virtual Texture &getTexture(const std::string &id) = 0;
     };
 
 }

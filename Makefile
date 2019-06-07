@@ -5,7 +5,7 @@
 ## Makefile
 ##
 
-.PHONY:		all tests_run coverage clean fclean re
+.PHONY:		all debug ninja tests_run coverage clean fclean re
 
 all:
 			if [ ! -d  build ]; then mkdir build; fi
@@ -14,6 +14,10 @@ all:
 debug:
 			if [ ! -d  build ]; then mkdir build; fi
 			cd build && cmake .. -DCMAKE_BUILD_TYPE=Debug && cmake --build . -- --no-print-directory
+
+ninja:
+			if [ ! -d  build ]; then mkdir build; fi
+			cd build && cmake .. -DCMAKE_BUILD_TYPE=Debug -G"Ninja" && cmake --build .
 
 tests_run:
 			if [ ! -d  build ]; then mkdir build; fi

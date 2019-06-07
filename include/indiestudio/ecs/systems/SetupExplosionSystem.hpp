@@ -19,14 +19,16 @@ namespace IndieStudio::ECS::System {
     public:
         void process(ManagerType &manager, World *world) override {
             (void) world;
-            manager.template forEntitiesWith<IsBomb, LifeTime>(
+            manager.template forEntitiesWith<Node, IsBomb, LifeTime>(
                 [&manager](auto &data, [[gnu::unused]] auto id) {
                     auto &Lifetime = manager.template getComponent<LifeTime>(data);
+                    auto &node = manager.template getComponent<Node>(data);
 
                     if (std::time(nullptr) - Lifetime.lifeTime >= 5) {
                         manager.setComponent(data, IsExploding());
                         manager.setComponent(data, ExplosionLifeTime());
                         manager.template unsetComponent<LifeTime>(data);
+                        node.node->setVisible(false);
                     }
             });
         }

@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <functional>
 #include <sstream>
 #include <unordered_map>
 
@@ -22,7 +23,7 @@ namespace IndieStudio {
                     std::stringstream ss;
                     ss << key;
 
-                    throw new std::runtime_error("Tried to register an object with an existing key (" + ss.str() + ")");
+                    throw std::runtime_error("Tried to register an object with an existing key (" + ss.str() + ")");
                 }
 
                 this->removeKey(key);
@@ -59,10 +60,16 @@ namespace IndieStudio {
                 std::stringstream ss;
                 ss << key;
 
-                throw new std::runtime_error("Tried to get an unknown key (" + ss.str() + ")");
+                throw std::runtime_error("Tried to get an unknown key (" + ss.str() + ")");
             }
 
             return this->container[key];
+        }
+
+        void forEach(std::function<void(K key, V &value)> &&callback)
+        {
+            for (auto it = this->container.begin(); it != this->container.end(); ++it)
+                callback(it->first, it->second);
         }
 
         bool has(K key) const

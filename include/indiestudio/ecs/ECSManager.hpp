@@ -32,11 +32,10 @@ namespace IndieStudio::ECS {
 
     template<typename... ComponentTypes>
     class ECSManager {
-
+    public:
         using EntityType = Entity<EventCallbacks<ECSManager<ComponentTypes...>>, ComponentTypes...>;
         using Components = TypeList<EventCallbacks<ECSManager<ComponentTypes...>>, ComponentTypes...>;
 
-    public:
         ECSManager() {}
         ~ECSManager() {}
 

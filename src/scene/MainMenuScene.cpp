@@ -83,7 +83,7 @@ namespace IndieStudio {
             throw std::runtime_error("Failed to load player.md3");
 
         anms->setMaterialFlag(irr::video::EMF_LIGHTING, false);
-        anms->setMaterialTexture(0, scene.manager->textureManager.getTexture("assets/textures/player_black.png").content);
+        anms->setMaterialTexture(0, scene.manager->textureManager.getTexture("assets/textures/player_white.png").content);
         anms->setFrameLoop(0, 27);
         anms->setAnimationSpeed(30);
         anms->setScale(irr::core::vector3df(8.f,8.f,8.f));

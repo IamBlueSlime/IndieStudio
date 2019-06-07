@@ -34,6 +34,7 @@ namespace IndieStudio {
         ECS::Component::IsPlayer,
         ECS::Component::IA,
         ECS::Component::IsBomb,
+        ECS::Component::IsBlock,
         ECS::Component::IsPowerUp,
         ECS::Component::SoundID,
         ECS::Component::Direction,
@@ -48,7 +49,8 @@ namespace IndieStudio {
         ECS::Component::Setup,
         ECS::Component::Movement,
         ECS::Component::Particle,
-        ECS::Component::AnimTexture
+        ECS::Component::AnimTexture,
+        ECS::Component::Stat
     >;
 
     using WorldECSSystems = ECS::SystemsImpl<
@@ -85,6 +87,8 @@ namespace IndieStudio {
         void initPlayer(WorldManager &manager, irr::scene::ISceneManager *scenemg, int playerId);
         void move(const irr::core::vector3df &direction, ECS::Position &pos, ECS::Speed &speed, ECS::Node &node);
 
+        std::size_t getBlockEntityIdByPos(short x, short z) override;
+
         /* ISerializable implementation */
         void pack(ByteBuffer &buffer) const override;
         void unpack(ByteBuffer &buffer) override;
@@ -92,17 +96,13 @@ namespace IndieStudio {
         WorldSettings &getSettings() { return this->settings; }
         MapPattern *getPattern() override { return this->pattern.get(); }
         const WorldSettings &getSettings() const { return this->settings; }
+        irr::scene::IMetaTriangleSelector *getMeta() override { return this->meta; }
 
     protected:
     private:
-        irr::core::vector3df direction[4] = {
-            {0, 0, 1},
-            {0, 0, -1},
-            {-1, 0, 0},
-            {1, 0, 0}
-        };
         WorldSettings settings;
         std::unique_ptr<MapPattern> pattern;
+        std::unordered_map<std::size_t, std::pair<short, short>> breakableBlockMapping;
         WorldECS ecs;
         SceneManager::Scene &scene;
         irr::scene::IMetaTriangleSelector *meta;

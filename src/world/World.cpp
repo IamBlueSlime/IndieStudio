@@ -89,7 +89,6 @@ namespace IndieStudio {
         node->addAnimator(anim);
 
         node->setVisible(true);
-        node->setAnimator
         ecs.setComponent(test, AnimTexture(textureArray, anim));
         ecs.setComponent(test, Setup());
     }
@@ -113,9 +112,10 @@ namespace IndieStudio {
         ecs.setComponent(player, MaterialTexture(0, "assets/textures/player_" + Constants::PLAYER_COLORS[playerId] + ".png"));
         ecs.setComponent(player, MaterialFlag(irr::video::EMF_LIGHTING, false));
         ecs.setComponent(player, Scale(Constants::TILE_SIZE_FACTOR, Constants::TILE_SIZE_FACTOR, Constants::TILE_SIZE_FACTOR));
-        ecs.setComponent(player, Position(positions[playerId].first, 70, positions[playerId].second));
+        ecs.setComponent(player, Position(positions[playerId].first, 61, positions[playerId].second));
         ecs.setComponent(player, Speed(1, 1, 1));
         ecs.setComponent(player, Movement());
+        ecs.setComponent(player, IsPlayer());
         auto animator = scenemg->createCollisionResponseAnimator(this->meta, node_p, {5, 5, 5}, {0, 0, 0});
         node_p->addAnimator(animator);
         animator->drop();
@@ -126,8 +126,10 @@ namespace IndieStudio {
 
         auto &mov = ecs.getComponent<Movement>(player);
 
-        if (this->settings.players[playerId].controlType == WorldSettings::Player::ControlType::KEYBOARD) {
-            event.keyInput.Key = this->settings.players[playerId].keyboardUp;
+        if (this->settings.players[playerId].controlProvider == "AI") {
+            ecs.setComponent(player, IA());
+        } else {
+            event.keyInput.Key = this->settings.players[playerId].mappings.keyUp;
             eventCB.addCallback(event,
                 [&] (const EventData &event, auto, auto)
                 {
@@ -140,7 +142,7 @@ namespace IndieStudio {
                     mov.left = false;
                     mov.right = false;
                 });
-            event.keyInput.Key = this->settings.players[playerId].keyboardDown;
+            event.keyInput.Key = this->settings.players[playerId].mappings.keyDown;
             eventCB.addCallback(event,
                 [&] (const EventData &event, auto, auto)
                 {
@@ -153,7 +155,7 @@ namespace IndieStudio {
                     mov.left = false;
                     mov.right = false;
                 });
-            event.keyInput.Key = this->settings.players[playerId].keyboardLeft;
+            event.keyInput.Key = this->settings.players[playerId].mappings.keyLeft;
             eventCB.addCallback(event,
                 [&] (const EventData &event, auto, auto)
                 {
@@ -166,7 +168,7 @@ namespace IndieStudio {
                     mov.down = false;
                     mov.right = false;
                 });
-            event.keyInput.Key = this->settings.players[playerId].keyboardRight;
+            event.keyInput.Key = this->settings.players[playerId].mappings.keyRight;
             eventCB.addCallback(event,
                 [&] (const EventData &event, auto, auto)
                 {
@@ -179,8 +181,6 @@ namespace IndieStudio {
                     mov.down = false;
                     mov.left = false;
                 });
-        } else if (this->settings.players[playerId].controlType == WorldSettings::Player::ControlType::AI) {
-            ecs.setComponent(player, IA());
         }
 
         ecs.setComponent(player, eventCB);
@@ -219,7 +219,7 @@ namespace IndieStudio {
         ecs.setComponent(bomb, MaterialTexture(0, "assets/textures/bomb.png"));
 		ecs.setComponent(bomb, MaterialFlag(irr::video::EMF_LIGHTING, true));
 		ecs.setComponent(bomb, Scale(3.5, 3.5, 3.5));
-		ecs.setComponent(bomb, Position(40.5, 70, 100.5));
+		ecs.setComponent(bomb, Position(20.5, 70, 160.5));
         ecs.setComponent(bomb, IsBomb());
         ecs.setComponent(bomb, ExplosionRange());
         ecs.setComponent(bomb, LifeTime());
@@ -234,6 +234,8 @@ namespace IndieStudio {
         ecs.setComponent(powerup, Position(28, 70, 45));
         ecs.setComponent(powerup, IsPowerUp());
         ecs.setComponent(powerup, Setup());
+
+        this->pattern->set(1, 1, 1, MapPattern::TileType::POWER_UP);
 
         generator->generate(this->pattern.get());
 	    this->pattern->forEach([&](int x, int y, int z, MapPattern::TileType tileType) {
@@ -279,6 +281,11 @@ namespace IndieStudio {
 
             ecs.setComponent(newBlock, MaterialFlag(irr::video::EMF_LIGHTING, true));
             ecs.setComponent(newBlock, Setup());
+
+            if (y == 1) {
+            this->breakableBlockMapping.insert(std::make_pair(newBlock.id,
+                std::make_pair(x, z)));
+            }
         });
 
         initPlayer(manager, scenemg, 0);
@@ -321,16 +328,16 @@ namespace IndieStudio {
                                 tmp->setVisible(!tmp->isVisible());
                             }
                         );
-                        move(direction[0], pos, speed, node);
+                        move({0, 0, 1}, pos, speed, node);
                         did = true;
                     } if (mov.down) {
-                        move(direction[1], pos, speed, node);
+                        move({0, 0, -1}, pos, speed, node);
                         did = true;
                     } if (mov.left) {
-                        move(direction[2], pos, speed, node);
+                        move({-1, 0, 0}, pos, speed, node);
                         did = true;
                     } if (mov.right) {
-                        move(direction[3], pos, speed, node);
+                        move({1, 0, 0}, pos, speed, node);
                         did = true;
                     }
                     if (!did) {
@@ -353,6 +360,17 @@ namespace IndieStudio {
     void World::forwardEvent(ECS::Event::EventData event)
     {
         this->ecs.getEventManager().push_event(event);
+    }
+
+    std::size_t World::getBlockEntityIdByPos(short x, short z)
+    {
+        std::pair<short, short> pos = std::make_pair(x, z);
+
+        for (auto it = this->breakableBlockMapping.begin(); it != this->breakableBlockMapping.end(); ++it)
+            if (it->second == pos)
+                return it->first;
+
+        throw std::runtime_error("wtf");
     }
 
     void World::pack(ByteBuffer &buffer) const

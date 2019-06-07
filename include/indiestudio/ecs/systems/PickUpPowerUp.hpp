@@ -7,7 +7,6 @@
 
 #pragma once
 
-
 #include "indiestudio/world/MapPattern.hpp"
 #include "indiestudio/ecs/Components.hpp"
 #include "indiestudio/ecs/BaseSystem.hpp"
@@ -19,53 +18,59 @@ namespace IndieStudio::ECS::System {
 
     template<typename ManagerType>
     class PickUpPowerUp : public BaseSystem<ManagerType> {
-    public:
+        public:
 
-        struct Coord {
-            std::size_t x;
-            std::size_t y;
-        };
-
-        bool isOnPowerUp(Coord player, Coord powerup, MapPattern *map) {
-            if (map->get(player.x, 1, player.y) == map->get(powerup.x, 1, powerup.y))
-                return true;
-            return false;
-        }
-
-        Coord convertPosition(Position p) {
-            Coord coord = {
-                static_cast<std::size_t>(p.x / Constants::TILE_SIZE_FACTOR), 
-                static_cast<std::size_t>(p.z / Constants::TILE_SIZE_FACTOR)
+            struct Coord {
+                std::size_t x;
+                std::size_t y;
             };
-            return coord;
-        }
 
-        IWorld *getWorld(IWorld *world) { return world; }
+            bool isOnPowerUp(Coord player, Coord powerup, MapPattern *map) {
+                if (map->get(player.x, 1, player.y) == map->get(powerup.x, 1, powerup.y))
+                    return true;
+                return false;
+            }
 
-        void process(ManagerType &manager, World *tmp_world) override {
-            manager.template forEntitiesWith<IsPlayer, Position>(
-                [&manager, tmp_world, this](auto &data, [[gnu::unused]] auto id) {
-                    IWorld *world = getWorld(tmp_world);
+            Coord convertPosition(Position p) {
+                std::pair<short, short> tileScalePos = MapPattern::positionToTile(p.x, p.z);
+                PickUpPowerUp::Coord coord = {static_cast<std::size_t>(tileScalePos.first), static_cast<std::size_t>(tileScalePos.second)};
+                return coord;
+            }
+
+            void applyPowerUp(Speed &speed, Stat &stat) {
+                std::cout << "POWER UP APPLIED !" << std::endl;
+                speed.x += 1;
+                speed.y += 1;
+                speed.z += 1;
+                stat.bomb += 1;
+                stat.range += 1;
+            }
+
+            IWorld *getWorld(IWorld *world) { return world; }
+
+            void process(ManagerType &manager, World *world) override {
+                manager.template forEntitiesWith<IsPlayer, Position, Stat, Speed>(
+                [&manager, world, this](auto &data, [[gnu::unused]] auto id) {
                     auto &playerPos = manager.template getComponent<Position>(data);
-                    MapPattern *tilemap = world->getPattern();
+                    auto &speed = manager.template getComponent<Speed>(data);
+                    auto &stat = manager.template getComponent<Stat>(data);
+                    MapPattern *tilemap = getWorld(world)->getPattern();
 
                     manager.template forEntitiesWith<IsPowerUp, Position>(
-                        [&manager, &playerPos, tilemap, this](auto &data, [[gnu::unused]] auto id) {
+                        [&manager, &playerPos, &stat, &speed, tilemap, this](auto &data, [[gnu::unused]] auto id) {
                             auto &powerupPos = manager.template getComponent<Position>(data);
-                            Coord tilePlayerPos = this->convertPosition(playerPos);
+                            PickUpPowerUp::Coord tilePlayerPos = this->convertPosition(playerPos);
 
                             if (this->isOnPowerUp(tilePlayerPos, this->convertPosition(powerupPos), tilemap)) {
-                                // update tilemap
                                 tilemap->set(tilePlayerPos.x, 1, tilePlayerPos.y, MapPattern::TileType::PLAYER);
-                                // apply powerup
-                                std::cout << "POWER UP APPLIED !" << std::endl;
-                                // delete entity
                                 manager.delEntity(data);
-                            }
-                        });
-            });
-        }
-    protected:
-    private:
+                                applyPowerUp(speed, stat);
+                            }    
+                    });
+                });
+            }
+
+        protected:
+        private:
     };
 }
