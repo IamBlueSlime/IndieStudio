@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2019
 ** OOP_indie_studio_2018
 ** File description:
-** ecs Events.hpp
+** common Events.hpp
 */
 
 #pragma once
@@ -11,7 +11,6 @@
 #include <unordered_map>
 #include <iostream>
 #include <cassert>
-
 #include <irrlicht.h>
 
 namespace IndieStudio::ECS::Event {

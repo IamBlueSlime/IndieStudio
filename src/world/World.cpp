@@ -87,7 +87,8 @@ namespace IndieStudio {
 
     void World::move(const irr::core::vector3df &direction, ECS::Position &pos, ECS::Speed &speed, ECS::Node &node)
     {
-        auto tilePos = MapPattern::positionToTile(pos.x, pos.z);
+        // auto tilePos = MapPattern::positionToTile(pos.x, pos.z);
+        // std::cout << tilePos.first << ";" << tilePos.second << std::endl;
         irr::core::vector3df newPos(
             tryMove(node.node, direction, irr::core::vector3df(speed.x, speed.y, speed.z))
         );
@@ -98,6 +99,7 @@ namespace IndieStudio {
 
     void World::initDeflagration(WorldManager &manager, irr::scene::ISceneManager *scenemg)
     {
+        (void) manager;
         irr::video::IVideoDriver *driver = Singleton::getDevice()->getVideoDriver();
 
         auto &test = ecs.addEntity();
@@ -147,23 +149,19 @@ namespace IndieStudio {
         ecs.setComponent(player, Speed(1, 1, 1));
         ecs.setComponent(player, Movement());
         ecs.setComponent(player, IsPlayer());
+        ecs.setComponent(player, Stat());
         auto animator = scenemg->createCollisionResponseAnimator(this->meta, node_p, {5, 5, 5}, {0, 0, 0});
         node_p->addAnimator(animator);
         animator->drop();
 
         auto eventCB = EventCallbacks<WorldECS>();
-        IndieStudio::ECS::Event::EventData event;
-        event.type = ECS::Event::EventType::INDIE_KEYBOARD_EVENT;
-
         auto &mov = ecs.getComponent<Movement>(player);
 
         if (this->settings.players[playerId].controlProvider == "AI") {
             ecs.setComponent(player, IA());
         } else {
-            event.keyInput.Key = this->settings.players[playerId].mappings.keyUp;
-            eventCB.addCallback(event,
-                [&] (const EventData &event, auto, auto)
-                {
+            eventCB.addCallback(this->settings.players[playerId].mappings.up,
+                [&] (const EventData &event, auto, auto) {
                     if (!event.keyInput.PressedDown) {
                         mov.up = event.keyInput.PressedDown;
                         return;
@@ -172,11 +170,10 @@ namespace IndieStudio {
                     mov.down = false;
                     mov.left = false;
                     mov.right = false;
-                });
-            event.keyInput.Key = this->settings.players[playerId].mappings.keyDown;
-            eventCB.addCallback(event,
-                [&] (const EventData &event, auto, auto)
-                {
+                }
+            );
+            eventCB.addCallback(this->settings.players[playerId].mappings.down,
+                [&] (const EventData &event, auto, auto) {
                     if (!event.keyInput.PressedDown) {
                         mov.down = event.keyInput.PressedDown;
                         return;
@@ -185,11 +182,10 @@ namespace IndieStudio {
                     mov.up = false;
                     mov.left = false;
                     mov.right = false;
-                });
-            event.keyInput.Key = this->settings.players[playerId].mappings.keyLeft;
-            eventCB.addCallback(event,
-                [&] (const EventData &event, auto, auto)
-                {
+                }
+            );
+            eventCB.addCallback(this->settings.players[playerId].mappings.left,
+                [&] (const EventData &event, auto, auto) {
                     if (!event.keyInput.PressedDown) {
                         mov.left = event.keyInput.PressedDown;
                         return;
@@ -198,11 +194,10 @@ namespace IndieStudio {
                     mov.up = false;
                     mov.down = false;
                     mov.right = false;
-                });
-            event.keyInput.Key = this->settings.players[playerId].mappings.keyRight;
-            eventCB.addCallback(event,
-                [&] (const EventData &event, auto, auto)
-                {
+                }
+            );
+            eventCB.addCallback(this->settings.players[playerId].mappings.right,
+                [&] (const EventData &event, auto, auto) {
                     if (!event.keyInput.PressedDown) {
                         mov.right = event.keyInput.PressedDown;
                         return;
@@ -211,7 +206,8 @@ namespace IndieStudio {
                     mov.up = false;
                     mov.down = false;
                     mov.left = false;
-                });
+                }
+            );
         }
 
         ecs.setComponent(player, eventCB);
@@ -261,12 +257,10 @@ namespace IndieStudio {
         ecs.setComponent(powerup, Node(Node(static_cast<irr::scene::IAnimatedMeshSceneNode *>(node->clone()))));
         ecs.setComponent(powerup, MaterialTexture(0, "assets/textures/tmp_powerUp.png"));
         ecs.setComponent(powerup, MaterialFlag(irr::video::EMF_LIGHTING, true));
-        ecs.setComponent(powerup, Scale(9, 9, 9));
-        ecs.setComponent(powerup, Position(28, 70, 45));
+        ecs.setComponent(powerup, Scale(8, 8, 8));
+        ecs.setComponent(powerup, Position(23, 75, 40));
         ecs.setComponent(powerup, IsPowerUp());
         ecs.setComponent(powerup, Setup());
-
-        this->pattern->set(1, 1, 1, MapPattern::TileType::POWER_UP);
 
         generator->generate(this->pattern.get());
 	    this->pattern->forEach([&](int x, int y, int z, MapPattern::TileType tileType) {
@@ -317,6 +311,8 @@ namespace IndieStudio {
             this->breakableBlockMapping.insert(std::make_pair(newBlock.id,
                 std::make_pair(x, z)));
             }
+            //set the powerUp on TileMap
+            this->pattern->set(1, 1, 2, MapPattern::TileType::POWER_UP);
         });
 
         initPlayer(manager, scenemg, 0);

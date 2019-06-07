@@ -25,8 +25,8 @@ namespace IndieStudio::ECS::System {
                 std::size_t y;
             };
 
-            bool isOnPowerUp(Coord player, Coord powerup, MapPattern *map) {
-                if (map->get(player.x, 1, player.y) == map->get(powerup.x, 1, powerup.y))
+            bool isOnPowerUp(Coord player, MapPattern *map) {
+                if (map->get(player.x, 1, player.y) == MapPattern::TileType::POWER_UP)
                     return true;
                 return false;
             }
@@ -55,17 +55,18 @@ namespace IndieStudio::ECS::System {
                     auto &speed = manager.template getComponent<Speed>(data);
                     auto &stat = manager.template getComponent<Stat>(data);
                     MapPattern *tilemap = getWorld(world)->getPattern();
-
-                    manager.template forEntitiesWith<IsPowerUp, Position>(
-                        [&manager, &playerPos, &stat, &speed, tilemap, this](auto &data, [[gnu::unused]] auto id) {
-                            auto &powerupPos = manager.template getComponent<Position>(data);
+                    
+                    manager.template forEntitiesWith<IsPowerUp>(
+                        [&manager, &playerPos, &stat, &speed, tilemap, this](auto &entity, [[gnu::unused]] auto id) {
                             PickUpPowerUp::Coord tilePlayerPos = this->convertPosition(playerPos);
 
-                            if (this->isOnPowerUp(tilePlayerPos, this->convertPosition(powerupPos), tilemap)) {
-                                tilemap->set(tilePlayerPos.x, 1, tilePlayerPos.y, MapPattern::TileType::PLAYER);
-                                manager.delEntity(data);
+                            if (this->isOnPowerUp(tilePlayerPos, tilemap)) {
+                                auto &node = manager.template getComponent<Node>(entity);
+                                node.node->setVisible(false);
+                                tilemap->set(tilePlayerPos.x, 1, tilePlayerPos.y, MapPattern::TileType::EMPTY);
+                                manager.delEntity(entity);
                                 applyPowerUp(speed, stat);
-                            }    
+                            }
                     });
                 });
             }

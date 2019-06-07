@@ -8,18 +8,19 @@
 #pragma once
 
 #include <string>
-#include "irrlicht.h"
+#include <irrlicht.h>
+#include "indiestudio/ecs/Events.hpp"
 
 namespace IndieStudio {
 
 	class IControlProvider {
 	public:
 		struct Mappings {
-			irr::EKEY_CODE keyUp;
-			irr::EKEY_CODE keyLeft;
-			irr::EKEY_CODE keyDown;
-			irr::EKEY_CODE keyRight;
-			irr::EKEY_CODE keyDrop;
+			ECS::Event::EventData up;
+			ECS::Event::EventData left;
+			ECS::Event::EventData down;
+			ECS::Event::EventData right;
+			ECS::Event::EventData drop;
 		};
 
 		virtual ~IControlProvider() = default;

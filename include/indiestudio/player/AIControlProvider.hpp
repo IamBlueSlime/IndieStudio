@@ -33,14 +33,7 @@ namespace IndieStudio {
         Mappings getPlayerMappings(int playerIdx) const override
         {
             (void) playerIdx;
-
-            return {
-                irr::EKEY_CODE::KEY_F1,
-                irr::EKEY_CODE::KEY_F1,
-                irr::EKEY_CODE::KEY_F1,
-                irr::EKEY_CODE::KEY_F1,
-                irr::EKEY_CODE::KEY_F1
-            };
+            return {};
         }
 
         const std::string &getIconPath() const override { return ICON_PATH; }

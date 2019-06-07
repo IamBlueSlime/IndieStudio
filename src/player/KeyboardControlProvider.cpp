@@ -14,13 +14,19 @@ namespace IndieStudio {
     void KeyboardControlProvider::initConfigurationArea(irr::gui::IGUIEnvironment *guiEnv,
         irr::gui::IGUIElement *area, int playerIdx)
     {
-        this->playerMappings[playerIdx] = {
-            irr::EKEY_CODE::KEY_KEY_Z,
-            irr::EKEY_CODE::KEY_KEY_Q,
-            irr::EKEY_CODE::KEY_KEY_S,
-            irr::EKEY_CODE::KEY_KEY_D,
-            irr::EKEY_CODE::KEY_KEY_E
-        };
+        ECS::Event::EventData eventData;
+        eventData.type = ECS::Event::EventType::INDIE_KEYBOARD_EVENT;
+        
+        eventData.keyInput.Key = irr::EKEY_CODE::KEY_KEY_Z;
+        this->playerMappings[playerIdx].up = eventData;
+        eventData.keyInput.Key = irr::EKEY_CODE::KEY_KEY_Q;
+        this->playerMappings[playerIdx].left = eventData;
+        eventData.keyInput.Key = irr::EKEY_CODE::KEY_KEY_S;
+        this->playerMappings[playerIdx].down = eventData;
+        eventData.keyInput.Key = irr::EKEY_CODE::KEY_KEY_D;
+        this->playerMappings[playerIdx].right = eventData;
+        eventData.keyInput.Key = irr::EKEY_CODE::KEY_KEY_E;
+        this->playerMappings[playerIdx].drop = eventData;
 
         int dx = 20;
 
@@ -72,11 +78,11 @@ namespace IndieStudio {
         && event.KeyInput.PressedDown) {
             for (int i = 0; i < 4; i += 1) {
                 irr::EKEY_CODE *codes[5] = {
-                    &this->playerMappings[i].keyUp,
-                    &this->playerMappings[i].keyLeft,
-                    &this->playerMappings[i].keyDown,
-                    &this->playerMappings[i].keyRight,
-                    &this->playerMappings[i].keyDrop
+                    &this->playerMappings[i].up.keyInput.Key,
+                    &this->playerMappings[i].left.keyInput.Key,
+                    &this->playerMappings[i].down.keyInput.Key,
+                    &this->playerMappings[i].right.keyInput.Key,
+                    &this->playerMappings[i].drop.keyInput.Key
                 };
 
                 for (int j = 0; j < 5; j += 1) {
@@ -108,11 +114,11 @@ namespace IndieStudio {
         int playerIdx) const
     {
         irr::EKEY_CODE codes[5] = {
-            this->playerMappings[playerIdx].keyUp,
-            this->playerMappings[playerIdx].keyLeft,
-            this->playerMappings[playerIdx].keyDown,
-            this->playerMappings[playerIdx].keyRight,
-            this->playerMappings[playerIdx].keyDrop
+            this->playerMappings[playerIdx].up.keyInput.Key,
+            this->playerMappings[playerIdx].left.keyInput.Key,
+            this->playerMappings[playerIdx].down.keyInput.Key,
+            this->playerMappings[playerIdx].right.keyInput.Key,
+            this->playerMappings[playerIdx].drop.keyInput.Key
         };
 
         for (int i = 0; i < 5; i += 1) {
@@ -126,11 +132,11 @@ namespace IndieStudio {
     {
         for (int i = 0; i < 4; i += 1) {
             irr::EKEY_CODE codes[5] = {
-                this->playerMappings[i].keyUp,
-                this->playerMappings[i].keyLeft,
-                this->playerMappings[i].keyDown,
-                this->playerMappings[i].keyRight,
-                this->playerMappings[i].keyDrop
+                this->playerMappings[i].up.keyInput.Key,
+                this->playerMappings[i].left.keyInput.Key,
+                this->playerMappings[i].down.keyInput.Key,
+                this->playerMappings[i].right.keyInput.Key,
+                this->playerMappings[i].drop.keyInput.Key
             };
 
             for (int j = 0; j < 5; j += 1)
