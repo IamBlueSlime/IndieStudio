@@ -123,18 +123,13 @@ namespace IndieStudio {
         animator->drop();
 
         auto eventCB = EventCallbacks<WorldECS>();
-        IndieStudio::ECS::Event::EventData event;
-        event.type = ECS::Event::EventType::INDIE_KEYBOARD_EVENT;
-
         auto &mov = ecs.getComponent<Movement>(player);
 
         if (this->settings.players[playerId].controlProvider == "AI") {
             ecs.setComponent(player, IA());
         } else {
-            event.keyInput.Key = this->settings.players[playerId].mappings.keyUp;
-            eventCB.addCallback(event,
-                [&] (const EventData &event, auto, auto)
-                {
+            eventCB.addCallback(this->settings.players[playerId].mappings.up,
+                [&] (const EventData &event, auto, auto) {
                     if (!event.keyInput.PressedDown) {
                         mov.up = event.keyInput.PressedDown;
                         return;
@@ -143,11 +138,10 @@ namespace IndieStudio {
                     mov.down = false;
                     mov.left = false;
                     mov.right = false;
-                });
-            event.keyInput.Key = this->settings.players[playerId].mappings.keyDown;
-            eventCB.addCallback(event,
-                [&] (const EventData &event, auto, auto)
-                {
+                }
+            );
+            eventCB.addCallback(this->settings.players[playerId].mappings.down,
+                [&] (const EventData &event, auto, auto) {
                     if (!event.keyInput.PressedDown) {
                         mov.down = event.keyInput.PressedDown;
                         return;
@@ -156,11 +150,10 @@ namespace IndieStudio {
                     mov.up = false;
                     mov.left = false;
                     mov.right = false;
-                });
-            event.keyInput.Key = this->settings.players[playerId].mappings.keyLeft;
-            eventCB.addCallback(event,
-                [&] (const EventData &event, auto, auto)
-                {
+                }
+            );
+            eventCB.addCallback(this->settings.players[playerId].mappings.left,
+                [&] (const EventData &event, auto, auto) {
                     if (!event.keyInput.PressedDown) {
                         mov.left = event.keyInput.PressedDown;
                         return;
@@ -169,11 +162,10 @@ namespace IndieStudio {
                     mov.up = false;
                     mov.down = false;
                     mov.right = false;
-                });
-            event.keyInput.Key = this->settings.players[playerId].mappings.keyRight;
-            eventCB.addCallback(event,
-                [&] (const EventData &event, auto, auto)
-                {
+                }
+            );
+            eventCB.addCallback(this->settings.players[playerId].mappings.right,
+                [&] (const EventData &event, auto, auto) {
                     if (!event.keyInput.PressedDown) {
                         mov.right = event.keyInput.PressedDown;
                         return;
@@ -182,7 +174,8 @@ namespace IndieStudio {
                     mov.up = false;
                     mov.down = false;
                     mov.left = false;
-                });
+                }
+            );
         }
 
         ecs.setComponent(player, eventCB);
