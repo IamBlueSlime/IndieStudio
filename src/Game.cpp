@@ -21,6 +21,7 @@ namespace IndieStudio {
         this->statisticManager.load();
         this->soundManager.init();
         this->fontManager.init();
+        this->controlProviderManager.init();
         this->worldManager.init();
         this->modManager.init();
         this->sceneManager.init();

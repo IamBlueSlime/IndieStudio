@@ -20,7 +20,7 @@ namespace IndieStudio {
         void registerTexture(std::string id) override;
         void registerTexture(std::string id, Texture &Texture,
             bool overrideExisting = false) override;
-        Texture &getTexture(const std::string &id);
+        Texture &getTexture(const std::string &id) override;
 
 	protected:
 	private:

@@ -135,6 +135,16 @@ namespace IndieStudio::ECS::Component {
         int direction;
     };
 
+    struct Stat {
+        Stat()
+        :
+        bomb(0), range(1), kill(0) {}
+
+        std::size_t bomb;
+        std::size_t range;
+        std::size_t kill;
+    };
+
     struct Scale {
         Scale(float _x = 1.0f, float _y = 1.0f, float _z = 1.0f)
         :
@@ -152,6 +162,15 @@ namespace IndieStudio::ECS::Component {
 
         int layer;
         std::string path;
+    };
+
+    struct AnimTexture {
+        AnimTexture(irr::core::array<irr::video::ITexture *> _textureArray = 0, irr::scene::ISceneNodeAnimator *_anim = 0)
+        :
+        textureArray(_textureArray), anim(_anim) {}
+
+        irr::core::array<irr::video::ITexture *> textureArray;
+        irr::scene::ISceneNodeAnimator *anim;
     };
 
     struct MaterialFlag {

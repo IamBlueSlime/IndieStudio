@@ -52,6 +52,8 @@ namespace IndieStudio {
 
     void World::move(const irr::core::vector3df &direction, ECS::Position &pos, ECS::Speed &speed, ECS::Node &node)
     {
+        auto tilePos = MapPattern::positionToTile(pos.x, pos.z);
+        // std::cout << tilePos.first << ";" << tilePos.second << std::endl;
         irr::core::vector3df newPos(
             tryMove(node.node, direction, irr::core::vector3df(speed.x, speed.y, speed.z))
         );
@@ -59,6 +61,38 @@ namespace IndieStudio {
         pos.y = newPos.Y;
         pos.z = newPos.Z;
     }
+
+    void World::initDeflagration(WorldManager &manager, irr::scene::ISceneManager *scenemg)
+    {
+        irr::video::IVideoDriver *driver = Singleton::getDevice()->getVideoDriver();
+
+        auto &test = ecs.addEntity();
+        auto node = scenemg->addAnimatedMeshSceneNode(scenemg->getMesh("assets/models/cube.obj"));
+
+        node->setMaterialType(irr::video::EMT_TRANSPARENT_ADD_COLOR);
+        ecs.setComponent(test, Node(node));
+        ecs.setComponent(test, MaterialTexture(0, "assets/textures/bomb.png"));
+        ecs.setComponent(test, MaterialFlag(irr::video::EMF_LIGHTING, true));
+        ecs.setComponent(test, Scale(Constants::TILE_SIZE_FACTOR, Constants::TILE_SIZE_FACTOR, Constants::TILE_SIZE_FACTOR));
+        ecs.setComponent(test, Position(20.5, 70, 100.5));
+
+        irr::core::array<irr::video::ITexture *> textureArray;
+        textureArray.push_back(driver->getTexture("assets/textures/flames1.png"));
+        textureArray.push_back(driver->getTexture("assets/textures/flames2.png"));
+        textureArray.push_back(driver->getTexture("assets/textures/flames4.png"));
+        textureArray.push_back(driver->getTexture("assets/textures/flames3.png"));
+        textureArray.push_back(driver->getTexture("assets/textures/flames5.png"));
+        textureArray.push_back(driver->getTexture("assets/textures/flames6.png"));
+        textureArray.push_back(driver->getTexture("assets/textures/flames7.png"));
+        textureArray.push_back(driver->getTexture("assets/textures/flames8.png"));
+        auto anim = scenemg->createTextureAnimator(textureArray, 1000 / 8, false);
+        node->addAnimator(anim);
+
+        node->setVisible(true);
+        ecs.setComponent(test, AnimTexture(textureArray, anim));
+        ecs.setComponent(test, Setup());
+    }
+
 
     void World::initPlayer(WorldManager &manager, irr::scene::ISceneManager *scenemg, int playerId)
     {
@@ -73,6 +107,7 @@ namespace IndieStudio {
         };
 
         auto node_p = scenemg->addAnimatedMeshSceneNode(scenemg->getMesh("assets/models/player.md3"));
+        node_p->setFrameLoop(0, 27);
         ecs.setComponent(player, Node(node_p));
         ecs.setComponent(player, MaterialTexture(0, "assets/textures/player_" + Constants::PLAYER_COLORS[playerId] + ".png"));
         ecs.setComponent(player, MaterialFlag(irr::video::EMF_LIGHTING, false));
@@ -81,6 +116,7 @@ namespace IndieStudio {
         ecs.setComponent(player, Speed(1, 1, 1));
         ecs.setComponent(player, Movement());
         ecs.setComponent(player, IsPlayer());
+        ecs.setComponent(player, Stat());
         auto animator = scenemg->createCollisionResponseAnimator(this->meta, node_p, {5, 5, 5}, {0, 0, 0});
         node_p->addAnimator(animator);
         animator->drop();
@@ -91,10 +127,12 @@ namespace IndieStudio {
 
         auto &mov = ecs.getComponent<Movement>(player);
 
-        if (this->settings.players[playerId].controlType == WorldSettings::Player::ControlType::KEYBOARD) {
-            event.keyInput.Key = this->settings.players[playerId].keyboardUp;
+        if (this->settings.players[playerId].controlProvider == "AI") {
+            ecs.setComponent(player, IA());
+        } else {
+            event.keyInput.Key = this->settings.players[playerId].mappings.keyUp;
             eventCB.addCallback(event,
-                [&] (const EventData &event, std::size_t id, WorldECS &ecs)
+                [&] (const EventData &event, auto, auto)
                 {
                     if (!event.keyInput.PressedDown) {
                         mov.up = event.keyInput.PressedDown;
@@ -105,9 +143,9 @@ namespace IndieStudio {
                     mov.left = false;
                     mov.right = false;
                 });
-            event.keyInput.Key = this->settings.players[playerId].keyboardDown;
+            event.keyInput.Key = this->settings.players[playerId].mappings.keyDown;
             eventCB.addCallback(event,
-                [&] (const EventData &event, std::size_t id, WorldECS &ecs)
+                [&] (const EventData &event, auto, auto)
                 {
                     if (!event.keyInput.PressedDown) {
                         mov.down = event.keyInput.PressedDown;
@@ -118,9 +156,9 @@ namespace IndieStudio {
                     mov.left = false;
                     mov.right = false;
                 });
-            event.keyInput.Key = this->settings.players[playerId].keyboardLeft;
+            event.keyInput.Key = this->settings.players[playerId].mappings.keyLeft;
             eventCB.addCallback(event,
-                [&] (const EventData &event, std::size_t id, WorldECS &ecs)
+                [&] (const EventData &event, auto, auto)
                 {
                     if (!event.keyInput.PressedDown) {
                         mov.left = event.keyInput.PressedDown;
@@ -131,9 +169,9 @@ namespace IndieStudio {
                     mov.down = false;
                     mov.right = false;
                 });
-            event.keyInput.Key = this->settings.players[playerId].keyboardRight;
+            event.keyInput.Key = this->settings.players[playerId].mappings.keyRight;
             eventCB.addCallback(event,
-                [&] (const EventData &event, std::size_t id, WorldECS &ecs)
+                [&] (const EventData &event, auto, auto)
                 {
                     if (!event.keyInput.PressedDown) {
                         mov.right = event.keyInput.PressedDown;
@@ -144,8 +182,6 @@ namespace IndieStudio {
                     mov.down = false;
                     mov.left = false;
                 });
-        } else if (this->settings.players[playerId].controlType == WorldSettings::Player::ControlType::AI) {
-            ecs.setComponent(player, IA());
         }
 
         ecs.setComponent(player, eventCB);
@@ -195,12 +231,10 @@ namespace IndieStudio {
         ecs.setComponent(powerup, Node(Node(static_cast<irr::scene::IAnimatedMeshSceneNode *>(node->clone()))));
         ecs.setComponent(powerup, MaterialTexture(0, "assets/textures/tmp_powerUp.png"));
         ecs.setComponent(powerup, MaterialFlag(irr::video::EMF_LIGHTING, true));
-        ecs.setComponent(powerup, Scale(9, 9, 9));
-        ecs.setComponent(powerup, Position(28, 70, 45));
+        ecs.setComponent(powerup, Scale(8, 8, 8));
+        ecs.setComponent(powerup, Position(23, 75, 40));
         ecs.setComponent(powerup, IsPowerUp());
         ecs.setComponent(powerup, Setup());
-
-        this->pattern->set(1, 1, 1, MapPattern::TileType::POWER_UP);
 
         generator->generate(this->pattern.get());
 	    this->pattern->forEach([&](int x, int y, int z, MapPattern::TileType tileType) {
@@ -251,12 +285,16 @@ namespace IndieStudio {
             this->breakableBlockMapping.insert(std::make_pair(newBlock.id,
                 std::make_pair(x, z)));
             }
+            //set the powerUp on TileMap
+            this->pattern->set(1, 1, 2, MapPattern::TileType::POWER_UP);
         });
 
         initPlayer(manager, scenemg, 0);
         initPlayer(manager, scenemg, 1);
         initPlayer(manager, scenemg, 2);
         initPlayer(manager, scenemg, 3);
+
+        initDeflagration(manager, scenemg);
 
         Initializer<WorldECS>::initAllEntities(ecs, scenemg);
     }
@@ -283,6 +321,14 @@ namespace IndieStudio {
 
                     bool did = false;
                     if (mov.up) {
+                        this->ecs.forEntitiesWith<AnimTexture>(
+                            [&](auto &data, auto)
+                            {
+                                std::cout << this->ecs.getComponent<Node>(data).node->getFrameNr() << std::endl;
+                                irr::scene::IAnimatedMeshSceneNode *tmp = this->ecs.getComponent<Node>(data).node;
+                                tmp->setVisible(!tmp->isVisible());
+                            }
+                        );
                         move({0, 0, 1}, pos, speed, node);
                         did = true;
                     } if (mov.down) {
