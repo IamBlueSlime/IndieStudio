@@ -34,6 +34,8 @@ namespace IndieStudio {
         {
             this->logger = std::move(logger);
         }
+
+        ILogger *getLogger() { return this->logger.get(); }
     
     protected:
         std::unique_ptr<ILogger> logger;
