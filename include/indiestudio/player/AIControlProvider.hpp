@@ -36,6 +36,9 @@ namespace IndieStudio {
             return {};
         }
 
+        std::deque<ECS::Event::EventData> pollEvents() override
+            { return std::deque<ECS::Event::EventData>(); }
+
         const std::string &getIconPath() const override { return ICON_PATH; }
 
 	protected:

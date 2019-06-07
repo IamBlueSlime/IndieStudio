@@ -15,7 +15,7 @@ namespace IndieStudio::WiimoteController {
 
     void WiimoteController::onEnable(IGame &game)
     {
-        this->wiimoteControlProvider = std::make_unique<WiimoteControlProvider>(*this);
+        this->wiimoteControlProvider = std::make_unique<WiimoteControlProvider>(*this, &game);
         game.getControlProviderManager().registerControlProvider("Wiimote",
             this->wiimoteControlProvider.get());
     }

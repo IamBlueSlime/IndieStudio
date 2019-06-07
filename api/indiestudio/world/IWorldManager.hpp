@@ -8,6 +8,7 @@
 #pragma once
 
 #include <string>
+#include "indiestudio/world/IWorld.hpp"
 #include "indiestudio/world/IWorldGenerator.hpp"
 
 namespace IndieStudio {
@@ -17,6 +18,7 @@ namespace IndieStudio {
 		virtual ~IWorldManager() = default;
         virtual void registerGenerator(const std::string &name,
             IWorldGenerator *generator) = 0;
+        virtual IWorld *getLoadedWorld() = 0;
     };
 
 }

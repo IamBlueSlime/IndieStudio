@@ -29,7 +29,7 @@ namespace IndieStudio {
             scene.gui->removeChild(element);
 
         WorldSettings &settings = static_cast<WorldManager &>(
-            Game::INSTANCE->getWorldManager()).getLoadedWorld()->getSettings();
+            Game::INSTANCE->getWorldManager()).getLoadedWorldImpl()->getSettings();
         irr::scene::ICameraSceneNode *camera = scene.scene->addCameraSceneNode(0,
             irr::core::vector3df(Constants::TILE_SIZE_FACTOR * (settings.width / 2), 50 + Constants::TILE_SIZE_FACTOR * settings.width - 125, Constants::TILE_SIZE_FACTOR * 3),
             irr::core::vector3df(Constants::TILE_SIZE_FACTOR * (settings.width / 2), 50, Constants::TILE_SIZE_FACTOR * (settings.height / 2)));
@@ -217,7 +217,7 @@ namespace IndieStudio {
 
                 TIMER_TASK = Scheduler::schedule(1000, [&]() {
                     World *world = static_cast<WorldManager &>(
-                        Game::INSTANCE->getWorldManager()).getLoadedWorld();
+                        Game::INSTANCE->getWorldManager()).getLoadedWorldImpl();
 
                     world->getSettings().elapsedSeconds += 1;
                     updateTimer(scene);
@@ -238,7 +238,7 @@ namespace IndieStudio {
     void PlayScene::updateTimer(SceneManager::Scene &scene)
     {
          World *world = static_cast<WorldManager &>(
-            Game::INSTANCE->getWorldManager()).getLoadedWorld();
+            Game::INSTANCE->getWorldManager()).getLoadedWorldImpl();
 
         irr::gui::IGUIStaticText *timerRef = static_cast<irr::gui::IGUIStaticText *>
             (scene.gui->getElementFromId(4243));
@@ -265,7 +265,7 @@ namespace IndieStudio {
     bool PlayScene::onEvent(SceneManager::Scene &scene, const irr::SEvent &event)
     {
         World *world = static_cast<WorldManager &>(
-            Game::INSTANCE->getWorldManager()).getLoadedWorld();
+            Game::INSTANCE->getWorldManager()).getLoadedWorldImpl();
 
         if (world->getSettings().elapsedSeconds == 0)
             return false;

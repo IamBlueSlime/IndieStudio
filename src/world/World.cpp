@@ -331,6 +331,15 @@ namespace IndieStudio {
 
         while (Game::INSTANCE->getSceneManager().getActive() == SceneManager::PLAY_ID
         && Singleton::getDevice()->run()) {
+            for (int i = 0; i < 4; i += 1) {
+                auto events = this->settings.players[i].controlProviderPtr->pollEvents();
+
+                while (!events.empty()) {
+                    this->ecs.getEventManager().push_event(events.front());
+                    events.pop_front();
+                }
+            }
+
             this->ecs.getEventManager().switch_event_queue();
             scene.scene->getVideoDriver()->beginScene(true, true);
             systems.process();

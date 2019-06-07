@@ -123,8 +123,10 @@ namespace IndieStudio {
         controlProviders.forEach([&](std::string id, IControlProvider *controlProvider) {
             int itemIdx = playerTypeBox->addItem(std::wstring(id.begin(), id.end()).c_str());
 
-            if (settings.players[idx].controlProvider == id)
+            if (settings.players[idx].controlProvider == id) {
                 playerTypeBox->setSelected(itemIdx);
+                settings.players[idx].controlProviderPtr = controlProvider;
+            }
 
             irr::gui::IGUITab *providerTab = guiEnv->addTab(irr::core::recti(
                 {origin.X, origin.Y + 40},
@@ -196,6 +198,8 @@ namespace IndieStudio {
 
                 areas[playerIdx][settings.players[playerIdx].controlProvider]->setVisible(false);
                 settings.players[playerIdx].controlProvider = std::string(tmp.begin(), tmp.end());
+                settings.players[playerIdx].controlProviderPtr = Game::INSTANCE->getControlProviderManager()
+                    .getControlProvider(settings.players[playerIdx].controlProvider);
                 areas[playerIdx][settings.players[playerIdx].controlProvider]->setVisible(true);
             }
 
