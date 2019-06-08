@@ -21,7 +21,7 @@ namespace IndieStudio {
         void registerFont(std::string id) override;
         void registerFont(std::string id, Font &font,
             bool overrideExisting = false) override;
-        Font &getFont(const std::string &id);
+        Font &getFont(const std::string &id) override;
 
 	protected:
 	private:

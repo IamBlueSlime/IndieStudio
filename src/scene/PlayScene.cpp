@@ -120,6 +120,7 @@ namespace IndieStudio {
 
         irr::gui::IGUIStaticText *timerText = guiEnv->addStaticText(L"00:00",
             timer->getAbsolutePosition(), false, true, guiRoot, 4243);
+        timerText->setOverrideFont(Game::INSTANCE->getFontManager().getFont("assets/fonts/roboto_regular_72.png").content);
         timerText->setOverrideColor(irr::video::SColor(255, 255, 255, 255));
         updateTimer(scene);
 
@@ -202,8 +203,9 @@ namespace IndieStudio {
         BACKGROUND_MUSIC.setLoop(true);
 
         irr::gui::IGUIStaticText *countdown = guiEnv->addStaticText(L"5", irr::core::recti(
-            {w / 2 - 10, h / 2 - 10}, { w / 2 + 10, h / 2 + 10}
+            {w / 2 - 20, h / 2 - 40}, { w / 2 + 30, h / 2 + 40}
         ), false, true, guiRoot, 4242);
+        countdown->setOverrideFont(Game::INSTANCE->getFontManager().getFont("assets/fonts/roboto_regular_72.png").content);
         countdown->setOverrideColor(irr::video::SColor(255, 255, 255, 255));
 
         Scheduler::schedule(1000, [&]() {

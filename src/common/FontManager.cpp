@@ -16,6 +16,7 @@ namespace IndieStudio {
     void FontManager::init()
     {
         this->registerFont("assets/fonts/roboto_regular.png");
+        this->registerFont("assets/fonts/roboto_regular_72.png");
     }
 
     void FontManager::registerFont(std::string id)
