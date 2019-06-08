@@ -438,6 +438,8 @@ namespace IndieStudio::ECS::System {
         }
 
         std::optional<typename Poti<ManagerType>::Direction> atk_player(ManagerType &manager, Position position, IWorld *world, std::size_t id) {
+            (void) id;
+
             MapPattern *tilemap = world->getPattern();
 
             //std::cout << "Attacking!" << std::endl;
@@ -454,6 +456,7 @@ namespace IndieStudio::ECS::System {
             if (decision.value().second <= 3) {
                 //std::cout << "Attacked! :D i finished my move!" << std::endl;
                 std::pair<short, short> player_coord = MapPattern::positionToTile(position.x, position.z);
+                (void) player_coord;
                 // TODO: poser bombe
 //                world->poseBomb(player_coord.first * 20 + 0.5, player_coord.second * 20 + 0.5, id);
                 // TODO: ajouter du bruit aléatoire, et prendre en compte les stats du player
