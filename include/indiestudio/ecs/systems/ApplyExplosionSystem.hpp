@@ -46,6 +46,7 @@ namespace IndieStudio::ECS::System {
                         manager.delEntity(entity);
                         bombRange.explosionRangeUp = i;
                         //TODO: add power up if it drops
+                        getWorld(world)->createDeflagration(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1000);
                         pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::EMPTY);
                         break;
                     } else {
@@ -69,7 +70,24 @@ namespace IndieStudio::ECS::System {
                         manager.delEntity(entity);
                         bombRange.explosionRangeDown = i;
                         //TODO: add power up if it drops
+                        getWorld(world)->createDeflagration(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1000);
                         pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::EMPTY);
+                        break;
+                    } else if (tile == IndieStudio::MapPattern::TileType::BOMB) {
+                        std::size_t entityID = 0;
+                        manager.template forEntitiesWith<IsBomb, Position, Node>(
+                        [&](auto &data, auto id) {
+                            auto pos = manager.template getComponent<Position>(data);
+                            auto BombInTile = pattern->positionToTile(pos.x, pos.z);
+                            if (BombInTile.first == posInTile.first &&
+                                BombInTile.second == posInTile.second)
+                                entityID = id;
+                        });
+                        auto &node = manager.template getComponent<Node>(entityID);
+                        manager.setComponent(entityID, IsExploding());
+                        manager.setComponent(entityID, ExplosionLifeTime());
+                        manager.template unsetComponent<LifeTime>(entityID);
+                        node.node->setVisible(false);
                         break;
                     } else {
                         getWorld(world)->createDeflagration(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1000);
@@ -92,6 +110,7 @@ namespace IndieStudio::ECS::System {
                         manager.delEntity(entity);
                         bombRange.explosionRangeLeft = i;
                         //TODO: add power up if it drops
+                        getWorld(world)->createDeflagration(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1000);
                         pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::EMPTY);
                         break;
                     } else {
@@ -115,6 +134,7 @@ namespace IndieStudio::ECS::System {
                         manager.delEntity(entity);
                         bombRange.explosionRangeRight = i;
                         //TODO: add power up if it drops
+                        getWorld(world)->createDeflagration(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1000);
                         pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::EMPTY);
                         break;
                     } else {

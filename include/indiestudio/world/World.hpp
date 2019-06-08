@@ -45,12 +45,13 @@ namespace IndieStudio {
         ECS::Component::MeshPath,
         ECS::Component::NodeCreate,
         ECS::Component::Node,
-        ECS::Component::ID,
+        ECS::Component::PosedBy,
         ECS::Component::Setup,
         ECS::Component::Movement,
         ECS::Component::Particle,
         ECS::Component::TextureArray,
-        ECS::Component::Stat
+        ECS::Component::Stat,
+        ECS::Component::MaxBomb
     >;
 
     using WorldECSSystems = ECS::SystemsImpl<

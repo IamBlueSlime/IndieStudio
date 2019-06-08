@@ -9,13 +9,6 @@
 
 #include <iostream>
 #include "indiestudio/ecs/Components.hpp"
-#include "indiestudio/Game.hpp"
-#include "indiestudio/Constants.hpp"
-#include "indiestudio/common/Scheduler.hpp"
-#include "indiestudio/ecs/Events.hpp"
-#include "indiestudio/scene/PlayScene.hpp"
-#include "indiestudio/world/World.hpp"
-#include "indiestudio/world/WorldManager.hpp"
 #include "indiestudio/Singleton.hpp"
 #include "indiestudio/ecs/Initializer.hpp"
 
@@ -29,7 +22,7 @@ namespace IndieStudio {
             };
 
             template <typename ManagerType>
-            static void poseBomb(ManagerType &manager, irr::scene::ISceneManager *scenemg, float BombPosX, float BombPosZ, BombType type) {
+            static void poseBomb(ManagerType &manager, irr::scene::ISceneManager *scenemg, float BombPosX, float BombPosZ, BombType type, std::size_t playerID) {
                 auto &newBomb = manager.addEntity();
 
                 manager.setComponent(newBomb, MeshPath("assets/models/bomb.obj"));
@@ -40,6 +33,7 @@ namespace IndieStudio {
                 manager.setComponent(newBomb, IsBomb());
                 manager.setComponent(newBomb, ExplosionRange());
                 manager.setComponent(newBomb, LifeTime());
+                manager.setComponent(newBomb, PosedBy(playerID));
                 manager.setComponent(newBomb, Setup());
                 manager.setComponent(newBomb, NodeCreate());
                 IndieStudio::Initializer<WorldECS>::initAllEntities(manager, scenemg);

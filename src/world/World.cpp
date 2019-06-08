@@ -149,6 +149,7 @@ namespace IndieStudio {
         ecs.setComponent(player, Speed(1, 1, 1));
         ecs.setComponent(player, Movement());
         ecs.setComponent(player, IsPlayer());
+        ecs.setComponent(player, MaxBomb(5));
 
         auto statCmnt = Stat();
         statCmnt.playerIdx = playerId;
@@ -212,15 +213,18 @@ namespace IndieStudio {
                     mov.left = false;
                 });
             eventCB.addCallback(this->settings.players[playerId].mappings.drop,
-                [&] (const EventData &event, auto, auto) {
+                [&] (auto, auto, auto) {
                     auto &position = this->ecs.template getComponent<Position>(player);
+                    auto &maxBomb = this->ecs.template getComponent<MaxBomb>(player);
                     auto posInTile = this->pattern->positionToTile(position.x, position.z);
                     auto actualTile = this->pattern->get(posInTile.first, 1, posInTile.second);
 
-                    if (actualTile == IndieStudio::MapPattern::TileType::BOMB)
+                    if (actualTile == IndieStudio::MapPattern::TileType::BOMB ||
+                        maxBomb.nb <= 0)
                         return;
                     this->pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::BOMB);
-                    IndieStudio::BombFactory::poseBomb<WorldECS>(this->ecs, this->scene.scene, posInTile.first * 20 + 0.5, posInTile.second * 20 + 0.5, IndieStudio::BombFactory::BombType::NORMAL);
+                    IndieStudio::BombFactory::poseBomb<WorldECS>(this->ecs, this->scene.scene, posInTile.first * 20 + 0.5, posInTile.second * 20 + 0.5, IndieStudio::BombFactory::BombType::NORMAL, player.id);
+                    maxBomb.nb--;
                 }
             );
         }

@@ -209,21 +209,12 @@ namespace IndieStudio::ECS::Component {
         irr::scene::IAnimatedMeshSceneNode *node;
     };
 
-        struct Particle {
+    struct Particle {
         Particle(irr::scene::IParticleSystemSceneNode *_particle = nullptr)
         :
         particle(_particle) {}
 
         irr::scene::IParticleSystemSceneNode *particle;
-    };
-
-
-    struct ID {
-        ID(int _id = 0)
-        :
-        id(_id) {}
-
-        int id;
     };
 
     struct Setup {
@@ -237,6 +228,22 @@ namespace IndieStudio::ECS::Component {
         bool down = false;
         bool left = false;
         bool right = false;
+    };
+
+    struct MaxBomb {
+        MaxBomb(int _nb = 1)
+        :
+        nb(_nb) {}
+
+        int nb;
+    };
+
+    struct PosedBy {
+        PosedBy(std::size_t _id = 0)
+        :
+        id(_id) {}
+
+        std::size_t id;
     };
 
     template<typename ManagerType>
