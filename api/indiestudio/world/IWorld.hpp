@@ -19,6 +19,7 @@ namespace IndieStudio {
         virtual std::size_t getBlockEntityIdByPos(short x, short z) = 0;
         virtual irr::scene::IMetaTriangleSelector *getMeta() = 0;
         virtual bool createDeflagration(const irr::core::vector3df &position, unsigned int timeMs) = 0;
+        virtual void poseBomb(float BombPosX, float BombPosZ, std::size_t playerID) = 0;
     };
 
 }

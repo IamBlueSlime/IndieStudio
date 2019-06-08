@@ -102,6 +102,9 @@ namespace IndieStudio {
         const WorldSettings &getSettings() const { return this->settings; }
         irr::scene::IMetaTriangleSelector *getMeta() override { return this->meta; }
 
+        void poseBomb(float BombPosX, float BombPosZ, std::size_t playerID) override;
+
+
     protected:
     private:
         WorldSettings settings;

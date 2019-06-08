@@ -223,7 +223,7 @@ namespace IndieStudio {
                         maxBomb.nb <= 0)
                         return;
                     this->pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::BOMB);
-                    IndieStudio::BombFactory::poseBomb<WorldECS>(this->ecs, this->scene.scene, posInTile.first * 20 + 0.5, posInTile.second * 20 + 0.5, IndieStudio::BombFactory::BombType::NORMAL, player.id);
+                    IndieStudio::BombFactory::poseBomb<WorldECS>(this->ecs, this->scene.scene, posInTile.first * 20 + 0.5, posInTile.second * 20 + 0.5, player.id);
                     maxBomb.nb--;
                 }
             );
@@ -231,6 +231,10 @@ namespace IndieStudio {
 
         ecs.setComponent(player, eventCB);
         ecs.setComponent(player, Setup());
+    }
+
+    void World::poseBomb(float BombPosX, float BombPosZ, std::size_t playerID) {
+        IndieStudio::BombFactory::poseBomb<WorldECS>(this->ecs, this->scene.scene, BombPosX, BombPosZ, playerID);
     }
 
     void World::create(WorldManager &manager)

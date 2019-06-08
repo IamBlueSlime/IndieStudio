@@ -15,14 +15,9 @@
 namespace IndieStudio {
     class BombFactory {
     	public:
-            enum BombType {
-                NORMAL,
-                CIRCULAR,
-                MEGA
-            };
 
             template <typename ManagerType>
-            static void poseBomb(ManagerType &manager, irr::scene::ISceneManager *scenemg, float BombPosX, float BombPosZ, BombType type, std::size_t playerID) {
+            static void poseBomb(ManagerType &manager, irr::scene::ISceneManager *scenemg, float BombPosX, float BombPosZ, std::size_t playerID) {
                 auto &newBomb = manager.addEntity();
 
                 manager.setComponent(newBomb, MeshPath("assets/models/bomb.obj"));
