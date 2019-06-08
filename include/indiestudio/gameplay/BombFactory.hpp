@@ -17,7 +17,17 @@ namespace IndieStudio {
     	public:
 
             template <typename ManagerType>
-            static void poseBomb(ManagerType &manager, irr::scene::ISceneManager *scenemg, float BombPosX, float BombPosZ, std::size_t playerID) {
+            static void poseBomb(ManagerType &manager, IWorld *world, irr::scene::ISceneManager *scenemg, float BombPosX, float BombPosZ, std::size_t playerID) {
+
+                auto posInTile = MapPattern::positionToTile(BombPosX, BombPosZ);
+                auto pattern = world->getPattern();
+                auto actualTile = pattern->get(posInTile.first, 1, posInTile.second);
+                auto &maxBomb = manager.template getComponent<MaxBomb>(playerID);
+
+                if (actualTile == MapPattern::TileType::BOMB ||
+                    maxBomb.nb == 0) {
+                    return;
+                }
                 auto &newBomb = manager.addEntity();
 
                 manager.setComponent(newBomb, MeshPath("assets/models/bomb.obj"));
@@ -31,6 +41,8 @@ namespace IndieStudio {
                 manager.setComponent(newBomb, PosedBy(playerID));
                 manager.setComponent(newBomb, Setup());
                 manager.setComponent(newBomb, NodeCreate());
+                pattern->set(posInTile.first, 1, posInTile.second, MapPattern::TileType::BOMB);
+                maxBomb.nb--;
                 IndieStudio::Initializer<WorldECS>::initAllEntities(manager, scenemg);
             };
     };

@@ -215,16 +215,9 @@ namespace IndieStudio {
             eventCB.addCallback(this->settings.players[playerId].mappings.drop,
                 [&] (auto, auto, auto) {
                     auto &position = this->ecs.template getComponent<Position>(player);
-                    auto &maxBomb = this->ecs.template getComponent<MaxBomb>(player);
                     auto posInTile = this->pattern->positionToTile(position.x, position.z);
-                    auto actualTile = this->pattern->get(posInTile.first, 1, posInTile.second);
 
-                    if (actualTile == IndieStudio::MapPattern::TileType::BOMB ||
-                        maxBomb.nb <= 0)
-                        return;
-                    this->pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::BOMB);
-                    IndieStudio::BombFactory::poseBomb<WorldECS>(this->ecs, this->scene.scene, posInTile.first * 20 + 0.5, posInTile.second * 20 + 0.5, player.id);
-                    maxBomb.nb--;
+                    IndieStudio::BombFactory::poseBomb<WorldECS>(this->ecs, this, this->scene.scene, posInTile.first * 20 + 0.5, posInTile.second * 20 + 0.5, player.id);
                 }
             );
         }
@@ -234,7 +227,7 @@ namespace IndieStudio {
     }
 
     void World::poseBomb(float BombPosX, float BombPosZ, std::size_t playerID) {
-        IndieStudio::BombFactory::poseBomb<WorldECS>(this->ecs, this->scene.scene, BombPosX, BombPosZ, playerID);
+        IndieStudio::BombFactory::poseBomb<WorldECS>(this->ecs, this, this->scene.scene, BombPosX, BombPosZ, playerID);
     }
 
     void World::create(WorldManager &manager)

@@ -57,6 +57,7 @@ namespace IndieStudio::ECS::Component {
         :
         lifeTime(_lifeTime) {}
 
+//TODO: std::chrono
         int lifeTime;
     };
 
