@@ -45,6 +45,7 @@ namespace IndieStudio {
         ECS::Component::MeshPath,
         ECS::Component::NodeCreate,
         ECS::Component::Node,
+        ECS::Component::Given,
         ECS::Component::PosedBy,
         ECS::Component::Setup,
         ECS::Component::Movement,
