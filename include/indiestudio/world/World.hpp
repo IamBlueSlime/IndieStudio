@@ -85,7 +85,7 @@ namespace IndieStudio {
 
         bool createDeflagration(irr::scene::ISceneNode *node, irr::core::array<irr::video::ITexture *> &textureArray,
             const irr::core::vector3df &position, unsigned int timeMs = 1000);
-        bool createDeflagration(const irr::core::vector3df &position, unsigned int timeMs = 1000);
+        bool createDeflagration(const irr::core::vector3df &position, unsigned int timeMs = 1000) override;
         void initDeflagration(WorldManager &manager, irr::scene::ISceneManager *scenemg);
         void initPlayer(WorldManager &manager, irr::scene::ISceneManager *scenemg, int playerId);
         void move(const irr::core::vector3df &direction, ECS::Position &pos, ECS::Speed &speed, ECS::Node &node);

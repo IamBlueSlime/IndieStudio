@@ -14,6 +14,7 @@
 #include "indiestudio/world/WorldManager.hpp"
 #include "indiestudio/Singleton.hpp"
 #include "indiestudio/ecs/Initializer.hpp"
+#include "indiestudio/gameplay/BombFactory.hpp"
 
 namespace IndieStudio {
 
@@ -130,8 +131,6 @@ namespace IndieStudio {
 
     void World::initPlayer(WorldManager &manager, irr::scene::ISceneManager *scenemg, int playerId)
     {
-        (void) manager;
-
         auto &player = ecs.addEntity();
         std::pair<short, short> positions[4] = {
             std::make_pair(1 * Constants::TILE_SIZE_FACTOR, (this->settings.height - 2) * Constants::TILE_SIZE_FACTOR),
@@ -211,6 +210,17 @@ namespace IndieStudio {
                     mov.up = false;
                     mov.down = false;
                     mov.left = false;
+                });
+            eventCB.addCallback(this->settings.players[playerId].mappings.drop,
+                [&] (const EventData &event, auto, auto) {
+                    auto &position = this->ecs.template getComponent<Position>(player);
+                    auto posInTile = this->pattern->positionToTile(position.x, position.z);
+                    auto actualTile = this->pattern->get(posInTile.first, 1, posInTile.second);
+
+                    if (actualTile == IndieStudio::MapPattern::TileType::BOMB)
+                        return;
+                    this->pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::BOMB);
+                    IndieStudio::BombFactory::poseBomb<WorldECS>(this->ecs, this->scene.scene, posInTile.first * 20 + 0.5, posInTile.second * 20 + 0.5, IndieStudio::BombFactory::BombType::NORMAL);
                 }
             );
         }
@@ -243,19 +253,6 @@ namespace IndieStudio {
 		node->setScale(irr::core::vector3df(Constants::TILE_SIZE_FACTOR, Constants::TILE_SIZE_FACTOR, Constants::TILE_SIZE_FACTOR));
 		node->setPosition(irr::core::vector3df(0.5, 50, 0.5));
         node->addShadowVolumeSceneNode(node->getMesh());
-
-        auto &bomb = ecs.addEntity();
-
-        auto node1 = scenemg->addAnimatedMeshSceneNode(scenemg->getMesh("assets/models/bomb.obj"));
-        ecs.setComponent(bomb, Node(node1));
-        ecs.setComponent(bomb, MaterialTexture(0, "assets/textures/bomb.png"));
-		ecs.setComponent(bomb, MaterialFlag(irr::video::EMF_LIGHTING, true));
-		ecs.setComponent(bomb, Scale(3.5, 3.5, 3.5));
-		ecs.setComponent(bomb, Position(20.5, 70, 160.5));
-        ecs.setComponent(bomb, IsBomb());
-        ecs.setComponent(bomb, ExplosionRange());
-        ecs.setComponent(bomb, LifeTime());
-        ecs.setComponent(bomb, Setup());
 
         auto &powerup = ecs.addEntity();
 

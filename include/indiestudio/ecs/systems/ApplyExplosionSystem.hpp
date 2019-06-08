@@ -49,6 +49,7 @@ namespace IndieStudio::ECS::System {
                         pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::EMPTY);
                         break;
                     } else {
+                        getWorld(world)->createDeflagration(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1000);
                         pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::BOMB_EXPLOSION);
                     }
                 }
@@ -71,6 +72,7 @@ namespace IndieStudio::ECS::System {
                         pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::EMPTY);
                         break;
                     } else {
+                        getWorld(world)->createDeflagration(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1000);
                         pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::BOMB_EXPLOSION);
                     }
                 }
@@ -93,6 +95,7 @@ namespace IndieStudio::ECS::System {
                         pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::EMPTY);
                         break;
                     } else {
+                        getWorld(world)->createDeflagration(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1000);
                         pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::BOMB_EXPLOSION);
                     }
                 }
@@ -115,12 +118,12 @@ namespace IndieStudio::ECS::System {
                         pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::EMPTY);
                         break;
                     } else {
+                        getWorld(world)->createDeflagration(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1000);
                         pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::BOMB_EXPLOSION);
                     }
                 }
             });
         }
-    
     protected:
     private:
         IWorld *getWorld(IWorld *world) { return world; }
