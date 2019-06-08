@@ -2,6 +2,7 @@ project(wiimotecontroller VERSION 1.0.0 LANGUAGES CXX)
 
 add_library(wiimotecontroller SHARED
     src/WiimoteController.cpp
+    src/WiimoteControlProvider.cpp
 )
 
 target_include_directories(wiimotecontroller PRIVATE include)

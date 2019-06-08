@@ -13,6 +13,7 @@
 namespace IndieStudio {
 
     WorldSettings NewGameScene::settings = WorldSettings();
+    std::unordered_map<std::string, irr::gui::IGUITab *> NewGameScene::areas[4];
 
     void NewGameScene::initialize(SceneManager::Scene &scene)
     {
@@ -77,7 +78,6 @@ namespace IndieStudio {
             irr::core::vector2di playerOrigin = {origin.X + (240 * i), origin.Y};
             setupPlayer(scene, playerOrigin, i);
         }
-        updateKeyboardButtons(scene);
 
         origin.X += 240;
         irr::core::vector2di pos(origin.X, 610);
@@ -110,178 +110,111 @@ namespace IndieStudio {
         float deltas[4] = {-35, -10, 10, 35};
         anms->setPosition(irr::core::vector3df(deltas[idx], -10, 0));
 
-        origin.Y += 200;
+        origin.Y += 190;
 
         irr::gui::IGUIComboBox *playerTypeBox = guiEnv->addComboBox(irr::core::recti(
             {origin.X, origin.Y},
             {origin.X + 225, origin.Y + 20}
         ), guiRoot, 42 + (idx * 10));
 
-        playerTypeBox->addItem(L"Keyboard");
-        playerTypeBox->addItem(L"Controller");
-        playerTypeBox->addItem(L"AI");
-        playerTypeBox->setSelected(static_cast<irr::s32>(settings.players[idx].controlType));
+        Registry<std::string, IControlProvider *> &controlProviders =
+            static_cast<ControlProviderManager &>(Game::INSTANCE->getControlProviderManager()).getControlProviders();
 
-        origin.X += 20;
-        origin.Y += 40;
-        guiEnv->addButton(irr::core::recti(
-            {origin.X + 35, origin.Y}, {origin.X + 35 + 30, origin.Y + 30}
-        ), guiRoot, 42 + (idx * 10) + 1, L"?", L"Up key");
+        controlProviders.forEach([&](std::string id, IControlProvider *controlProvider) {
+            int itemIdx = playerTypeBox->addItem(std::wstring(id.begin(), id.end()).c_str());
 
-        guiEnv->addButton(irr::core::recti(
-            {origin.X, origin.Y + 35}, {origin.X + 30, origin.Y + 35 + 30}
-        ), guiRoot, 42 + (idx * 10) + 2, L"?", L"Left key");
-
-        guiEnv->addButton(irr::core::recti(
-            {origin.X + 35, origin.Y + 35}, {origin.X + 35 + 30, origin.Y + 35 + 30}
-        ), guiRoot, 42 + (idx * 10) + 3, L"?", L"Down key");
-
-        guiEnv->addButton(irr::core::recti(
-            {origin.X + 35 + 35, origin.Y + 35}, {origin.X + 35 + 35 + 30, origin.Y + 35 + 30}
-        ), guiRoot, 42 + (idx * 10) + 4, L"?", L"Right key");
-
-        guiEnv->addButton(irr::core::recti(
-            {origin.X + 150, origin.Y + 17}, {origin.X + 150 + 30, origin.Y + 17 + 30}
-        ), guiRoot, 42 + (idx * 10) + 5, L"?", L"Drop key");
-    }
-
-    void NewGameScene::updateKeyboardButtons(SceneManager::Scene &scene)
-    {
-        for (int i = 0; i < 4; i += 1) {
-            irr::gui::IGUIComboBox *comboBox = static_cast<irr::gui::IGUIComboBox *>(
-                scene.gui->getElementFromId(42 + (i * 10)));
-
-            bool visible = comboBox->getSelected() == 0;
-
-            irr::EKEY_CODE *codes[5] = {
-                &settings.players[i].keyboardUp,
-                &settings.players[i].keyboardLeft,
-                &settings.players[i].keyboardDown,
-                &settings.players[i].keyboardRight,
-                &settings.players[i].keyboardDrop
-            };
-
-            for (int j = 1; j < 6; j += 1) {
-                std::wstring tmp;
-                tmp += *codes[j - 1];
-                scene.gui->getElementFromId(42 + (i * 10) + j)->setText(tmp.c_str());
-                scene.gui->getElementFromId(42 + (i * 10) + j)->setVisible(visible);
+            if (settings.players[idx].controlProvider == id) {
+                playerTypeBox->setSelected(itemIdx);
+                settings.players[idx].controlProviderPtr = controlProvider;
             }
-        }
-    }
 
-    bool NewGameScene::isValidKeyboardKey(irr::EKEY_CODE code)
-    {
-        if (code < irr::KEY_KEY_0 || code > irr::KEY_KEY_Z)
-            return false;
+            irr::gui::IGUITab *providerTab = guiEnv->addTab(irr::core::recti(
+                {origin.X, origin.Y + 40},
+                {origin.X + 225, origin.Y + 40 + 80}
+            ), guiRoot);
 
-        for (int i = 0; i < 4; i += 1) {
-            irr::EKEY_CODE *codes[5] = {
-                &settings.players[i].keyboardUp,
-                &settings.players[i].keyboardLeft,
-                &settings.players[i].keyboardDown,
-                &settings.players[i].keyboardRight,
-                &settings.players[i].keyboardDrop
-            };
+            providerTab->setVisible(false);
+            controlProvider->initConfigurationArea(guiEnv, providerTab, idx);
+            areas[idx].insert(std::make_pair(id, providerTab));
+        });
 
-            for (int j = 1; j < 6; j += 1) {
-                if (*codes[j - 1] == code)
-                    return false;
-            }
-        }
-
-        return true;
+        areas[idx][settings.players[idx].controlProvider]->setVisible(true);
     }
 
     bool NewGameScene::onEvent(SceneManager::Scene &scene, const irr::SEvent &event)
     {
-        (void) scene;
         if (event.EventType == irr::EET_KEY_INPUT_EVENT
         && event.KeyInput.Key == irr::KEY_ESCAPE && event.KeyInput.PressedDown) {
             scene.manager->setActiveScene(SceneManager::MAIN_MENU_ID);
             return true;
         } else if (event.EventType == irr::EET_GUI_EVENT
-        && event.GUIEvent.EventType == irr::gui::EGET_BUTTON_CLICKED) {
-            if (event.GUIEvent.Caller->getID() == BUTTON_ID_BACK) {
-                scene.manager->setActiveScene(SceneManager::MAIN_MENU_ID);
-                return true;
-            } else if (event.GUIEvent.Caller->getID() == BUTTON_ID_CONFIRM) {
-                MainMenuScene::BACKGROUND_MUSIC.stop();
-
-                WorldManager &manager = static_cast<WorldManager &>(
-                    Game::INSTANCE->getWorldManager());
-
-                int mapScale = static_cast<irr::gui::IGUIScrollBar *>(
-                    scene.gui->getElementFromId(32)
-                )->getPos();
-                settings.width *= mapScale;
-                settings.height *= mapScale;
-
-                irr::gui::IGUIComboBox *generatorBox = static_cast<irr::gui::IGUIComboBox *>(
-                    scene.gui->getElementFromId(33));
-                std::wstring generatorName = std::wstring(generatorBox->getItem(generatorBox->getSelected()));
-                settings.worldGenerator = std::string(generatorName.begin(), generatorName.end());
-
-                SceneManager::Scene &playScene = scene.manager->getScene(SceneManager::PLAY_ID);
-                playScene.scene->clear();
-                World *world = manager.create(settings);
-                PlayScene::initialize(playScene);
-                scene.manager->setActiveScene(SceneManager::PLAY_ID);
-                world->focusECS(playScene);
-
-                return true;
-            } else if (event.GUIEvent.Caller->getID() > 42) {
-                irr::gui::IGUIButton *button = static_cast<irr::gui::IGUIButton *>(
-                    event.GUIEvent.Caller);
-
-                if (button->isPressed()) {
-                    button->setPressed(false);
-                    updateKeyboardButtons(scene);
-                } else {
-                    button->setText(L"?");
-                    button->setPressed(true);
-                }
-
-                return true;
-            }
+        && event.GUIEvent.EventType == irr::gui::EGET_BUTTON_CLICKED
+        && event.GUIEvent.Caller->getID() == BUTTON_ID_BACK) {
+            scene.manager->setActiveScene(SceneManager::MAIN_MENU_ID);
+            return true;
         } else if (event.EventType == irr::EET_GUI_EVENT
-        && event.GUIEvent.EventType == irr::gui::EGET_COMBO_BOX_CHANGED) {
+        && event.GUIEvent.EventType == irr::gui::EGET_BUTTON_CLICKED
+        && event.GUIEvent.Caller->getID() == BUTTON_ID_CONFIRM) {
+            MainMenuScene::BACKGROUND_MUSIC.stop();
+
+            WorldManager &manager = static_cast<WorldManager &>(
+                Game::INSTANCE->getWorldManager());
+
+            int mapScale = static_cast<irr::gui::IGUIScrollBar *>(
+                scene.gui->getElementFromId(32)
+            )->getPos();
+            settings.width *= mapScale;
+            settings.height *= mapScale;
+
+            irr::gui::IGUIComboBox *generatorBox = static_cast<irr::gui::IGUIComboBox *>(
+                scene.gui->getElementFromId(33));
+            std::wstring generatorName = std::wstring(generatorBox->getItem(generatorBox->getSelected()));
+            settings.worldGenerator = std::string(generatorName.begin(), generatorName.end());
+
+            Registry<std::string, IControlProvider *> &controlProviders =
+                static_cast<ControlProviderManager &>(Game::INSTANCE->getControlProviderManager()).getControlProviders();
+
+            for (int i = 0; i < 4; i += 1)
+                settings.players[i].mappings = controlProviders.get(settings.players[i].controlProvider)->
+                    getPlayerMappings(i);
+
+            SceneManager::Scene &playScene = scene.manager->getScene(SceneManager::PLAY_ID);
+            playScene.scene->clear();
+            World *world = manager.create(settings);
+            PlayScene::initialize(playScene);
+            scene.manager->setActiveScene(SceneManager::PLAY_ID);
+            world->focusECS(playScene);
+
+            return true;
+        } else if (event.EventType == irr::EET_GUI_EVENT
+        && event.GUIEvent.EventType == irr::gui::EGET_COMBO_BOX_CHANGED
+        && event.GUIEvent.Caller->getID() >= 42) {
             irr::gui::IGUIComboBox *comboBox = static_cast<irr::gui::IGUIComboBox *>(
                 event.GUIEvent.Caller);
 
-            if (comboBox->getID() < 42)
-                return false;
+            if (comboBox->getSelected() != -1) {
+                int playerIdx = (comboBox->getID() - 42) / 10;
+                std::wstring tmp = std::wstring(comboBox->getItem(comboBox->getSelected()));
 
-            if (comboBox->getSelected() != -1)
-                settings.players[(comboBox->getID() - 42) / 10].controlType = static_cast<WorldSettings::Player::ControlType>(comboBox->getSelected());
-            updateKeyboardButtons(scene);
-            return true;
-        } else if (event.EventType == irr::EET_KEY_INPUT_EVENT
-        && isValidKeyboardKey(event.KeyInput.Key)
-        && event.KeyInput.PressedDown) {
-            for (int i = 0; i < 4; i += 1) {
-                irr::EKEY_CODE *codes[5] = {
-                    &settings.players[i].keyboardUp,
-                    &settings.players[i].keyboardLeft,
-                    &settings.players[i].keyboardDown,
-                    &settings.players[i].keyboardRight,
-                    &settings.players[i].keyboardDrop
-                };
-
-                for (int j = 1; j < 6; j += 1) {
-                    irr::gui::IGUIButton *button = static_cast<irr::gui::IGUIButton *>(
-                        scene.gui->getElementFromId(42 + (i * 10) + j));
-
-                    if (button->isPressed()) {
-                        *codes[j - 1] = event.KeyInput.Key;
-                        button->setPressed(false);
-                        updateKeyboardButtons(scene);
-                        return true;
-                    }
-                }
+                areas[playerIdx][settings.players[playerIdx].controlProvider]->setVisible(false);
+                settings.players[playerIdx].controlProvider = std::string(tmp.begin(), tmp.end());
+                settings.players[playerIdx].controlProviderPtr = Game::INSTANCE->getControlProviderManager()
+                    .getControlProvider(settings.players[playerIdx].controlProvider);
+                areas[playerIdx][settings.players[playerIdx].controlProvider]->setVisible(true);
             }
 
             return true;
+        }
+
+        Registry<std::string, IControlProvider *> &controlProviders =
+            static_cast<ControlProviderManager &>(Game::INSTANCE->getControlProviderManager()).getControlProviders();
+
+        for (int i = 0; i < 4; i += 1) {
+            if (controlProviders.get(settings.players[i].controlProvider)->
+                onConfigurationEvent(event,
+                areas[i][settings.players[i].controlProvider], i)) {
+                    return true;
+            }
         }
 
         return false;

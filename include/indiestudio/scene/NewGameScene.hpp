@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include <unordered_map>
+#include <string>
 #include "indiestudio/scene/SceneManager.hpp"
 
 namespace IndieStudio {
@@ -18,6 +20,7 @@ namespace IndieStudio {
     protected:
     private:
         static WorldSettings settings;
+        static std::unordered_map<std::string, irr::gui::IGUITab *> areas[4];
 
         static void setupMenu(SceneManager::Scene &scene);
         static void setupPlayer(SceneManager::Scene &scene, irr::core::vector2di origin,

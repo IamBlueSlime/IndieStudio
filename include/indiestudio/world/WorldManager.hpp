@@ -36,7 +36,8 @@ namespace IndieStudio {
             return this->generators;
         }
 
-        World *getLoadedWorld() { return this->loadedWorld.get(); }
+        IWorld *getLoadedWorld() override { return this->loadedWorld.get(); }
+        World *getLoadedWorldImpl() { return this->loadedWorld.get(); }
 
     protected:
     private:

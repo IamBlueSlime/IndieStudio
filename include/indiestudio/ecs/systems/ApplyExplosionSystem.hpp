@@ -20,11 +20,11 @@ namespace IndieStudio::ECS::System {
     template<typename ManagerType>
     class ApplyExplosion : public BaseSystem<ManagerType> {
     public:
-        void process(ManagerType &manager, IndieStudio::IWorld *world) {
-            IndieStudio::MapPattern *pattern = world->getPattern();
+        void process(ManagerType &manager, IndieStudio::World *world) {
+            IndieStudio::MapPattern *pattern = getWorld(world)->getPattern();
 
             manager.template forEntitiesWith<IsBomb, Position, IsExploding, ExplosionRange>(
-            [&manager, &pattern, &world](auto &data, [[gnu::unused]] auto id) {
+            [this, &manager, &pattern, &world](auto &data, [[gnu::unused]] auto id) {
 
                 auto &bombPosition = manager.template getComponent<Position>(data);
                 auto &bombRange = manager.template getComponent<ExplosionRange>(data);
@@ -38,14 +38,20 @@ namespace IndieStudio::ECS::System {
                         bombRange.explosionRangeUp = i;
                         break;
                     } else if (tile == IndieStudio::MapPattern::TileType::BREAKABLE_BLOCK) {
-                        auto entity = world->getBlockEntityIdByPos(posInTile.first, posInTile.second);
+                        auto entity = getWorld(world)->getBlockEntityIdByPos(posInTile.first, posInTile.second);
                         auto &node = manager.template getComponent<Node>(entity);
-                        irr::scene::IMetaTriangleSelector *meta = world->getMeta();
+                        irr::scene::IMetaTriangleSelector *meta = getWorld(world)->getMeta();
                         meta->removeTriangleSelector(node.node->getTriangleSelector());
                         node.node->setVisible(false);
                         manager.delEntity(entity);
                         bombRange.explosionRangeUp = i;
+                        //TODO: add power up if it drops
+                        getWorld(world)->createDeflagration(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1000);
+                        pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::EMPTY);
                         break;
+                    } else {
+                        getWorld(world)->createDeflagration(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1000);
+                        pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::BOMB_EXPLOSION);
                     }
                 }
                 for (float i = 0; i < bombRange.explosionRangeDown; i += 1.0f) {
@@ -56,14 +62,36 @@ namespace IndieStudio::ECS::System {
                         bombRange.explosionRangeDown = i;
                         break;
                     } else if (tile == IndieStudio::MapPattern::TileType::BREAKABLE_BLOCK) {
-                        auto entity = world->getBlockEntityIdByPos(posInTile.first, posInTile.second);
+                        auto entity = getWorld(world)->getBlockEntityIdByPos(posInTile.first, posInTile.second);
                         auto &node = manager.template getComponent<Node>(entity);
-                        irr::scene::IMetaTriangleSelector *meta = world->getMeta();
+                        irr::scene::IMetaTriangleSelector *meta = getWorld(world)->getMeta();
                         meta->removeTriangleSelector(node.node->getTriangleSelector());
                         node.node->setVisible(false);
                         manager.delEntity(entity);
                         bombRange.explosionRangeDown = i;
+                        //TODO: add power up if it drops
+                        getWorld(world)->createDeflagration(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1000);
+                        pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::EMPTY);
                         break;
+                    } else if (tile == IndieStudio::MapPattern::TileType::BOMB) {
+                        std::size_t entityID = 0;
+                        manager.template forEntitiesWith<IsBomb, Position, Node>(
+                        [&](auto &data, auto id) {
+                            auto pos = manager.template getComponent<Position>(data);
+                            auto BombInTile = pattern->positionToTile(pos.x, pos.z);
+                            if (BombInTile.first == posInTile.first &&
+                                BombInTile.second == posInTile.second)
+                                entityID = id;
+                        });
+                        auto &node = manager.template getComponent<Node>(entityID);
+                        manager.setComponent(entityID, IsExploding());
+                        manager.setComponent(entityID, ExplosionLifeTime());
+                        manager.template unsetComponent<LifeTime>(entityID);
+                        node.node->setVisible(false);
+                        break;
+                    } else {
+                        getWorld(world)->createDeflagration(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1000);
+                        pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::BOMB_EXPLOSION);
                     }
                 }
                 for (float i = 0; i < bombRange.explosionRangeLeft; i += 1.0f) {
@@ -74,14 +102,20 @@ namespace IndieStudio::ECS::System {
                         bombRange.explosionRangeLeft = i;
                         break;
                     } else if (tile == IndieStudio::MapPattern::TileType::BREAKABLE_BLOCK) {
-                        auto entity = world->getBlockEntityIdByPos(posInTile.first, posInTile.second);
+                        auto entity = getWorld(world)->getBlockEntityIdByPos(posInTile.first, posInTile.second);
                         auto &node = manager.template getComponent<Node>(entity);
-                        irr::scene::IMetaTriangleSelector *meta = world->getMeta();
+                        irr::scene::IMetaTriangleSelector *meta = getWorld(world)->getMeta();
                         meta->removeTriangleSelector(node.node->getTriangleSelector());
                         node.node->setVisible(false);
                         manager.delEntity(entity);
                         bombRange.explosionRangeLeft = i;
+                        //TODO: add power up if it drops
+                        getWorld(world)->createDeflagration(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1000);
+                        pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::EMPTY);
                         break;
+                    } else {
+                        getWorld(world)->createDeflagration(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1000);
+                        pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::BOMB_EXPLOSION);
                     }
                 }
                 for (float i = 0; i < bombRange.explosionRangeRight; i += 1.0f) {
@@ -92,17 +126,26 @@ namespace IndieStudio::ECS::System {
                         bombRange.explosionRangeRight = i;
                         break;
                     } else if (tile == IndieStudio::MapPattern::TileType::BREAKABLE_BLOCK) {
-                        auto entity = world->getBlockEntityIdByPos(posInTile.first, posInTile.second);
+                        auto entity = getWorld(world)->getBlockEntityIdByPos(posInTile.first, posInTile.second);
                         auto &node = manager.template getComponent<Node>(entity);
-                        irr::scene::IMetaTriangleSelector *meta = world->getMeta();
+                        irr::scene::IMetaTriangleSelector *meta = getWorld(world)->getMeta();
                         meta->removeTriangleSelector(node.node->getTriangleSelector());
                         node.node->setVisible(false);
                         manager.delEntity(entity);
                         bombRange.explosionRangeRight = i;
+                        //TODO: add power up if it drops
+                        getWorld(world)->createDeflagration(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1000);
+                        pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::EMPTY);
                         break;
+                    } else {
+                        getWorld(world)->createDeflagration(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1000);
+                        pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::BOMB_EXPLOSION);
                     }
                 }
             });
         }
+    protected:
+    private:
+        IWorld *getWorld(IWorld *world) { return world; }
     };
 }

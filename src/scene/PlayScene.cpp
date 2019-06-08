@@ -29,7 +29,7 @@ namespace IndieStudio {
             scene.gui->removeChild(element);
 
         WorldSettings &settings = static_cast<WorldManager &>(
-            Game::INSTANCE->getWorldManager()).getLoadedWorld()->getSettings();
+            Game::INSTANCE->getWorldManager()).getLoadedWorldImpl()->getSettings();
         irr::scene::ICameraSceneNode *camera = scene.scene->addCameraSceneNode(0,
             irr::core::vector3df(Constants::TILE_SIZE_FACTOR * (settings.width / 2), 50 + Constants::TILE_SIZE_FACTOR * settings.width - 125, Constants::TILE_SIZE_FACTOR * 3),
             irr::core::vector3df(Constants::TILE_SIZE_FACTOR * (settings.width / 2), 50, Constants::TILE_SIZE_FACTOR * (settings.height / 2)));
@@ -44,6 +44,18 @@ namespace IndieStudio {
         scene.onEvent = [&](const irr::SEvent &event) {
             return onEvent(scene, event);
         };
+    }
+
+    void PlayScene::updateStats(SceneManager::Scene &scene, int playerIdx,
+        const ECS::Component::Stat &stats)
+    {
+        irr::gui::IGUIStaticText *killCount = static_cast<irr::gui::IGUIStaticText *>(
+            scene.gui->getElementFromId(424242 + (playerIdx * 10)));
+        killCount->setText(std::to_wstring(stats.kill).c_str());
+
+        irr::gui::IGUIStaticText *bombCount = static_cast<irr::gui::IGUIStaticText *>(
+            scene.gui->getElementFromId(424242 + (playerIdx * 10) + 1));
+        bombCount->setText(std::to_wstring(stats.kill).c_str());
     }
 
     void PlayScene::setupWaterBackground(SceneManager::Scene &scene)
@@ -120,6 +132,7 @@ namespace IndieStudio {
 
         irr::gui::IGUIStaticText *timerText = guiEnv->addStaticText(L"00:00",
             timer->getAbsolutePosition(), false, true, guiRoot, 4243);
+        timerText->setOverrideFont(Game::INSTANCE->getFontManager().getFont("assets/fonts/roboto_regular_72.png").content);
         timerText->setOverrideColor(irr::video::SColor(255, 255, 255, 255));
         updateTimer(scene);
 
@@ -156,6 +169,22 @@ namespace IndieStudio {
 
             banner->setImage(bannerTexture);
             banner->setScaleImage(true);
+
+            irr::core::recti controlProviderIconRect = irr::core::recti(
+                {iconPositions[i].X + wi + 10, iconPositions[i].Y + hi - 24},
+                {iconPositions[i].X + wi + 10 + 24, iconPositions[i].Y + hi}
+            );
+
+            if (i >= 2) {
+                controlProviderIconRect.UpperLeftCorner.X -= wi + 10 + 24 + 10;
+                controlProviderIconRect.LowerRightCorner.X -= wi + 10 + 24 + 10;
+            }
+
+            irr::gui::IGUIImage *controlProviderIcon = guiEnv->addImage(controlProviderIconRect, guiRoot);
+            controlProviderIcon->setImage(scene.manager->textureManager.getTexture(
+                static_cast<WorldManager &>(Game::INSTANCE->getWorldManager()).getLoadedWorldImpl()->
+                getSettings().players[i].controlProviderPtr->getIconPath()).content);
+            controlProviderIcon->setScaleImage(true);
 
             irr::gui::IGUIImage *killIcon = guiEnv->addImage(irr::core::recti(
                 {bannerRect.UpperLeftCorner.X + 30, bannerRect.UpperLeftCorner.Y + 8},
@@ -202,8 +231,9 @@ namespace IndieStudio {
         BACKGROUND_MUSIC.setLoop(true);
 
         irr::gui::IGUIStaticText *countdown = guiEnv->addStaticText(L"5", irr::core::recti(
-            {w / 2 - 10, h / 2 - 10}, { w / 2 + 10, h / 2 + 10}
+            {w / 2 - 20, h / 2 - 40}, { w / 2 + 30, h / 2 + 40}
         ), false, true, guiRoot, 4242);
+        countdown->setOverrideFont(Game::INSTANCE->getFontManager().getFont("assets/fonts/roboto_regular_72.png").content);
         countdown->setOverrideColor(irr::video::SColor(255, 255, 255, 255));
 
         Scheduler::schedule(1000, [&]() {
@@ -217,7 +247,7 @@ namespace IndieStudio {
 
                 TIMER_TASK = Scheduler::schedule(1000, [&]() {
                     World *world = static_cast<WorldManager &>(
-                        Game::INSTANCE->getWorldManager()).getLoadedWorld();
+                        Game::INSTANCE->getWorldManager()).getLoadedWorldImpl();
 
                     world->getSettings().elapsedSeconds += 1;
                     updateTimer(scene);
@@ -238,7 +268,7 @@ namespace IndieStudio {
     void PlayScene::updateTimer(SceneManager::Scene &scene)
     {
          World *world = static_cast<WorldManager &>(
-            Game::INSTANCE->getWorldManager()).getLoadedWorld();
+            Game::INSTANCE->getWorldManager()).getLoadedWorldImpl();
 
         irr::gui::IGUIStaticText *timerRef = static_cast<irr::gui::IGUIStaticText *>
             (scene.gui->getElementFromId(4243));
@@ -265,7 +295,7 @@ namespace IndieStudio {
     bool PlayScene::onEvent(SceneManager::Scene &scene, const irr::SEvent &event)
     {
         World *world = static_cast<WorldManager &>(
-            Game::INSTANCE->getWorldManager()).getLoadedWorld();
+            Game::INSTANCE->getWorldManager()).getLoadedWorldImpl();
 
         if (world->getSettings().elapsedSeconds == 0)
             return false;

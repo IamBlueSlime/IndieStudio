@@ -72,11 +72,8 @@ namespace IndieStudio {
         textureManager.registerTexture("assets/textures/player_banner.png");
         textureManager.registerTexture("assets/textures/player_banner_inverse.png");
         textureManager.registerTexture("assets/textures/timer.png");
-        textureManager.registerTexture("assets/textures/icons/ai.png");
         textureManager.registerTexture("assets/textures/icons/bomb.png");
         textureManager.registerTexture("assets/textures/icons/bomberman.png");
-        textureManager.registerTexture("assets/textures/icons/controller.png");
-        textureManager.registerTexture("assets/textures/icons/keyboard.png");
 
         meshManager.registerMesh("assets/models/cube.obj");
         meshManager.registerMesh("assets/models/player.md3");

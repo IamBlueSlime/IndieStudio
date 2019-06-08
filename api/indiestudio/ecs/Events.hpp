@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2019
 ** OOP_indie_studio_2018
 ** File description:
-** ecs Events.hpp
+** common Events.hpp
 */
 
 #pragma once
@@ -11,7 +11,6 @@
 #include <unordered_map>
 #include <iostream>
 #include <cassert>
-
 #include <irrlicht.h>
 
 namespace IndieStudio::ECS::Event {
@@ -19,7 +18,8 @@ namespace IndieStudio::ECS::Event {
     enum class EventType {
 		INDIE_KEYBOARD_EVENT,
 		INDIE_JOYSTICK_EVENT,
-		INDIE_MOUSE_EVENT
+		INDIE_MOUSE_EVENT,
+        INDIE_UNIQUE_TAG_EVENT
     };
 
     struct EventData {
@@ -32,9 +32,8 @@ namespace IndieStudio::ECS::Event {
 
             switch (this->type) {
                 case EventType::INDIE_KEYBOARD_EVENT: return this->keyInput.Key == other.keyInput.Key;
-                    break;
                 case EventType::INDIE_MOUSE_EVENT: return this->mouseInput.Event == other.mouseInput.Event;
-                    break;
+                case EventType::INDIE_UNIQUE_TAG_EVENT: return this->uniqueTag == other.uniqueTag;
                 default:
                     std::cout << "operator== not implemented on this ECS::Event::EventData : aborting" << std::endl;
                     assert(false);
@@ -48,6 +47,7 @@ namespace IndieStudio::ECS::Event {
             struct irr::SEvent::SKeyInput keyInput;
             struct irr::SEvent::SJoystickEvent joystickEvent;
             struct irr::SEvent::SMouseInput mouseInput;
+            long uniqueTag;
         };
     };
 
@@ -65,6 +65,8 @@ namespace std {
                     return (hash<int>()(static_cast<int>(event.type))) ^ (hash<int>()(static_cast<int>(event.keyInput.Key) << 1)) >> 1;
                 case IndieStudio::ECS::Event::EventType::INDIE_MOUSE_EVENT:
                     return (hash<int>()(static_cast<int>(event.type))) ^ (hash<int>()(static_cast<int>(event.mouseInput.Event) << 1)) >> 1;
+                case IndieStudio::ECS::Event::EventType::INDIE_UNIQUE_TAG_EVENT:
+                    return (hash<int>()(static_cast<int>(event.type))) ^ (hash<long>()(event.uniqueTag));
                 default:
                     std::cout << "hash not implemented on this ECS::Event::EventData <<: aborting" << std::endl;
                     assert(false);
