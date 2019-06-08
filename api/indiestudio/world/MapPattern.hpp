@@ -31,7 +31,11 @@ namespace IndieStudio {
 
             // On the floor
             FLOOR_FIRST,
-            FLOOR_SECOND
+            FLOOR_SECOND,
+
+            // Only in the AI
+            SOLID_POTENTIAL_EXPLOSION,
+            POTENTIAL_EXPLOSION
         };
 
         MapPattern(unsigned short width, unsigned short height) : width(width), height(height)
