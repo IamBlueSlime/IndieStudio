@@ -87,12 +87,12 @@ namespace IndieStudio::ECS::Component {
 
     struct BombType {
         enum {
-            DEFAULT = 1,
-            STICKY = 2,
+            NORMAL = 1,
+            CIRCULAR = 2,
             MEGA = 4
         };
 
-        BombType(int _bombType = BombType::DEFAULT)
+        BombType(int _bombType = BombType::NORMAL)
         :
         bombType(_bombType) {}
 
@@ -109,6 +109,9 @@ namespace IndieStudio::ECS::Component {
     };
 
     struct IsBlock {
+    };
+
+    struct Given {
     };
 
     struct SoundID {

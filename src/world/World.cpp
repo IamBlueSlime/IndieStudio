@@ -149,7 +149,7 @@ namespace IndieStudio {
         ecs.setComponent(player, Speed(1, 1, 1));
         ecs.setComponent(player, Movement());
         ecs.setComponent(player, IsPlayer());
-        ecs.setComponent(player, MaxBomb(5));
+        ecs.setComponent(player, MaxBomb(2));
 
         auto statCmnt = Stat();
         statCmnt.playerIdx = playerId;
