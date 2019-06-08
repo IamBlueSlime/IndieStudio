@@ -9,6 +9,7 @@
 #include "indiestudio/Constants.hpp"
 #include "indiestudio/common/Scheduler.hpp"
 #include "indiestudio/ecs/Events.hpp"
+#include "indiestudio/scene/PlayScene.hpp"
 #include "indiestudio/world/World.hpp"
 #include "indiestudio/world/WorldManager.hpp"
 #include "indiestudio/Singleton.hpp"
@@ -149,7 +150,11 @@ namespace IndieStudio {
         ecs.setComponent(player, Speed(1, 1, 1));
         ecs.setComponent(player, Movement());
         ecs.setComponent(player, IsPlayer());
-        ecs.setComponent(player, Stat());
+
+        auto statCmnt = Stat();
+        statCmnt.playerIdx = playerId;
+
+        ecs.setComponent(player, statCmnt);
         auto animator = scenemg->createCollisionResponseAnimator(this->meta, node_p, {5, 5, 5}, {0, 0, 0});
         node_p->addAnimator(animator);
         animator->drop();
@@ -382,6 +387,11 @@ namespace IndieStudio {
             scene.gui->draw();
             scene.scene->getVideoDriver()->endScene();
             Scheduler::tick();
+            this->ecs.forEntitiesWith<Stat>([&](auto &data, std::size_t id) {
+                (void) id;
+                const Stat &stats = this->ecs.getComponent<Stat>(data);
+                PlayScene::updateStats(this->scene, stats.playerIdx, stats);
+            });
         }
     }
 

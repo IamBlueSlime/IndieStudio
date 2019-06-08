@@ -138,8 +138,9 @@ namespace IndieStudio::ECS::Component {
     struct Stat {
         Stat()
         :
-        bomb(0), range(1), kill(0) {}
+        playerIdx(0), bomb(0), range(1), kill(0) {}
 
+        int playerIdx;
         std::size_t bomb;
         std::size_t range;
         std::size_t kill;

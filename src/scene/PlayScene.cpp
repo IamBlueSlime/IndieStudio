@@ -46,6 +46,18 @@ namespace IndieStudio {
         };
     }
 
+    void PlayScene::updateStats(SceneManager::Scene &scene, int playerIdx,
+        const ECS::Component::Stat &stats)
+    {
+        irr::gui::IGUIStaticText *killCount = static_cast<irr::gui::IGUIStaticText *>(
+            scene.gui->getElementFromId(424242 + (playerIdx * 10)));
+        killCount->setText(std::to_wstring(stats.kill).c_str());
+
+        irr::gui::IGUIStaticText *bombCount = static_cast<irr::gui::IGUIStaticText *>(
+            scene.gui->getElementFromId(424242 + (playerIdx * 10) + 1));
+        bombCount->setText(std::to_wstring(stats.kill).c_str());
+    }
+
     void PlayScene::setupWaterBackground(SceneManager::Scene &scene)
     {
         // irr::scene::IAnimatedMesh* mesh = scene.scene->addHillPlaneMesh("myHill",
