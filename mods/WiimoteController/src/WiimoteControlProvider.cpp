@@ -97,8 +97,6 @@ namespace IndieStudio::WiimoteController {
         bdaddr_t wiimoteAddr;
         bdaddr_t broadcastAddr = {{0, 0, 0, 0, 0, 0}};
 
-        std::cout << this->mod.getLogger() << std::endl;
-
         std::stringstream ss;
         ss << "Player " << idx + 1 << ", put your Wiimote in discoverable mode now (press 1+2)...";
         this->mod.getLogger()->warning(ss.str());

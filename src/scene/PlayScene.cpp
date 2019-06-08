@@ -158,6 +158,22 @@ namespace IndieStudio {
             banner->setImage(bannerTexture);
             banner->setScaleImage(true);
 
+            irr::core::recti controlProviderIconRect = irr::core::recti(
+                {iconPositions[i].X + wi + 10, iconPositions[i].Y + hi - 24},
+                {iconPositions[i].X + wi + 10 + 24, iconPositions[i].Y + hi}
+            );
+
+            if (i >= 2) {
+                controlProviderIconRect.UpperLeftCorner.X -= wi + 10 + 24 + 10;
+                controlProviderIconRect.LowerRightCorner.X -= wi + 10 + 24 + 10;
+            }
+
+            irr::gui::IGUIImage *controlProviderIcon = guiEnv->addImage(controlProviderIconRect, guiRoot);
+            controlProviderIcon->setImage(scene.manager->textureManager.getTexture(
+                static_cast<WorldManager &>(Game::INSTANCE->getWorldManager()).getLoadedWorldImpl()->
+                getSettings().players[i].controlProviderPtr->getIconPath()).content);
+            controlProviderIcon->setScaleImage(true);
+
             irr::gui::IGUIImage *killIcon = guiEnv->addImage(irr::core::recti(
                 {bannerRect.UpperLeftCorner.X + 30, bannerRect.UpperLeftCorner.Y + 8},
                 {bannerRect.UpperLeftCorner.X + 30 + 24, bannerRect.UpperLeftCorner.Y + 8 + 24}
