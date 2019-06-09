@@ -159,10 +159,20 @@ namespace IndieStudio {
 
     bool MainMenuScene::onEvent(SceneManager::Scene &scene, const irr::SEvent &event)
     {
-        (void) scene;
+        static irr::gui::IGUIWindow *msgBox = nullptr;
+
         if (event.EventType == irr::EET_KEY_INPUT_EVENT) {
             if (event.KeyInput.Key == irr::KEY_ESCAPE && event.KeyInput.PressedDown) {
-                Singleton::getDevice()->closeDevice();
+                if (!msgBox) {
+                    msgBox = Singleton::getDevice()->getGUIEnvironment()->addMessageBox(
+                    L"Quit", L"Are You Sure ?", true,
+                    irr::gui::EMBF_YES | irr::gui::EMBF_NO, scene.gui, MSG_BOX_QUIT);
+                    msgBox->setDraggable(false);
+                } else {
+                    msgBox->remove();
+                    msgBox = nullptr;
+                }
+                // Singleton::getDevice()->closeDevice();
                 return true;
             }
         } else if (event.EventType == irr::EET_GUI_EVENT
@@ -171,11 +181,28 @@ namespace IndieStudio {
                 scene.manager->setActiveScene(SceneManager::NEW_GAME_ID);
                 return true;
             } else if (event.GUIEvent.Caller->getID() == BUTTON_ID_QUIT) {
-                Singleton::getDevice()->closeDevice();
+                msgBox = Singleton::getDevice()->getGUIEnvironment()->addMessageBox(
+                    L"Quit", L"Are You Sure ?", true,
+                    irr::gui::EMBF_YES | irr::gui::EMBF_NO, scene.gui, MSG_BOX_QUIT);
+                msgBox->setDraggable(false);
+                return true;
+            } else if (event.GUIEvent.Caller->getID() == BUTTON_ID_PLAY_LOAD) {
+                msgBox = Singleton::getDevice()->getGUIEnvironment()->addMessageBox(
+                    L"Load Game", L"Not implemented yet.", true,
+                    irr::gui::EMBF_OK, scene.gui);
+                msgBox->setDraggable(false);
                 return true;
             }
+        } else if (event.EventType == irr::EET_GUI_EVENT) {
+            if (event.GUIEvent.EventType == irr::gui::EGET_MESSAGEBOX_CANCEL
+            || event.GUIEvent.EventType == irr::gui::EGET_MESSAGEBOX_NO
+            || event.GUIEvent.EventType == irr::gui::EGET_MESSAGEBOX_OK) {
+                msgBox = nullptr;
+            } else if (event.GUIEvent.EventType == irr::gui::EGET_MESSAGEBOX_YES
+            && event.GUIEvent.Caller->getID() == MSG_BOX_QUIT) {
+                Singleton::getDevice()->closeDevice();
+            }
         }
-
         return false;
     }
 

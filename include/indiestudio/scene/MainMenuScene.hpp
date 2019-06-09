@@ -17,7 +17,7 @@ namespace IndieStudio {
         static sf::Sound BACKGROUND_MUSIC;
 
         static void initialize(SceneManager::Scene &scene);
-    
+
     protected:
     private:
         static void setupMenu(SceneManager::Scene &scene);
@@ -28,7 +28,8 @@ namespace IndieStudio {
         enum {
             BUTTON_ID_PLAY_NEW,
             BUTTON_ID_PLAY_LOAD,
-            BUTTON_ID_QUIT
+            BUTTON_ID_QUIT,
+            MSG_BOX_QUIT
         };
     };
 
