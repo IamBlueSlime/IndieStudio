@@ -46,7 +46,7 @@ namespace IndieStudio::ECS::System {
                         node.node->setVisible(false);
                         manager.delEntity(entity);
                         bombRange.explosionRangeUp = i;
-                        getWorld(world)->createDeflagration(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1000);
+                        getWorld(world)->createBlast(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1000);
                         //TODO: add power up if it drops
                         pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::EMPTY);
                         break;
@@ -72,10 +72,10 @@ namespace IndieStudio::ECS::System {
                             maxBomb.nb++;
                         }
                         pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::BOMB_EXPLOSION);
-                        getWorld(world)->createDeflagration(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1000);
+                        getWorld(world)->createBlast(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1000);
                     } else {
                         if (pattern->get(posInTile.first, 1, posInTile.second) != IndieStudio::MapPattern::TileType::BOMB_EXPLOSION) {
-                            getWorld(world)->createDeflagration(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1000);
+                            getWorld(world)->createBlast(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1000);
                             pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::BOMB_EXPLOSION);
                         }
                     }
@@ -97,7 +97,7 @@ namespace IndieStudio::ECS::System {
                         manager.delEntity(entity);
                         bombRange.explosionRangeDown = i;
                         //TODO: add power up if it drops
-                        getWorld(world)->createDeflagration(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1000);
+                        getWorld(world)->createBlast(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1000);
                         pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::EMPTY);
                         break;
                     } else if (tile == IndieStudio::MapPattern::TileType::BOMB) {
@@ -122,11 +122,11 @@ namespace IndieStudio::ECS::System {
                             maxBomb.nb++;
                         }
                         pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::BOMB_EXPLOSION);
-                        getWorld(world)->createDeflagration(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1000);
+                        getWorld(world)->createBlast(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1000);
                     } else {
                         if (pattern->get(posInTile.first, 1, posInTile.second) != IndieStudio::MapPattern::TileType::BOMB_EXPLOSION) {
                             pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::BOMB_EXPLOSION);
-                            getWorld(world)->createDeflagration(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1000);
+                            getWorld(world)->createBlast(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1000);
                         }
                     }
                 }
@@ -147,7 +147,7 @@ namespace IndieStudio::ECS::System {
                         manager.delEntity(entity);
                         bombRange.explosionRangeLeft = i;
                         //TODO: add power up if it drops
-                        getWorld(world)->createDeflagration(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1000);
+                        getWorld(world)->createBlast(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1000);
                         pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::EMPTY);
                         break;
                     } else if (tile == IndieStudio::MapPattern::TileType::BOMB) {
@@ -172,10 +172,10 @@ namespace IndieStudio::ECS::System {
                             maxBomb.nb++;
                         }
                         pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::BOMB_EXPLOSION);
-                        getWorld(world)->createDeflagration(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1000);
+                        getWorld(world)->createBlast(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1000);
                     } else {
                         if (pattern->get(posInTile.first, 1, posInTile.second) != IndieStudio::MapPattern::TileType::BOMB_EXPLOSION) {
-                            getWorld(world)->createDeflagration(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1000);
+                            getWorld(world)->createBlast(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1000);
                             pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::BOMB_EXPLOSION);
                         }
                     }
@@ -197,7 +197,7 @@ namespace IndieStudio::ECS::System {
                         manager.delEntity(entity);
                         bombRange.explosionRangeRight = i;
                         //TODO: add power up if it drops
-                        getWorld(world)->createDeflagration(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1000);
+                        getWorld(world)->createBlast(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1000);
                         pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::EMPTY);
                         break;
                     }  else if (tile == IndieStudio::MapPattern::TileType::BOMB) {
@@ -222,10 +222,10 @@ namespace IndieStudio::ECS::System {
                             maxBomb.nb++;
                         }
                         pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::BOMB_EXPLOSION);
-                        getWorld(world)->createDeflagration(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1000);
+                        getWorld(world)->createBlast(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1000);
                     } else {
                         if (pattern->get(posInTile.first, 1, posInTile.second) != IndieStudio::MapPattern::TileType::BOMB_EXPLOSION) {
-                            getWorld(world)->createDeflagration(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1000);
+                            getWorld(world)->createBlast(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1000);
                             pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::BOMB_EXPLOSION);
                         }
                     }

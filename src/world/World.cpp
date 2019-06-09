@@ -30,7 +30,7 @@ namespace IndieStudio {
         srand(std::time(nullptr));
     }
 
-    bool World::createDeflagration(const irr::core::vector3df &position, unsigned int timeMs)
+    bool World::createBlast(const irr::core::vector3df &position, unsigned int timeMs)
     {
         bool ret = true;
         this->ecs.forEntitiesWith<TextureArray>(
@@ -38,14 +38,14 @@ namespace IndieStudio {
             {
                 irr::scene::ISceneNode *sceneNode = this->ecs.getComponent<Node>(data).node;
                 irr::core::array<irr::video::ITexture *> &textureArray = this->ecs.getComponent<TextureArray>(data).textureArray;
-                ret = createDeflagration(sceneNode, textureArray, position, timeMs);
+                ret = createBlast(sceneNode, textureArray, position, timeMs);
             }
         );
         return ret;
     }
 
 
-    bool World::createDeflagration(irr::scene::ISceneNode *node, irr::core::array<irr::video::ITexture *> &textureArray,
+    bool World::createBlast(irr::scene::ISceneNode *node, irr::core::array<irr::video::ITexture *> &textureArray,
         const irr::core::vector3df &position, unsigned int timeMs)
     {
         if (!node)
@@ -99,7 +99,7 @@ namespace IndieStudio {
         pos.z = newPos.Z;
     }
 
-    void World::initDeflagration(WorldManager &manager, irr::scene::ISceneManager *scenemg)
+    void World::initBlast(WorldManager &manager, irr::scene::ISceneManager *scenemg)
     {
         (void) manager;
         irr::video::IVideoDriver *driver = Singleton::getDevice()->getVideoDriver();
@@ -323,7 +323,7 @@ namespace IndieStudio {
         initPlayer(manager, scenemg, 2);
         initPlayer(manager, scenemg, 3);
 
-        initDeflagration(manager, scenemg);
+        initBlast(manager, scenemg);
 
         Initializer<WorldECS>::initAllEntities(ecs, scenemg);
     }
