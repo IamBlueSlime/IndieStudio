@@ -242,6 +242,9 @@ namespace IndieStudio::ECS::Component {
         int nb;
     };
 
+    struct NotSolid {
+    };
+
     struct PosedBy {
         PosedBy(std::size_t _id = 0)
         :

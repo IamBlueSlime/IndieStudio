@@ -15,3 +15,4 @@
 #include "indiestudio/ecs/systems/MovePlayerSystem.hpp"
 #include "indiestudio/ecs/systems/IASystem.hpp"
 #include "indiestudio/ecs/systems/PickUpPowerUp.hpp"
+#include "indiestudio/ecs/systems/SolidBombSystem.hpp"
