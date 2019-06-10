@@ -23,13 +23,17 @@ namespace IndieStudio::ECS::System {
         void process(ManagerType &manager, IndieStudio::World *world) {
             IndieStudio::MapPattern *pattern = getWorld(world)->getPattern();
 
-            manager.template forEntitiesWith<IsBomb, Position, IsExploding, ExplosionRange>(
+            manager.template forEntitiesWith<IsBomb, Position, IsExploding, ExplosionRange, ExplosionLifeTime>(
             [this, &manager, &pattern, &world](auto &data, [[gnu::unused]] auto id) {
 
                 auto &bombPosition = manager.template getComponent<Position>(data);
                 auto &bombRange = manager.template getComponent<ExplosionRange>(data);
+                auto &explosionTime = manager.template getComponent<ExplosionLifeTime>(data);
                 std::pair<short, short> posInTile;
 
+                if (std::time(nullptr) - explosionTime.explosionLifeTime >= 1) {
+                    return;
+                }
                 for (float i = 0; i < bombRange.explosionRangeUp; i += 1.0f) {
                     posInTile = pattern->positionToTile(bombPosition.x, bombPosition.z + (i * 20));
                     IndieStudio::MapPattern::TileType tile = pattern->get(posInTile.first, 1, posInTile.second);

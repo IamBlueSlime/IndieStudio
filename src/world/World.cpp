@@ -84,7 +84,7 @@ namespace IndieStudio {
             this->ecs.getEventManager().switch_event_queue();
             scene.scene->getVideoDriver()->beginScene(true, true);
             systems.process();
-            this->ecs.forEntitiesWith<Movement>(
+            this->ecs.forEntitiesWith<Movement, Alive>(
                 [&](auto &data, [[gnu::unused]] std::size_t id)
                 {
                     if (settings.elapsedSeconds == 0)
@@ -206,11 +206,11 @@ namespace IndieStudio {
             dir.Y = 10;
         else
             dir.Y -= height;
-        dir *= 10;
-        auto anim = this->scene.scene->createFlyStraightAnimator(pos, dir, 2000);
+        dir *= 20;
+        auto anim = this->scene.scene->createFlyStraightAnimator(pos, dir, 1000);
         node->addAnimator(anim);
         anim->drop();
-        anim = this->scene.scene->createRotationAnimator(irr::core::vector3df(0, 5, 0));
+        anim = this->scene.scene->createRotationAnimator(irr::core::vector3df(0, 1, 0));
         node->addAnimator(anim);
         anim->drop();
     }
@@ -394,6 +394,7 @@ namespace IndieStudio {
         ecs.setComponent(player, Speed(1, 1, 1));
         ecs.setComponent(player, Movement());
         ecs.setComponent(player, IsPlayer());
+        ecs.setComponent(player, Alive());
         ecs.setComponent(player, MaxBomb(1));
 
         auto statCmnt = Stat();

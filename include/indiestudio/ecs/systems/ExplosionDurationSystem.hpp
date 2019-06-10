@@ -26,9 +26,8 @@ namespace IndieStudio::ECS::System {
                     auto pattern = this->getWorld(world)->getPattern();
                     std::pair<short, short> posInTile;
 
-                     if (std::time(nullptr) - explosionTime.explosionLifeTime >= 1) {
-                        // manager.template unsetComponent<IsExploding>(data);
-                        // manager.template unsetComponent<ExplosionLifeTime>(data);
+                    if (std::time(nullptr) - explosionTime.explosionLifeTime >= 1) {
+                        manager.delEntity(data);
                         for (float i = 0; i < range.explosionRangeUp; i++) {
                             posInTile = pattern->positionToTile(position.x, position.z + (i * 20));
                             pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::EMPTY);
@@ -45,7 +44,6 @@ namespace IndieStudio::ECS::System {
                             posInTile = pattern->positionToTile(position.x + (i * 20), position.z);
                             pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::EMPTY);
                         }
-                        manager.delEntity(data);
                     }
             });
         }
