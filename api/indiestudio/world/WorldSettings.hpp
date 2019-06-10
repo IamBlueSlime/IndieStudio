@@ -35,7 +35,7 @@ namespace IndieStudio {
         unsigned long elapsedSeconds = 0;
 
         /* ISerializable implementation */
-        void pack(ByteBuffer &buffer) const override;
+        void pack(ByteBuffer &buffer) override;
         void unpack(ByteBuffer &buffer) override;
 
     protected:

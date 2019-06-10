@@ -9,7 +9,7 @@
 
 namespace IndieStudio {
 
-    void MapPattern::pack(ByteBuffer &buffer) const
+    void MapPattern::pack(ByteBuffer &buffer)
     {
         unsigned int tileCount = 0;
 

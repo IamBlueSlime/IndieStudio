@@ -10,6 +10,7 @@
 #include <deque>
 #include <string>
 #include <irrlicht.h>
+#include "indiestudio/common/ByteBuffer.hpp"
 #include "indiestudio/ecs/Events.hpp"
 
 namespace IndieStudio {
@@ -35,6 +36,9 @@ namespace IndieStudio {
 		virtual std::deque<ECS::Event::EventData> pollEvents() = 0;
 
 		virtual const std::string &getIconPath() const = 0;
+
+		virtual void pack(ByteBuffer &buffer, int playerIdx) const = 0;
+        virtual void unpack(ByteBuffer &buffer, int playerIdx) = 0;
 	};
 
 }

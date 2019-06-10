@@ -11,21 +11,28 @@ namespace IndieStudio {
 
     const std::string KeyboardControlProvider::ICON_PATH = "assets/textures/icons/keyboard.png";
 
+    const irr::EKEY_CODE KeyboardControlProvider::DEFAULT_KEYS[4][5] = {
+        { irr::EKEY_CODE::KEY_KEY_Z, irr::EKEY_CODE::KEY_KEY_Q, irr::EKEY_CODE::KEY_KEY_S, irr::EKEY_CODE::KEY_KEY_D, irr::EKEY_CODE::KEY_KEY_E },
+        { irr::EKEY_CODE::KEY_KEY_T, irr::EKEY_CODE::KEY_KEY_F, irr::EKEY_CODE::KEY_KEY_G, irr::EKEY_CODE::KEY_KEY_H, irr::EKEY_CODE::KEY_KEY_Y },
+        { irr::EKEY_CODE::KEY_KEY_I, irr::EKEY_CODE::KEY_KEY_J, irr::EKEY_CODE::KEY_KEY_K, irr::EKEY_CODE::KEY_KEY_L, irr::EKEY_CODE::KEY_KEY_O },
+        { irr::EKEY_CODE::KEY_UP, irr::EKEY_CODE::KEY_LEFT, irr::EKEY_CODE::KEY_DOWN, irr::EKEY_CODE::KEY_RIGHT, irr::EKEY_CODE::KEY_SHIFT },
+    };
+
     void KeyboardControlProvider::initConfigurationArea(irr::gui::IGUIEnvironment *guiEnv,
         irr::gui::IGUIElement *area, int playerIdx)
     {
         ECS::Event::EventData eventData;
         eventData.type = ECS::Event::EventType::INDIE_KEYBOARD_EVENT;
         
-        eventData.keyInput.Key = irr::EKEY_CODE::KEY_KEY_Z;
+        eventData.keyInput.Key = DEFAULT_KEYS[playerIdx][0];
         this->playerMappings[playerIdx].up = eventData;
-        eventData.keyInput.Key = irr::EKEY_CODE::KEY_KEY_Q;
+        eventData.keyInput.Key = DEFAULT_KEYS[playerIdx][1];
         this->playerMappings[playerIdx].left = eventData;
-        eventData.keyInput.Key = irr::EKEY_CODE::KEY_KEY_S;
+        eventData.keyInput.Key = DEFAULT_KEYS[playerIdx][2];
         this->playerMappings[playerIdx].down = eventData;
-        eventData.keyInput.Key = irr::EKEY_CODE::KEY_KEY_D;
+        eventData.keyInput.Key = DEFAULT_KEYS[playerIdx][3];
         this->playerMappings[playerIdx].right = eventData;
-        eventData.keyInput.Key = irr::EKEY_CODE::KEY_KEY_E;
+        eventData.keyInput.Key = DEFAULT_KEYS[playerIdx][4];
         this->playerMappings[playerIdx].drop = eventData;
 
         int dx = 20;
@@ -108,6 +115,24 @@ namespace IndieStudio {
     IControlProvider::Mappings KeyboardControlProvider::getPlayerMappings(int playerIdx) const
     {
         return this->playerMappings[playerIdx];
+    }
+
+    void KeyboardControlProvider::pack(ByteBuffer &buffer, int playerIdx) const
+    {
+        buffer << this->playerMappings[playerIdx].up.keyInput.Key;
+        buffer << this->playerMappings[playerIdx].left.keyInput.Key;
+        buffer << this->playerMappings[playerIdx].down.keyInput.Key;
+        buffer << this->playerMappings[playerIdx].right.keyInput.Key;
+        buffer << this->playerMappings[playerIdx].drop.keyInput.Key;
+    }
+
+    void KeyboardControlProvider::unpack(ByteBuffer &buffer, int playerIdx)
+    {
+        buffer >> this->playerMappings[playerIdx].up.keyInput.Key;
+        buffer >> this->playerMappings[playerIdx].left.keyInput.Key;
+        buffer >> this->playerMappings[playerIdx].down.keyInput.Key;
+        buffer >> this->playerMappings[playerIdx].right.keyInput.Key;
+        buffer >> this->playerMappings[playerIdx].drop.keyInput.Key;
     }
 
     void KeyboardControlProvider::updateButtons(irr::gui::IGUIElement *area,
