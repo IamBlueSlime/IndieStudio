@@ -27,7 +27,6 @@ namespace IndieStudio::ECS::System {
             [this, &manager, &pattern, &world](auto &data, [[gnu::unused]] auto id) {
 
                 auto &bombPosition = manager.template getComponent<Position>(data);
-                std::pair<short, short> bomb_pos = MapPattern::positionToTile(bombPosition.x, bombPosition.z);
                 auto &bombRange = manager.template getComponent<ExplosionRange>(data);
                 std::pair<short, short> posInTile;
 
