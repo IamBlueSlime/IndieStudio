@@ -101,6 +101,7 @@ namespace IndieStudio {
         MapPattern *getPattern() override { return this->pattern.get(); }
         const WorldSettings &getSettings() const { return this->settings; }
         irr::scene::IMetaTriangleSelector *getMeta() override { return this->meta; }
+        SceneManager::Scene &getScene() override { return this->scene; }
 
     protected:
     private:

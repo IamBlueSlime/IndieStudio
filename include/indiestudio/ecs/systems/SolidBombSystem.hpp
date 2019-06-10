@@ -31,7 +31,10 @@ namespace IndieStudio::ECS::System {
                         BombInTile.second == playerInTile.second) {
                         return;
                     }
-                    //TODO: Faire la collision de la bombe ici
+                    auto node = manager.template getComponent<Node>(data).node;
+                    auto selector = this->getWorld(world)->getScene().scene->createTriangleSelectorFromBoundingBox(node);
+                    node->setTriangleSelector(selector);
+                    this->getWorld(world)->getMeta()->addTriangleSelector(selector);
                     manager.template unsetComponent<NotSolid>(data);
                 });
             }

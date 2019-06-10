@@ -9,6 +9,7 @@
 
 #include <irrlicht.h>
 #include "indiestudio/world/MapPattern.hpp"
+#include "indiestudio/scene/SceneManager.hpp"
 
 namespace IndieStudio {
 
@@ -22,6 +23,7 @@ namespace IndieStudio {
         virtual MapPattern *getPattern() = 0;
         virtual std::size_t getBlockEntityIdByPos(short x, short z) = 0;
         virtual irr::scene::IMetaTriangleSelector *getMeta() = 0;
+        virtual SceneManager::Scene &getScene() = 0;
     };
 
 }
