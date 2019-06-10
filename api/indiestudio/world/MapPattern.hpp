@@ -105,7 +105,6 @@ namespace IndieStudio {
                 values.second = z - (z % factor);
             values.first /= factor;
             values.second /= factor;
-//            std::cout << "X : " << x << " | Z : " << z << "  -  TILES : " << values.first << " | " << values.second << std::endl;
             return values;
         }
 
@@ -123,5 +122,4 @@ namespace IndieStudio {
         std::unique_ptr<TileType[]> ground;
         std::unique_ptr<TileType[]> walls;
     };
-
 }
