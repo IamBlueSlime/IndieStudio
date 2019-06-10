@@ -18,6 +18,8 @@
 
 namespace IndieStudio {
 
+#define ABS(x) (x > 0 ? x : -x)
+
     World::World(WorldSettings settings)
         : settings(settings),
         pattern(std::make_unique<MapPattern>(settings.width, settings.height)),
@@ -163,8 +165,6 @@ namespace IndieStudio {
             auto anim = clone->getSceneManager()->createTextureAnimator(textureArray, timeMs / textureArray.size(), false);
             clone->addAnimator(anim);
             clone->setVisible(true);
-    
-            ret = true;
         });
 
         return ret;
@@ -194,6 +194,25 @@ namespace IndieStudio {
         pos.x = newPos.X;
         pos.y = newPos.Y;
         pos.z = newPos.Z;
+    }
+
+    void World::eject(irr::scene::ISceneNode *node, irr::core::vector3df &bombPos)
+    {
+        irr::core::vector3df pos(node->getAbsolutePosition());
+        irr::core::vector3df dir(pos.X - bombPos.X, 100, pos.Z - bombPos.Z);
+
+        float height = dir.Y - ((ABS(dir.X) - ABS(dir.Z)));
+        if (height > 90)
+            dir.Y = 10;
+        else
+            dir.Y -= height;
+        dir *= 10;
+        auto anim = this->scene.scene->createFlyStraightAnimator(pos, dir, 2000);
+        node->addAnimator(anim);
+        anim->drop();
+        anim = this->scene.scene->createRotationAnimator(irr::core::vector3df(0, 5, 0));
+        node->addAnimator(anim);
+        anim->drop();
     }
 
     void World::dropBomb(float bombPosX, float bombPosZ, std::size_t playerID)
