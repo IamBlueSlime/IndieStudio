@@ -34,12 +34,13 @@ namespace IndieStudio {
                 manager.setComponent(newBomb, MaterialTexture(0, "assets/textures/bomb.png"));
                 manager.setComponent(newBomb, MaterialFlag(irr::video::EMF_LIGHTING, true));
                 manager.setComponent(newBomb, Scale(3.5, 3.5, 3.5));
-                manager.setComponent(newBomb, Position(BombPosX, 70, BombPosZ));
+                manager.setComponent(newBomb, Position(BombPosX, 61, BombPosZ));
                 manager.setComponent(newBomb, IsBomb());
                 manager.setComponent(newBomb, ExplosionRange());
                 manager.setComponent(newBomb, LifeTime());
                 manager.setComponent(newBomb, PosedBy(playerID));
                 manager.setComponent(newBomb, Setup());
+                manager.setComponent(newBomb, NotSolid());
                 manager.setComponent(newBomb, NodeCreate());
                 pattern->set(posInTile.first, 1, posInTile.second, MapPattern::TileType::BOMB);
                 maxBomb.nb--;
