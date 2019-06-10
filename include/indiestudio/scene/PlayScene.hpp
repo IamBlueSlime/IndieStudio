@@ -8,6 +8,7 @@
 #pragma once
 
 #include <SFML/Audio.hpp>
+#include "indiestudio/ecs/Components.hpp"
 #include "indiestudio/scene/SceneManager.hpp"
 #include "indiestudio/world/MapPattern.hpp"
 #include "indiestudio/world/World.hpp"
@@ -17,6 +18,8 @@ namespace IndieStudio {
     class PlayScene {
 	public:
 		static void initialize(SceneManager::Scene &scene);
+        static void updateStats(SceneManager::Scene &scene, int playerIdx,
+            const ECS::Component::Stat &stats);
 
 	protected:
 	private:

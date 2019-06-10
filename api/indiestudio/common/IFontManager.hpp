@@ -22,6 +22,7 @@ namespace IndieStudio {
         virtual void registerFont(std::string id) = 0;
         virtual void registerFont(std::string id, Font &font,
             bool overrideExisting = false) = 0;
+        virtual Font &getFont(const std::string &id) = 0;
     };
 
 }

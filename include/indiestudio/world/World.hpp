@@ -45,11 +45,14 @@ namespace IndieStudio {
         ECS::Component::MeshPath,
         ECS::Component::NodeCreate,
         ECS::Component::Node,
-        ECS::Component::ID,
+        ECS::Component::Given,
+        ECS::Component::PosedBy,
         ECS::Component::Setup,
         ECS::Component::Movement,
         ECS::Component::Particle,
-        ECS::Component::Stat
+        ECS::Component::TextureArray,
+        ECS::Component::Stat,
+        ECS::Component::MaxBomb
     >;
 
     using WorldECSSystems = ECS::SystemsImpl<
@@ -82,7 +85,10 @@ namespace IndieStudio {
         void focusECS(SceneManager::Scene &scene);
         void forwardEvent(ECS::Event::EventData event);
 
-        void initParticle(WorldManager &manager, irr::scene::ISceneManager *scenemg);
+        bool createBlast(irr::scene::ISceneNode *node, irr::core::array<irr::video::ITexture *> &textureArray,
+            const irr::core::vector3df &position, unsigned int timeMs = 1000);
+        bool createBlast(const irr::core::vector3df &position, unsigned int timeMs = 1000) override;
+        void initBlast(WorldManager &manager, irr::scene::ISceneManager *scenemg);
         void initPlayer(WorldManager &manager, irr::scene::ISceneManager *scenemg, int playerId);
         void move(const irr::core::vector3df &direction, ECS::Position &pos, ECS::Speed &speed, ECS::Node &node);
 
@@ -96,6 +102,9 @@ namespace IndieStudio {
         MapPattern *getPattern() override { return this->pattern.get(); }
         const WorldSettings &getSettings() const { return this->settings; }
         irr::scene::IMetaTriangleSelector *getMeta() override { return this->meta; }
+
+        void poseBomb(float BombPosX, float BombPosZ, std::size_t playerID) override;
+
 
     protected:
     private:

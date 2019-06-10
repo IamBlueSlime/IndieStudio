@@ -17,7 +17,11 @@ namespace IndieStudio {
             irr::gui::IGUIElement *area, int playerIdx) override;
         bool onConfigurationEvent(const irr::SEvent &event,
             irr::gui::IGUIElement *area, int playerIdx) override;
+
         Mappings getPlayerMappings(int playerIdx) const override;
+        std::deque<ECS::Event::EventData> pollEvents() override
+            { return std::deque<ECS::Event::EventData>(); }
+
         const std::string &getIconPath() const override { return ICON_PATH; }
 
 	protected:

@@ -18,6 +18,7 @@ namespace IndieStudio {
     public:
         struct Player {
             std::string controlProvider = "AI";
+            IControlProvider *controlProviderPtr;
             IControlProvider::Mappings mappings;
         };
 

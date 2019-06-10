@@ -33,15 +33,11 @@ namespace IndieStudio {
         Mappings getPlayerMappings(int playerIdx) const override
         {
             (void) playerIdx;
-
-            return {
-                irr::EKEY_CODE::KEY_F1,
-                irr::EKEY_CODE::KEY_F1,
-                irr::EKEY_CODE::KEY_F1,
-                irr::EKEY_CODE::KEY_F1,
-                irr::EKEY_CODE::KEY_F1
-            };
+            return {};
         }
+
+        std::deque<ECS::Event::EventData> pollEvents() override
+            { return std::deque<ECS::Event::EventData>(); }
 
         const std::string &getIconPath() const override { return ICON_PATH; }
 

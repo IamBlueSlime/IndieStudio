@@ -57,6 +57,7 @@ namespace IndieStudio::ECS::Component {
         :
         lifeTime(_lifeTime) {}
 
+//TODO: std::chrono
         int lifeTime;
     };
 
@@ -87,12 +88,12 @@ namespace IndieStudio::ECS::Component {
 
     struct BombType {
         enum {
-            DEFAULT = 1,
-            STICKY = 2,
+            NORMAL = 1,
+            CIRCULAR = 2,
             MEGA = 4
         };
 
-        BombType(int _bombType = BombType::DEFAULT)
+        BombType(int _bombType = BombType::NORMAL)
         :
         bombType(_bombType) {}
 
@@ -109,6 +110,9 @@ namespace IndieStudio::ECS::Component {
     };
 
     struct IsBlock {
+    };
+
+    struct Given {
     };
 
     struct SoundID {
@@ -138,8 +142,9 @@ namespace IndieStudio::ECS::Component {
     struct Stat {
         Stat()
         :
-        bomb(0), range(1), kill(0) {}
+        playerIdx(0), bomb(0), range(1), kill(0) {}
 
+        int playerIdx;
         std::size_t bomb;
         std::size_t range;
         std::size_t kill;
@@ -162,6 +167,14 @@ namespace IndieStudio::ECS::Component {
 
         int layer;
         std::string path;
+    };
+
+    struct TextureArray {
+        TextureArray(irr::core::array<irr::video::ITexture *> _textureArray = 0)
+        :
+        textureArray(_textureArray){}
+
+        irr::core::array<irr::video::ITexture *> textureArray;
     };
 
     struct MaterialFlag {
@@ -200,21 +213,12 @@ namespace IndieStudio::ECS::Component {
         irr::scene::IAnimatedMeshSceneNode *node;
     };
 
-        struct Particle {
+    struct Particle {
         Particle(irr::scene::IParticleSystemSceneNode *_particle = nullptr)
         :
         particle(_particle) {}
 
         irr::scene::IParticleSystemSceneNode *particle;
-    };
-
-
-    struct ID {
-        ID(int _id = 0)
-        :
-        id(_id) {}
-
-        int id;
     };
 
     struct Setup {
@@ -228,6 +232,22 @@ namespace IndieStudio::ECS::Component {
         bool down = false;
         bool left = false;
         bool right = false;
+    };
+
+    struct MaxBomb {
+        MaxBomb(int _nb = 1)
+        :
+        nb(_nb) {}
+
+        int nb;
+    };
+
+    struct PosedBy {
+        PosedBy(std::size_t _id = 0)
+        :
+        id(_id) {}
+
+        std::size_t id;
     };
 
     template<typename ManagerType>

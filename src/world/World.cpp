@@ -9,10 +9,12 @@
 #include "indiestudio/Constants.hpp"
 #include "indiestudio/common/Scheduler.hpp"
 #include "indiestudio/ecs/Events.hpp"
+#include "indiestudio/scene/PlayScene.hpp"
 #include "indiestudio/world/World.hpp"
 #include "indiestudio/world/WorldManager.hpp"
 #include "indiestudio/Singleton.hpp"
 #include "indiestudio/ecs/Initializer.hpp"
+#include "indiestudio/gameplay/BombFactory.hpp"
 
 namespace IndieStudio {
 
@@ -26,6 +28,41 @@ namespace IndieStudio {
     World::World() : World(WorldSettings())
     {
         srand(std::time(nullptr));
+    }
+
+    bool World::createBlast(const irr::core::vector3df &position, unsigned int timeMs)
+    {
+        bool ret = true;
+        this->ecs.forEntitiesWith<TextureArray>(
+            [&] (auto &data, auto)
+            {
+                irr::scene::ISceneNode *sceneNode = this->ecs.getComponent<Node>(data).node;
+                irr::core::array<irr::video::ITexture *> &textureArray = this->ecs.getComponent<TextureArray>(data).textureArray;
+                ret = createBlast(sceneNode, textureArray, position, timeMs);
+            }
+        );
+        return ret;
+    }
+
+
+    bool World::createBlast(irr::scene::ISceneNode *node, irr::core::array<irr::video::ITexture *> &textureArray,
+        const irr::core::vector3df &position, unsigned int timeMs)
+    {
+        if (!node)
+            return false;
+        irr::scene::ISceneNode *clone = node->clone();
+        if (!clone)
+            return false;
+        clone->setPosition(position);
+        auto del = clone->getSceneManager()->createDeleteAnimator(timeMs);
+        if (!del)
+            return false;
+        clone->addAnimator(del);
+        auto anim = clone->getSceneManager()->createTextureAnimator(textureArray, timeMs / textureArray.size(), false);
+        clone->addAnimator(anim);
+        if (!clone->isVisible())
+            clone->setVisible(true);
+        return true;
     }
 
     static irr::core::vector3df tryMove(irr::scene::ISceneNode *node, const irr::core::vector3df &vector, const irr::core::vector3df &velocity)
@@ -52,6 +89,8 @@ namespace IndieStudio {
 
     void World::move(const irr::core::vector3df &direction, ECS::Position &pos, ECS::Speed &speed, ECS::Node &node)
     {
+        // auto tilePos = MapPattern::positionToTile(pos.x, pos.z);
+        // std::cout << tilePos.first << ";" << tilePos.second << std::endl;
         irr::core::vector3df newPos(
             tryMove(node.node, direction, irr::core::vector3df(speed.x, speed.y, speed.z))
         );
@@ -60,10 +99,38 @@ namespace IndieStudio {
         pos.z = newPos.Z;
     }
 
-    void World::initPlayer(WorldManager &manager, irr::scene::ISceneManager *scenemg, int playerId)
+    void World::initBlast(WorldManager &manager, irr::scene::ISceneManager *scenemg)
     {
         (void) manager;
+        irr::video::IVideoDriver *driver = Singleton::getDevice()->getVideoDriver();
 
+        auto &test = ecs.addEntity();
+        auto node = scenemg->addAnimatedMeshSceneNode(scenemg->getMesh("assets/models/cube.obj"));
+        node->setVisible(false);
+
+        node->setMaterialType(irr::video::EMT_TRANSPARENT_ADD_COLOR);
+        ecs.setComponent(test, Node(node));
+        ecs.setComponent(test, MaterialTexture(0, "assets/textures/bomb.png"));
+        ecs.setComponent(test, MaterialFlag(irr::video::EMF_LIGHTING, true));
+        ecs.setComponent(test, Scale(Constants::TILE_SIZE_FACTOR, Constants::TILE_SIZE_FACTOR, Constants::TILE_SIZE_FACTOR));
+        ecs.setComponent(test, Position(20.5, 90, 100.5));
+
+        irr::core::array<irr::video::ITexture *> textureArray;
+        textureArray.push_back(driver->getTexture("assets/textures/flames1.png"));
+        textureArray.push_back(driver->getTexture("assets/textures/flames2.png"));
+        textureArray.push_back(driver->getTexture("assets/textures/flames3.png"));
+        textureArray.push_back(driver->getTexture("assets/textures/flames4.png"));
+        textureArray.push_back(driver->getTexture("assets/textures/flames5.png"));
+        textureArray.push_back(driver->getTexture("assets/textures/flames6.png"));
+        textureArray.push_back(driver->getTexture("assets/textures/flames7.png"));
+        textureArray.push_back(driver->getTexture("assets/textures/flames8.png"));
+        ecs.setComponent(test, TextureArray(textureArray));
+        ecs.setComponent(test, Setup());
+    }
+
+
+    void World::initPlayer(WorldManager &manager, irr::scene::ISceneManager *scenemg, int playerId)
+    {
         auto &player = ecs.addEntity();
         std::pair<short, short> positions[4] = {
             std::make_pair(1 * Constants::TILE_SIZE_FACTOR, (this->settings.height - 2) * Constants::TILE_SIZE_FACTOR),
@@ -73,6 +140,7 @@ namespace IndieStudio {
         };
 
         auto node_p = scenemg->addAnimatedMeshSceneNode(scenemg->getMesh("assets/models/player.md3"));
+        node_p->setFrameLoop(0, 27);
         ecs.setComponent(player, Node(node_p));
         ecs.setComponent(player, MaterialTexture(0, "assets/textures/player_" + Constants::PLAYER_COLORS[playerId] + ".png"));
         ecs.setComponent(player, MaterialFlag(irr::video::EMF_LIGHTING, false));
@@ -81,23 +149,24 @@ namespace IndieStudio {
         ecs.setComponent(player, Speed(1, 1, 1));
         ecs.setComponent(player, Movement());
         ecs.setComponent(player, IsPlayer());
+        ecs.setComponent(player, MaxBomb(2));
+
+        auto statCmnt = Stat();
+        statCmnt.playerIdx = playerId;
+
+        ecs.setComponent(player, statCmnt);
         auto animator = scenemg->createCollisionResponseAnimator(this->meta, node_p, {5, 5, 5}, {0, 0, 0});
         node_p->addAnimator(animator);
         animator->drop();
 
         auto eventCB = EventCallbacks<WorldECS>();
-        IndieStudio::ECS::Event::EventData event;
-        event.type = ECS::Event::EventType::INDIE_KEYBOARD_EVENT;
-
         auto &mov = ecs.getComponent<Movement>(player);
 
         if (this->settings.players[playerId].controlProvider == "AI") {
             ecs.setComponent(player, IA());
         } else {
-            event.keyInput.Key = this->settings.players[playerId].mappings.keyUp;
-            eventCB.addCallback(event,
-                [&] (const EventData &event, std::size_t id, WorldECS &ecs)
-                {
+            eventCB.addCallback(this->settings.players[playerId].mappings.up,
+                [&] (const EventData &event, auto, auto) {
                     if (!event.keyInput.PressedDown) {
                         mov.up = event.keyInput.PressedDown;
                         return;
@@ -106,11 +175,10 @@ namespace IndieStudio {
                     mov.down = false;
                     mov.left = false;
                     mov.right = false;
-                });
-            event.keyInput.Key = this->settings.players[playerId].mappings.keyDown;
-            eventCB.addCallback(event,
-                [&] (const EventData &event, std::size_t id, WorldECS &ecs)
-                {
+                }
+            );
+            eventCB.addCallback(this->settings.players[playerId].mappings.down,
+                [&] (const EventData &event, auto, auto) {
                     if (!event.keyInput.PressedDown) {
                         mov.down = event.keyInput.PressedDown;
                         return;
@@ -119,11 +187,10 @@ namespace IndieStudio {
                     mov.up = false;
                     mov.left = false;
                     mov.right = false;
-                });
-            event.keyInput.Key = this->settings.players[playerId].mappings.keyLeft;
-            eventCB.addCallback(event,
-                [&] (const EventData &event, std::size_t id, WorldECS &ecs)
-                {
+                }
+            );
+            eventCB.addCallback(this->settings.players[playerId].mappings.left,
+                [&] (const EventData &event, auto, auto) {
                     if (!event.keyInput.PressedDown) {
                         mov.left = event.keyInput.PressedDown;
                         return;
@@ -132,11 +199,10 @@ namespace IndieStudio {
                     mov.up = false;
                     mov.down = false;
                     mov.right = false;
-                });
-            event.keyInput.Key = this->settings.players[playerId].mappings.keyRight;
-            eventCB.addCallback(event,
-                [&] (const EventData &event, std::size_t id, WorldECS &ecs)
-                {
+                }
+            );
+            eventCB.addCallback(this->settings.players[playerId].mappings.right,
+                [&] (const EventData &event, auto, auto) {
                     if (!event.keyInput.PressedDown) {
                         mov.right = event.keyInput.PressedDown;
                         return;
@@ -146,10 +212,22 @@ namespace IndieStudio {
                     mov.down = false;
                     mov.left = false;
                 });
+            eventCB.addCallback(this->settings.players[playerId].mappings.drop,
+                [&] (auto, auto, auto) {
+                    auto &position = this->ecs.template getComponent<Position>(player);
+                    auto posInTile = this->pattern->positionToTile(position.x, position.z);
+
+                    IndieStudio::BombFactory::poseBomb<WorldECS>(this->ecs, this, this->scene.scene, posInTile.first * 20 + 0.5, posInTile.second * 20 + 0.5, player.id);
+                }
+            );
         }
 
         ecs.setComponent(player, eventCB);
         ecs.setComponent(player, Setup());
+    }
+
+    void World::poseBomb(float BombPosX, float BombPosZ, std::size_t playerID) {
+        IndieStudio::BombFactory::poseBomb<WorldECS>(this->ecs, this, this->scene.scene, BombPosX, BombPosZ, playerID);
     }
 
     void World::create(WorldManager &manager)
@@ -177,30 +255,15 @@ namespace IndieStudio {
 		node->setPosition(irr::core::vector3df(0.5, 50, 0.5));
         node->addShadowVolumeSceneNode(node->getMesh());
 
-        auto &bomb = ecs.addEntity();
-
-        auto node1 = scenemg->addAnimatedMeshSceneNode(scenemg->getMesh("assets/models/bomb.obj"));
-        ecs.setComponent(bomb, Node(node1));
-        ecs.setComponent(bomb, MaterialTexture(0, "assets/textures/bomb.png"));
-		ecs.setComponent(bomb, MaterialFlag(irr::video::EMF_LIGHTING, true));
-		ecs.setComponent(bomb, Scale(3.5, 3.5, 3.5));
-		ecs.setComponent(bomb, Position(20.5, 70, 160.5));
-        ecs.setComponent(bomb, IsBomb());
-        ecs.setComponent(bomb, ExplosionRange());
-        ecs.setComponent(bomb, LifeTime());
-        ecs.setComponent(bomb, Setup());
-
         auto &powerup = ecs.addEntity();
 
         ecs.setComponent(powerup, Node(Node(static_cast<irr::scene::IAnimatedMeshSceneNode *>(node->clone()))));
         ecs.setComponent(powerup, MaterialTexture(0, "assets/textures/tmp_powerUp.png"));
         ecs.setComponent(powerup, MaterialFlag(irr::video::EMF_LIGHTING, true));
-        ecs.setComponent(powerup, Scale(9, 9, 9));
-        ecs.setComponent(powerup, Position(28, 70, 45));
+        ecs.setComponent(powerup, Scale(8, 8, 8));
+        ecs.setComponent(powerup, Position(23, 75, 40));
         ecs.setComponent(powerup, IsPowerUp());
         ecs.setComponent(powerup, Setup());
-
-        this->pattern->set(1, 1, 1, MapPattern::TileType::POWER_UP);
 
         generator->generate(this->pattern.get());
 	    this->pattern->forEach([&](int x, int y, int z, MapPattern::TileType tileType) {
@@ -251,12 +314,16 @@ namespace IndieStudio {
             this->breakableBlockMapping.insert(std::make_pair(newBlock.id,
                 std::make_pair(x, z)));
             }
+            //set the powerUp on TileMap
+            this->pattern->set(1, 1, 2, MapPattern::TileType::POWER_UP);
         });
 
         initPlayer(manager, scenemg, 0);
         initPlayer(manager, scenemg, 1);
         initPlayer(manager, scenemg, 2);
         initPlayer(manager, scenemg, 3);
+
+        initBlast(manager, scenemg);
 
         Initializer<WorldECS>::initAllEntities(ecs, scenemg);
     }
@@ -267,6 +334,15 @@ namespace IndieStudio {
 
         while (Game::INSTANCE->getSceneManager().getActive() == SceneManager::PLAY_ID
         && Singleton::getDevice()->run()) {
+            for (int i = 0; i < 4; i += 1) {
+                auto events = this->settings.players[i].controlProviderPtr->pollEvents();
+
+                while (!events.empty()) {
+                    this->ecs.getEventManager().push_event(events.front());
+                    events.pop_front();
+                }
+            }
+
             this->ecs.getEventManager().switch_event_queue();
             scene.scene->getVideoDriver()->beginScene(true, true);
             systems.process();
@@ -309,6 +385,11 @@ namespace IndieStudio {
             scene.gui->draw();
             scene.scene->getVideoDriver()->endScene();
             Scheduler::tick();
+            this->ecs.forEntitiesWith<Stat>([&](auto &data, std::size_t id) {
+                (void) id;
+                const Stat &stats = this->ecs.getComponent<Stat>(data);
+                PlayScene::updateStats(this->scene, stats.playerIdx, stats);
+            });
         }
     }
 

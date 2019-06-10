@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include <cwiid.h>
 #include "indiestudio/mod/AMod.hpp"
+#include "indiestudio/wiimotecontroller/WiimoteControlProvider.hpp"
 
 namespace IndieStudio::WiimoteController {
 
@@ -19,14 +19,9 @@ namespace IndieStudio::WiimoteController {
         void onEnable(IGame &game) override;
         void onDisable(IGame &game) override;
 
-        void onWorldUpdate(IGame &game, WorldSettings &settings);
-
     protected:
     private:
-        static const WorldSettings::Player::ControlType WIIMOTE_CONTROL_TYPE;
-        cwiid_wiimote_t *wiimotes[4];
-
-        void initializeWiimote(int idx);
+        std::unique_ptr<WiimoteControlProvider> wiimoteControlProvider;
     };
 
 }
