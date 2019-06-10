@@ -34,6 +34,9 @@ namespace IndieStudio::ECS::System {
                 if (std::time(nullptr) - explosionTime.explosionLifeTime >= 1) {
                     return;
                 }
+                auto &node = manager.template getComponent<Node>(data);
+                irr::scene::IMetaTriangleSelector *meta = getWorld(world)->getMeta();
+                meta->removeTriangleSelector(node.node->getTriangleSelector());
                 for (float i = 0; i < bombRange.explosionRangeUp; i += 1.0f) {
                     posInTile = pattern->positionToTile(bombPosition.x, bombPosition.z + (i * 20));
                     IndieStudio::MapPattern::TileType tile = pattern->get(posInTile.first, 1, posInTile.second);
