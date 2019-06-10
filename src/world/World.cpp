@@ -210,6 +210,9 @@ namespace IndieStudio {
         auto anim = this->scene.scene->createFlyStraightAnimator(pos, dir, 2000);
         node->addAnimator(anim);
         anim->drop();
+        anim = this->scene.scene->createRotationAnimator(irr::core::vector3df(0, 5, 0));
+        node->addAnimator(anim);
+        anim->drop();
     }
 
     void World::dropBomb(float bombPosX, float bombPosZ, std::size_t playerID)
