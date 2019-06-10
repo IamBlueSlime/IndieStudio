@@ -32,6 +32,10 @@ namespace IndieStudio::ECS::Event {
 
             switch (this->type) {
                 case EventType::INDIE_KEYBOARD_EVENT: return this->keyInput.Key == other.keyInput.Key;
+                case EventType::INDIE_JOYSTICK_EVENT:
+                    return this->joystickEvent.Axis == other.joystickEvent.Axis
+                    && this->joystickEvent.ButtonStates == other.joystickEvent.ButtonStates
+                    && this->joystickEvent.Joystick == other.joystickEvent.Joystick;
                 case EventType::INDIE_MOUSE_EVENT: return this->mouseInput.Event == other.mouseInput.Event;
                 case EventType::INDIE_UNIQUE_TAG_EVENT: return this->uniqueTag == other.uniqueTag;
                 default:
@@ -63,6 +67,7 @@ namespace std {
             switch (event.type) {
                 case IndieStudio::ECS::Event::EventType::INDIE_KEYBOARD_EVENT:
                     return (hash<int>()(static_cast<int>(event.type))) ^ (hash<int>()(static_cast<int>(event.keyInput.Key) << 1)) >> 1;
+                case IndieStudio::ECS::Event::EventType::INDIE_JOYSTICK_EVENT: return 0;
                 case IndieStudio::ECS::Event::EventType::INDIE_MOUSE_EVENT:
                     return (hash<int>()(static_cast<int>(event.type))) ^ (hash<int>()(static_cast<int>(event.mouseInput.Event) << 1)) >> 1;
                 case IndieStudio::ECS::Event::EventType::INDIE_UNIQUE_TAG_EVENT:

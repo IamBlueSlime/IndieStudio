@@ -41,6 +41,18 @@ namespace IndieStudio {
 
         const std::string &getIconPath() const override { return ICON_PATH; }
 
+		void pack(ByteBuffer &buffer, int playerIdx) const override
+        {
+            (void) buffer;
+            (void) playerIdx;
+        }
+
+        void unpack(ByteBuffer &buffer, int playerIdx) override
+        {
+            (void) buffer;
+            (void) playerIdx;
+        }
+
 	protected:
 	private:
         static const std::string ICON_PATH;

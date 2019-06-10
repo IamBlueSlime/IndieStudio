@@ -30,6 +30,9 @@ namespace IndieStudio {
         irr::video::IVideoDriver *driver = device->getVideoDriver();
         bool stop = false;
 
+        irr::core::array<irr::SJoystickInfo> joystickInfo;
+        device->activateJoysticks(joystickInfo);
+
         this->logger.info("Starting main loop...");
 
         while (device->run() && !stop) {

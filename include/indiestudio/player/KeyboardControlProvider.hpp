@@ -24,9 +24,13 @@ namespace IndieStudio {
 
         const std::string &getIconPath() const override { return ICON_PATH; }
 
+		void pack(ByteBuffer &buffer, int playerIdx) const override;
+        void unpack(ByteBuffer &buffer, int playerIdx) override;
+
 	protected:
 	private:
         static const std::string ICON_PATH;
+        static const irr::EKEY_CODE DEFAULT_KEYS[4][5];
         Mappings playerMappings[4];
 
         void updateButtons(irr::gui::IGUIElement *area, int playerIdx) const;
