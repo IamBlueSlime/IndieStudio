@@ -47,6 +47,7 @@ namespace IndieStudio {
         ECS::Component::Node,
         ECS::Component::Given,
         ECS::Component::PosedBy,
+        ECS::Component::NotSolid,
         ECS::Component::Setup,
         ECS::Component::Movement,
         ECS::Component::Particle,
@@ -63,7 +64,8 @@ namespace IndieStudio {
         ECS::System::MovePlayer<WorldECS>,
         ECS::System::SetupExplosion<WorldECS>,
         ECS::System::PickUpPowerUp<WorldECS>,
-        ECS::System::IASystem<WorldECS>
+        ECS::System::IASystem<WorldECS>,
+        ECS::System::SolidBomb<WorldECS>
     >;
 
     class WorldManager;
