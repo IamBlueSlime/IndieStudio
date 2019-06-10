@@ -61,7 +61,7 @@ namespace IndieStudio {
         return this->loadedWorld.get();
     }
 
-    void WorldManager::save(const std::string &path, const World &world)
+    void WorldManager::save(const std::string &path, World &world)
     {
         logger.info("Saving world '" + world.getSettings().name + "' at '" + path + "'...");
         std::ofstream file(path, std::ios::trunc);

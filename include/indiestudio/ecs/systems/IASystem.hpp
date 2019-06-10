@@ -458,7 +458,7 @@ namespace IndieStudio::ECS::System {
                 std::pair<short, short> player_coord = MapPattern::positionToTile(position.x, position.z);
                 (void) player_coord;
                 // TODO: poser bombe
-//                world->poseBomb(player_coord.first * 20 + 0.5, player_coord.second * 20 + 0.5, id);
+//                world->dropBomb(player_coord.first * 20 + 0.5, player_coord.second * 20 + 0.5, id);
                 // TODO: ajouter du bruit aléatoire, et prendre en compte les stats du player
                 return std::nullopt;
             }
@@ -484,7 +484,7 @@ namespace IndieStudio::ECS::System {
                 //std::cout << "Breacked wall!" << std::endl;
                 std::pair<short, short> player_coord = MapPattern::positionToTile(position.x, position.z);
                 // TODO: poser bomb
-                world->poseBomb(player_coord.first * 20 + 0.5, player_coord.second * 20 + 0.5, id);
+                world->dropBomb(player_coord.first * 20 + 0.5, player_coord.second * 20 + 0.5, id);
                 // l'action sera reroll, mais cancel immédiatement à l iteration suivante pour échapper à sa propre bombe
                 return std::nullopt;
             }

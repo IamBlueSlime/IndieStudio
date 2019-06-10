@@ -117,7 +117,7 @@ namespace IndieStudio {
         unsigned short getHeight() const { return this->height; }
 
         /* ISerializable implementation */
-        void pack(ByteBuffer &buffer) const override;
+        void pack(ByteBuffer &buffer) override;
         void unpack(ByteBuffer &buffer) override;
 
     protected:

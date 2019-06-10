@@ -10,7 +10,7 @@
 
 namespace IndieStudio {
 
-    void WorldSettings::pack(ByteBuffer &buffer) const
+    void WorldSettings::pack(ByteBuffer &buffer)
     {
         ByteBufferUtils::writeString<unsigned short>(buffer, this->name);
         buffer << this->width;

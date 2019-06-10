@@ -305,6 +305,7 @@ namespace IndieStudio {
                 COUNTDOWN_SOUND.stop();
                 BACKGROUND_MUSIC.stop();
                 Scheduler::stopTask(PlayScene::TIMER_TASK);
+
                 scene.manager->setActiveScene(SceneManager::MAIN_MENU_ID);
                 return true;
             }

@@ -117,6 +117,24 @@ namespace IndieStudio {
         return this->playerMappings[playerIdx];
     }
 
+    void KeyboardControlProvider::pack(ByteBuffer &buffer, int playerIdx) const
+    {
+        buffer << this->playerMappings[playerIdx].up.keyInput.Key;
+        buffer << this->playerMappings[playerIdx].left.keyInput.Key;
+        buffer << this->playerMappings[playerIdx].down.keyInput.Key;
+        buffer << this->playerMappings[playerIdx].right.keyInput.Key;
+        buffer << this->playerMappings[playerIdx].drop.keyInput.Key;
+    }
+
+    void KeyboardControlProvider::unpack(ByteBuffer &buffer, int playerIdx)
+    {
+        buffer >> this->playerMappings[playerIdx].up.keyInput.Key;
+        buffer >> this->playerMappings[playerIdx].left.keyInput.Key;
+        buffer >> this->playerMappings[playerIdx].down.keyInput.Key;
+        buffer >> this->playerMappings[playerIdx].right.keyInput.Key;
+        buffer >> this->playerMappings[playerIdx].drop.keyInput.Key;
+    }
+
     void KeyboardControlProvider::updateButtons(irr::gui::IGUIElement *area,
         int playerIdx) const
     {

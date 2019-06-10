@@ -172,7 +172,6 @@ namespace IndieStudio {
                     msgBox->remove();
                     msgBox = nullptr;
                 }
-                // Singleton::getDevice()->closeDevice();
                 return true;
             }
         } else if (event.EventType == irr::EET_GUI_EVENT
@@ -187,10 +186,7 @@ namespace IndieStudio {
                 msgBox->setDraggable(false);
                 return true;
             } else if (event.GUIEvent.Caller->getID() == BUTTON_ID_PLAY_LOAD) {
-                msgBox = Singleton::getDevice()->getGUIEnvironment()->addMessageBox(
-                    L"Load Game", L"Not implemented yet.", true,
-                    irr::gui::EMBF_OK, scene.gui);
-                msgBox->setDraggable(false);
+                scene.scene->getGUIEnvironment()->addFileOpenDialog(L"Select your world file", true, scene.gui);
                 return true;
             }
         } else if (event.EventType == irr::EET_GUI_EVENT) {
@@ -201,8 +197,38 @@ namespace IndieStudio {
             } else if (event.GUIEvent.EventType == irr::gui::EGET_MESSAGEBOX_YES
             && event.GUIEvent.Caller->getID() == MSG_BOX_QUIT) {
                 Singleton::getDevice()->closeDevice();
+            } else if (event.GUIEvent.EventType == irr::gui::EGET_FILE_SELECTED) {
+                const wchar_t *path = static_cast<irr::gui::IGUIFileOpenDialog *>(
+                    event.GUIEvent.Caller)->getFileName();
+                
+                if (path == nullptr)
+                    return true;
+
+                std::wstring tmp = std::wstring(path);
+
+                SceneManager::Scene &playScene = scene.manager->getScene(SceneManager::PLAY_ID);
+                playScene.scene->clear();
+                
+                WorldManager &manager = static_cast<WorldManager &>(
+                    Game::INSTANCE->getWorldManager());
+
+                try {
+                    World *world = manager.load(std::string(tmp.begin(), tmp.end()));
+
+                    PlayScene::initialize(playScene);
+                    scene.manager->setActiveScene(SceneManager::PLAY_ID);
+                    world->focusECS(playScene);
+                } catch (const std::logic_error &) {
+                    msgBox = Singleton::getDevice()->getGUIEnvironment()->addMessageBox(
+                    L"Failed to load the map", L"Please select a valid Bomberman map!", true,
+                    irr::gui::EMBF_OK, scene.gui, MSG_BOX_QUIT);
+                    msgBox->setDraggable(false);
+
+                    return true;
+                }
             }
         }
+        
         return false;
     }
 
