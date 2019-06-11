@@ -25,7 +25,7 @@ namespace IndieStudio::ECS::System {
         private:
             bool isOnPowerUp(
                 const std::pair<std::size_t, std::size_t> &player, 
-                const std::pair<std::size_t, std::size_t> &powerUp, MapPattern *map);
+                const std::pair<std::size_t, std::size_t> &powerUp);
             void applyPowerUp(Speed &speed, Stat &stat, IsPowerUp &powerUp);
     };
 }
