@@ -49,9 +49,6 @@ namespace IndieStudio {
     void PlayScene::updateStats(SceneManager::Scene &scene, int playerIdx,
         const ECS::Component::Stat &stats)
     {
-        static bool winned = false;
-        static bool equality = false;
-
         irr::gui::IGUIStaticText *killCount = static_cast<irr::gui::IGUIStaticText *>(
             scene.gui->getElementFromId(424242 + (playerIdx * 10)));
         killCount->setText(std::to_wstring(stats.kill).c_str());
@@ -65,24 +62,6 @@ namespace IndieStudio {
         if (!stats.alive) {
             deathCross->setVisible(true);
         }
-
-        irr::gui::IGUIImage *win = static_cast<irr::gui::IGUIImage *>(
-            scene.gui->getElementFromId(434343));
-
-        irr::gui::IGUIImage *draw = static_cast<irr::gui::IGUIImage *>(
-            scene.gui->getElementFromId(414141));
-
-        if (stats.winner) {
-            winned = true;
-        } else if (stats.draw) {
-            equality = true;
-        }
-        if (winned) {
-            win->setVisible(true);
-            Scheduler::stopTask(TIMER_TASK);
-        } else if (equality) {
-            draw->setVisible(true);
-        }
     }
 
     void PlayScene::setupWaterBackground(SceneManager::Scene &scene)
@@ -94,10 +73,10 @@ namespace IndieStudio {
         // irr::scene::ISceneNode* water = scene.scene->addWaterSurfaceSceneNode(
         //     mesh->getMesh(0), 1.0f, 500.0f, 10.0f);
         // water->setPosition(irr::core::vector3df(150, 7, 100));
-        // water->setMaterialTexture(0, scene.manager->textureManager.getTexture("assets/textures/water_stones.jpg").content);
-        // water->setMaterialTexture(1, scene.manager->textureManager.getTexture("assets/textures/water.jpg").content);
+        // water->setMaterialTexture(0, scene.manager->textureManager->getTexture("assets/textures/water_stones.jpg").content);
+        // water->setMaterialTexture(1, scene.manager->textureManager->getTexture("assets/textures/water.jpg").content);
         // water->setMaterialType(irr::video::EMT_REFLECTION_2_LAYER);
-        scene.scene->addSkyDomeSceneNode(scene.manager->textureManager.getTexture("assets/textures/skydome.jpg").content);
+        scene.scene->addSkyDomeSceneNode(scene.manager->textureManager->getTexture("assets/textures/skydome.jpg").content);
 //        //node->setMaterialFlag(irr::video::EMF_NORMALIZE_NORMALS, true);
         // scene.scene->setShadowColor(irr::video::SColor(100, 0, 0, 0));
         // water->setMaterialFlag(irr::video::EMF_LIGHTING, true);
@@ -111,7 +90,7 @@ namespace IndieStudio {
         irr::scene::ISceneNode* light = scene.scene->addBillboardSceneNode(lightnode, irr::core::dimension2d<irr::f32>(50, 50));
         light->setMaterialFlag(irr::video::EMF_LIGHTING, false);
         light->setMaterialType(irr::video::EMT_TRANSPARENT_ADD_COLOR);
-        light->setMaterialTexture(0, scene.manager->textureManager.getTexture("assets/textures/particlewhite.bmp").content);
+        light->setMaterialTexture(0, scene.manager->textureManager->getTexture("assets/textures/particlewhite.bmp").content);
         lightnode->addAnimator(scene.scene->createFlyCircleAnimator(lightnode->getAbsolutePosition(), 120, 0.0001));
 
         lightnode = scene.scene->addLightSceneNode(
@@ -120,7 +99,7 @@ namespace IndieStudio {
         light = scene.scene->addBillboardSceneNode(lightnode, irr::core::dimension2d<irr::f32>(50, 50));
         light->setMaterialFlag(irr::video::EMF_LIGHTING, false);
         light->setMaterialType(irr::video::EMT_TRANSPARENT_ADD_COLOR);
-        light->setMaterialTexture(0, scene.manager->textureManager.getTexture("assets/textures/particlewhite.bmp").content);
+        light->setMaterialTexture(0, scene.manager->textureManager->getTexture("assets/textures/particlewhite.bmp").content);
         lightnode->addAnimator(scene.scene->createFlyCircleAnimator(lightnode->getAbsolutePosition(), 120, 0.0001, {0.0, 1.0, 0.0}, 0.5));
 
         // scene.scene->addLightSceneNode(0, irr::core::vector3df(0, -50, 0),
@@ -154,7 +133,7 @@ namespace IndieStudio {
         irr::gui::IGUIImage *timer = guiEnv->addImage(irr::core::recti(
             {1280 / 2 - (300 / 2), 20}, {(1280 / 2 + (300 / 2)), 20 + 80 }
         ), guiRoot);
-        timer->setImage(scene.manager->textureManager.getTexture("assets/textures/timer.png").content);
+        timer->setImage(scene.manager->textureManager->getTexture("assets/textures/timer.png").content);
         timer->setScaleImage(true);
 
         irr::gui::IGUIStaticText *timerText = guiEnv->addStaticText(L"00:00",
@@ -173,7 +152,7 @@ namespace IndieStudio {
             irr::gui::IGUIImage *icon = guiEnv->addImage(irr::core::recti(
                 iconPositions[i], {iconPositions[i].X + wi, iconPositions[i].Y + hi}
             ), guiRoot);
-            icon->setImage(scene.manager->textureManager.getTexture(
+            icon->setImage(scene.manager->textureManager->getTexture(
                 "assets/textures/player_" + Constants::PLAYER_COLORS[i] + "_icon.png").content);
             icon->setScaleImage(true);
 
@@ -190,8 +169,8 @@ namespace IndieStudio {
             irr::gui::IGUIImage *banner = guiEnv->addImage(bannerRect, guiRoot);
 
             irr::video::ITexture *bannerTexture = (i >= 2
-                ? scene.manager->textureManager.getTexture("assets/textures/player_banner_inverse.png").content
-                : scene.manager->textureManager.getTexture("assets/textures/player_banner.png").content
+                ? scene.manager->textureManager->getTexture("assets/textures/player_banner_inverse.png").content
+                : scene.manager->textureManager->getTexture("assets/textures/player_banner.png").content
             );
 
             banner->setImage(bannerTexture);
@@ -208,7 +187,7 @@ namespace IndieStudio {
             }
 
             irr::gui::IGUIImage *controlProviderIcon = guiEnv->addImage(controlProviderIconRect, guiRoot);
-            controlProviderIcon->setImage(scene.manager->textureManager.getTexture(
+            controlProviderIcon->setImage(scene.manager->textureManager->getTexture(
                 static_cast<WorldManager &>(Game::INSTANCE->getWorldManager()).getLoadedWorldImpl()->
                 getSettings().players[i].controlProviderPtr->getIconPath()).content);
             controlProviderIcon->setScaleImage(true);
@@ -217,7 +196,7 @@ namespace IndieStudio {
                 {bannerRect.UpperLeftCorner.X + 30, bannerRect.UpperLeftCorner.Y + 8},
                 {bannerRect.UpperLeftCorner.X + 30 + 24, bannerRect.UpperLeftCorner.Y + 8 + 24}
             ), guiRoot);
-            killIcon->setImage(scene.manager->textureManager.getTexture("assets/textures/icons/bomberman.png").content);
+            killIcon->setImage(scene.manager->textureManager->getTexture("assets/textures/icons/bomberman.png").content);
             killIcon->setScaleImage(true);
 
             irr::gui::IGUIStaticText *killCount = guiEnv->addStaticText(L"0", irr::core::recti(
@@ -230,7 +209,7 @@ namespace IndieStudio {
                 {bannerRect.UpperLeftCorner.X + 110, bannerRect.UpperLeftCorner.Y + 8},
                 {bannerRect.UpperLeftCorner.X + 110 + 24, bannerRect.UpperLeftCorner.Y + 8 + 24}
             ), guiRoot);
-            bombIcon->setImage(scene.manager->textureManager.getTexture("assets/textures/icons/bomb.png").content);
+            bombIcon->setImage(scene.manager->textureManager->getTexture("assets/textures/icons/bomb.png").content);
             bombIcon->setScaleImage(true);
 
             irr::gui::IGUIStaticText *bombCount = guiEnv->addStaticText(L"0", irr::core::recti(
@@ -242,26 +221,10 @@ namespace IndieStudio {
             irr::gui::IGUIImage *deathCross = guiEnv->addImage(irr::core::recti(
                 iconPositions[i], {iconPositions[i].X + wi, iconPositions[i].Y + hi}
             ), guiRoot, 424242 + (i * 10) + 2);
-            deathCross->setImage(scene.manager->textureManager.getTexture(
-                "assets/textures/red-cross.png").content);
+            deathCross->setImage(scene.manager->textureManager->getTexture(
+                "assets/textures/icons/bomb.png").content);
             deathCross->setScaleImage(true);
             deathCross->setVisible(false);
-
-            irr::gui::IGUIImage *win = guiEnv->addImage(irr::core::recti(
-                {350, 450}, { 350 + 592, 450 + 200 }
-            ), guiRoot, 434343);
-            win->setImage(scene.manager->textureManager.getTexture(
-                "assets/textures/win.png").content);
-            win->setScaleImage(true);
-            win->setVisible(false);
-
-            irr::gui::IGUIImage *draw = guiEnv->addImage(irr::core::recti(
-                {350, 450}, { 350 + 592, 450 + 200 }
-            ), guiRoot, 414141);
-            draw->setImage(scene.manager->textureManager.getTexture(
-                "assets/textures/draw.png").content);
-            draw->setScaleImage(true);
-            draw->setVisible(false);
         }
     }
 

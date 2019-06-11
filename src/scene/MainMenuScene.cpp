@@ -24,7 +24,7 @@ namespace IndieStudio {
         BACKGROUND_MUSIC.setPlayingOffset(sf::seconds(21));
         BACKGROUND_MUSIC.setLoop(true);
 
-        scene.scene->addSkyDomeSceneNode(scene.manager->textureManager.getTexture("assets/textures/skydome.jpg").content);
+        scene.scene->addSkyDomeSceneNode(scene.manager->textureManager->getTexture("assets/textures/skydome.jpg").content);
 
         scene.scene->addCameraSceneNode(0, irr::core::vector3df(50, 0, 0), irr::core::vector3df(0, 0, 0));
 
@@ -43,7 +43,7 @@ namespace IndieStudio {
         auto guiRoot = scene.gui;
 
         guiEnv->addImage(
-            scene.manager->textureManager.getTexture("assets/textures/title.png").content,
+            scene.manager->textureManager->getTexture("assets/textures/title.png").content,
             irr::core::position2di(300, 75), true, guiRoot
         );
 
@@ -67,7 +67,7 @@ namespace IndieStudio {
             throw RessourceError("Failed to load player.md3");
 
         jesusModel->setMaterialFlag(irr::video::EMF_LIGHTING, false);
-        jesusModel->setMaterialTexture(0, scene.manager->textureManager.getTexture("assets/textures/jesus.png").content);
+        jesusModel->setMaterialTexture(0, scene.manager->textureManager->getTexture("assets/textures/jesus.png").content);
         jesusModel->setAnimationSpeed(30);
         jesusModel->setScale(irr::core::vector3df(0.7f ,0.7f ,0.7f));
         jesusModel->setPosition(irr::core::vector3df(0, -5, 0));
@@ -84,7 +84,7 @@ namespace IndieStudio {
             throw RessourceError("Failed to load player.md3");
 
         anms->setMaterialFlag(irr::video::EMF_LIGHTING, false);
-        anms->setMaterialTexture(0, scene.manager->textureManager.getTexture("assets/textures/player_white.png").content);
+        anms->setMaterialTexture(0, scene.manager->textureManager->getTexture("assets/textures/player_white.png").content);
         anms->setFrameLoop(0, 27);
         anms->setAnimationSpeed(30);
         anms->setScale(irr::core::vector3df(8.f,8.f,8.f));
@@ -111,13 +111,13 @@ namespace IndieStudio {
             int randTexture = rand() % 4;
 
             if (randTexture == 0)
-                clone->setMaterialTexture(0, scene.manager->textureManager.getTexture("assets/textures/player_black.png").content);
+                clone->setMaterialTexture(0, scene.manager->textureManager->getTexture("assets/textures/player_black.png").content);
             else if (randTexture == 1)
-                clone->setMaterialTexture(0, scene.manager->textureManager.getTexture("assets/textures/player_pink.png").content);
+                clone->setMaterialTexture(0, scene.manager->textureManager->getTexture("assets/textures/player_pink.png").content);
             else if (randTexture == 2)
-                clone->setMaterialTexture(0, scene.manager->textureManager.getTexture("assets/textures/player_red.png").content);
+                clone->setMaterialTexture(0, scene.manager->textureManager->getTexture("assets/textures/player_red.png").content);
             else
-                clone->setMaterialTexture(0, scene.manager->textureManager.getTexture("assets/textures/player_white.png").content);
+                clone->setMaterialTexture(0, scene.manager->textureManager->getTexture("assets/textures/player_white.png").content);
         }
     }
 

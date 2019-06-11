@@ -14,6 +14,28 @@ namespace IndieStudio {
     TextureManager::TextureManager() : logger("texturemanager")
     {}
 
+    void TextureManager::init()
+    {
+        registerTexture("assets/textures/skydome.jpg");
+        registerTexture("assets/textures/title.png");
+        registerTexture("assets/textures/water_stones.jpg");
+        registerTexture("assets/textures/water.jpg");
+        registerTexture("assets/textures/particlewhite.bmp");
+        registerTexture("assets/textures/jesus.png");
+
+        for (const std::string &color : Constants::PLAYER_COLORS) {
+            registerTexture("assets/textures/player_" + color + ".png");
+            registerTexture("assets/textures/player_" + color + "_icon.png");
+        }
+
+        registerTexture("assets/textures/player_banner.png");
+        registerTexture("assets/textures/player_banner_inverse.png");
+        registerTexture("assets/textures/timer.png");
+        registerTexture("assets/textures/icons/bomb.png");
+        registerTexture("assets/textures/icons/bomberman.png");
+    }
+
+
     void TextureManager::registerTexture(std::string id)
     {
         Texture texture;

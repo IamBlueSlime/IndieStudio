@@ -25,7 +25,8 @@ namespace IndieStudio {
         this->registry.add(id, controlProvider);
         this->logger.debug("Registered control provider '" + id + "'.");
 
-        Game::INSTANCE->getSceneManager().textureManager.registerTexture(
+        std::cout << "textureManager" << Game::INSTANCE->getSceneManager().textureManager << std::endl;
+        Game::INSTANCE->getSceneManager().textureManager->registerTexture(
             controlProvider->getIconPath());
     }
 

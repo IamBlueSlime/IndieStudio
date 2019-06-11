@@ -19,7 +19,7 @@ namespace IndieStudio {
     {
         settings = WorldSettings();
 
-        scene.scene->addSkyDomeSceneNode(scene.manager->textureManager.getTexture("assets/textures/skydome.jpg").content);
+        scene.scene->addSkyDomeSceneNode(scene.manager->textureManager->getTexture("assets/textures/skydome.jpg").content);
         scene.scene->addCameraSceneNode(0, irr::core::vector3df(0, 0, -50), irr::core::vector3df(0, 0, 0));
 
         setupMenu(scene);
@@ -35,7 +35,7 @@ namespace IndieStudio {
         auto guiRoot = scene.gui;
 
         guiEnv->addImage(
-            scene.manager->textureManager.getTexture("assets/textures/title.png").content,
+            scene.manager->textureManager->getTexture("assets/textures/title.png").content,
             irr::core::position2di(300, 75), true, guiRoot
         );
 
@@ -105,7 +105,7 @@ namespace IndieStudio {
             throw RessourceError("Failed to load player.md3");
 
         anms->setMaterialFlag(irr::video::EMF_LIGHTING, false);
-        anms->setMaterialTexture(0, scene.manager->textureManager.getTexture("assets/textures/player_" + Constants::PLAYER_COLORS[idx] + ".png").content);
+        anms->setMaterialTexture(0, scene.manager->textureManager->getTexture("assets/textures/player_" + Constants::PLAYER_COLORS[idx] + ".png").content);
         anms->setFrameLoop(0, 27);
         anms->setAnimationSpeed(30);
         anms->setScale(irr::core::vector3df(8.f,8.f,8.f));

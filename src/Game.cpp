@@ -12,7 +12,7 @@ namespace IndieStudio {
 
     Game *Game::INSTANCE = nullptr;
 
-    Game::Game() : logger("game"), achievementManager(*this), modManager(*this)
+    Game::Game() : logger("game"), achievementManager(*this), modManager(*this), sceneManager(&this->textureManager)
     {}
 
     void Game::start()
@@ -20,6 +20,7 @@ namespace IndieStudio {
         this->logger.info("Starting game...");
         this->statisticManager.load();
         this->soundManager.init();
+        this->textureManager.init();
         this->fontManager.init();
         this->controlProviderManager.init();
         this->worldManager.init();

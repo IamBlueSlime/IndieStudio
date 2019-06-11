@@ -186,7 +186,7 @@ namespace IndieStudio {
             irr::core::vector3df(pos.x, 73, pos.z)
         );
         auto &powerup = ecs.addEntity();
-        
+
         node->setVisible(true);
         ecs.setComponent(powerup, Node(node));
         ecs.setComponent(powerup, MaterialFlag(irr::video::EMF_LIGHTING, true));

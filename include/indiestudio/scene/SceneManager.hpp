@@ -12,7 +12,7 @@
 #include <unordered_map>
 #include <string>
 #include <irrlicht.h>
-#include "indiestudio/common/TextureManager.hpp"
+#include "indiestudio/common/ITextureManager.hpp"
 #include "indiestudio/common/MeshManager.hpp"
 
 namespace IndieStudio {
@@ -38,7 +38,7 @@ namespace IndieStudio {
 				[](const irr::SEvent &) { return false; };
 		};
 
-		SceneManager();
+		SceneManager(ITextureManager *textureManager);
 		~SceneManager() = default;
 
 		void init();
@@ -53,7 +53,7 @@ namespace IndieStudio {
 		const std::unordered_map<std::string, Scene> &getContainer()
 			{ return this->container; }
 
-		TextureManager textureManager;
+		ITextureManager *textureManager = 0;
 		MeshManager meshManager;
 	protected:
 	private:

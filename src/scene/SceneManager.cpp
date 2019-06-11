@@ -23,9 +23,10 @@ namespace IndieStudio {
     const std::string SceneManager::SETTINGS_ID = "settings";
     const std::string SceneManager::PLAY_ID = "play";
 
-    SceneManager::SceneManager()
+    SceneManager::SceneManager(ITextureManager *textureManager)
         : eventReceiver(std::make_unique<EventReceiver>(*this))
     {
+        this->textureManager = textureManager;
         irr::IrrlichtDevice *device = IndieStudio::Singleton::getDevice();
         device->setEventReceiver(this->eventReceiver.get());
 
@@ -58,27 +59,6 @@ namespace IndieStudio {
 
     void SceneManager::init()
     {
-        textureManager.registerTexture("assets/textures/skydome.jpg");
-        textureManager.registerTexture("assets/textures/title.png");
-        textureManager.registerTexture("assets/textures/water_stones.jpg");
-        textureManager.registerTexture("assets/textures/water.jpg");
-        textureManager.registerTexture("assets/textures/particlewhite.bmp");
-        textureManager.registerTexture("assets/textures/jesus.png");
-        textureManager.registerTexture("assets/textures/red-cross.png");
-        textureManager.registerTexture("assets/textures/win.png");
-        textureManager.registerTexture("assets/textures/draw.png");
-
-        for (const std::string &color : Constants::PLAYER_COLORS) {
-            textureManager.registerTexture("assets/textures/player_" + color + ".png");
-            textureManager.registerTexture("assets/textures/player_" + color + "_icon.png");
-        }
-
-        textureManager.registerTexture("assets/textures/player_banner.png");
-        textureManager.registerTexture("assets/textures/player_banner_inverse.png");
-        textureManager.registerTexture("assets/textures/timer.png");
-        textureManager.registerTexture("assets/textures/icons/bomb.png");
-        textureManager.registerTexture("assets/textures/icons/bomberman.png");
-
         meshManager.registerMesh("assets/models/cube.obj");
         meshManager.registerMesh("assets/models/player.md3");
         meshManager.registerMesh("assets/models/jesus.md3");
