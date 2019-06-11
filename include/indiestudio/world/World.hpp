@@ -53,7 +53,7 @@ namespace IndieStudio {
         ECS::Component::Particle,
         ECS::Component::TextureArray,
         ECS::Component::Stat,
-        ECS::Component::MaxBomb
+        ECS::Component::RealPlayer
     >;
 
     using WorldECSSystems = ECS::SystemsImpl<
@@ -66,7 +66,8 @@ namespace IndieStudio {
         ECS::System::PickUpPowerUpSystem<WorldECS>,
         ECS::System::IASystem<WorldECS>,
         ECS::System::SolidBombSystem<WorldECS>,
-        ECS::System::DeathSystem<WorldECS>
+        ECS::System::DeathSystem<WorldECS>,
+        ECS::System::WinLooseSystem<WorldECS>
     >;
 
     class WorldManager;

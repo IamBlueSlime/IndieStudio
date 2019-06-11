@@ -528,7 +528,7 @@ namespace IndieStudio::ECS::System {
             return std::make_optional(decision.value().first);
         }
 
-        std::optional<typename Poti<ManagerType>::Direction> destroy_wall(ManagerType &manager, Position position, IWorld *world, std::size_t id) {
+        std::optional<typename Poti<ManagerType>::Direction> destroy_wall(ManagerType &manager, Position position, IWorld *world, [[gnu::unused]] std::size_t id) {
             MapPattern *tilemap = world->getPattern();
 
             //std::cout << "Breacking wall!" << std::endl;
@@ -544,7 +544,7 @@ namespace IndieStudio::ECS::System {
 
             if (decision.value().second == 1) {
                 //std::cout << "Breacked wall!" << std::endl;
-                std::pair<short, short> player_coord = MapPattern::positionToTile(position.x, position.z);
+                //std::pair<short, short> player_coord = MapPattern::positionToTile(position.x, position.z);
 
 //                if (this->simulate_bomb({static_cast<std::size_t>(player_coord.first), static_cast<std::size_t>(player_coord.second)}, manager, position, world)) {
                     //std::cerr << "Posing bomb!! :0" << std::endl;
