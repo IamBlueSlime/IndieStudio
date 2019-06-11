@@ -280,6 +280,7 @@ namespace IndieStudio {
         BACKGROUND_MUSIC.setBuffer(static_cast<SoundManager &>(
             Game::INSTANCE->getSoundManager()).getSound("assets/sounds/bg_music_1.wav").buffer);
         BACKGROUND_MUSIC.setLoop(true);
+        BACKGROUND_MUSIC.setVolume(30.0f);
 
         irr::gui::IGUIStaticText *countdown = guiEnv->addStaticText(L"5", irr::core::recti(
             {w / 2 - 20, h / 2 - 40}, { w / 2 + 30, h / 2 + 40}
