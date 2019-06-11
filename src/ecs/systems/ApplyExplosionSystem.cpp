@@ -18,7 +18,7 @@ namespace IndieStudio::ECS::System {
         IndieStudio::MapPattern *pattern = world->getPattern();
 
         manager.template forEntitiesWith<IsBomb, Position, IsExploding, ExplosionRange, ExplosionLifeTime>(
-        [&manager, &pattern, &world](auto &data, [[gnu::unused]] auto id) {
+        [&manager, &pattern, &world, this](auto &data, [[gnu::unused]] auto id) {
 
             auto &bombPosition = manager.template getComponent<Position>(data);
             auto &bombRange = manager.template getComponent<ExplosionRange>(data);
@@ -47,8 +47,8 @@ namespace IndieStudio::ECS::System {
                     manager.delEntity(entity);
                     bombRange.explosionRangeUp = i;
                     world->createBlast(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1000);
-                    //TODO: add power up if it drops
                     pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::EMPTY);
+                    this->dropPowerUp(world, posInTile);
                     break;
                 }  else if (tile == IndieStudio::MapPattern::TileType::BOMB) {
                     std::size_t entityID = 0;
@@ -96,9 +96,9 @@ namespace IndieStudio::ECS::System {
                     node.node->setVisible(false);
                     manager.delEntity(entity);
                     bombRange.explosionRangeDown = i;
-                    //TODO: add power up if it drops
                     world->createBlast(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1000);
                     pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::EMPTY);
+                    this->dropPowerUp(world, posInTile);
                     break;
                 } else if (tile == IndieStudio::MapPattern::TileType::BOMB) {
                     std::size_t entityID = 0;
@@ -146,9 +146,9 @@ namespace IndieStudio::ECS::System {
                     node.node->setVisible(false);
                     manager.delEntity(entity);
                     bombRange.explosionRangeLeft = i;
-                    //TODO: add power up if it drops
                     world->createBlast(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1000);
                     pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::EMPTY);
+                    this->dropPowerUp(world, posInTile);
                     break;
                 } else if (tile == IndieStudio::MapPattern::TileType::BOMB) {
                     std::size_t entityID = 0;
@@ -196,9 +196,9 @@ namespace IndieStudio::ECS::System {
                     node.node->setVisible(false);
                     manager.delEntity(entity);
                     bombRange.explosionRangeRight = i;
-                    //TODO: add power up if it drops
                     world->createBlast(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1000);
                     pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::EMPTY);
+                    this->dropPowerUp(world, posInTile);
                     break;
                 }  else if (tile == IndieStudio::MapPattern::TileType::BOMB) {
                     std::size_t entityID = 0;
@@ -231,6 +231,18 @@ namespace IndieStudio::ECS::System {
                 }
             }
         });
+    }
+
+    template<typename ManagerType>
+    void ApplyExplosionSystem<ManagerType>::dropPowerUp(World *world, std::pair<short, short> posInTile) {
+        int spawnRand = rand() % 3;
+        int typeRand;
+        IndieStudio::MapPattern *pattern = world->getPattern();
+        if (spawnRand != 1)
+            return;
+        typeRand = rand() % 2;
+        world->createPowerUp(typeRand, Position(posInTile.first * 20 + 0.5, 80, posInTile.second * 20 + 0.5));
+        pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::POWER_UP);
     }
 
     template class ApplyExplosionSystem<WorldECS>;

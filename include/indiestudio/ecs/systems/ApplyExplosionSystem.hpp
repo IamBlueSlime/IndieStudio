@@ -18,5 +18,6 @@ namespace IndieStudio::ECS::System {
 
     protected:
     private:
+        void dropPowerUp(World *world, std::pair<short, short> posInTile);
     };
 }

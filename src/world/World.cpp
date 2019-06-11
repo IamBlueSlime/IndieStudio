@@ -49,16 +49,6 @@ namespace IndieStudio {
             throw IndieError(
                 "Failed to find the world generator " + this->settings.worldGenerator);
 
-        // auto &powerup = ecs.addEntity();
-
-        // ecs.setComponent(powerup, Node(Node(static_cast<irr::scene::IAnimatedMeshSceneNode *>(node->clone()))));
-        // ecs.setComponent(powerup, MaterialTexture(0, "assets/textures/tmp_powerUp.png"));
-        // ecs.setComponent(powerup, MaterialFlag(irr::video::EMF_LIGHTING, true));
-        // ecs.setComponent(powerup, Scale(8, 8, 8));
-        // ecs.setComponent(powerup, Position(23, 75, 40));
-        // ecs.setComponent(powerup, IsPowerUp());
-        // ecs.setComponent(powerup, Setup());
-
         generator->generate(this->pattern.get());
 
         this->createTerrain();
@@ -171,6 +161,26 @@ namespace IndieStudio {
         });
 
         return ret;
+    }
+
+    void World::createPowerUp(std::size_t type, const Position &pos) {
+        auto node = scene.scene->addAnimatedMeshSceneNode(scene.scene->getMesh("assets/models/cube.obj"));        
+        auto &powerup = ecs.addEntity();
+        
+        node->setVisible(true);
+        ecs.setComponent(powerup, Node(node));
+        ecs.setComponent(powerup, MaterialFlag(irr::video::EMF_LIGHTING, true));
+        ecs.setComponent(powerup, Scale(8, 8, 8));
+        ecs.setComponent(powerup, Position(pos.x, 73, pos.z));
+        ecs.setComponent(powerup, IsPowerUp(type));
+        ecs.setComponent(powerup, Setup());
+        if (type == IsPowerUp::SPEED_POWERUP)
+            ecs.setComponent(powerup, MaterialTexture(0, "assets/textures/tmp_SpeedPowerUp.png"));
+        else if (type == IsPowerUp::STOCK_POWERUP)
+            ecs.setComponent(powerup, MaterialTexture(0, "assets/textures/tmp_StockPowerUp.png"));
+        else
+            ecs.setComponent(powerup, MaterialTexture(0, "assets/textures/tmp_RangePowerUp.png"));
+        IndieStudio::Initializer<WorldECS>::initAllEntities(this->ecs, this->scene.scene);
     }
 
     void World::move(const irr::core::vector3df &direction, ECS::Position &pos, ECS::Speed &speed, ECS::Node &node)

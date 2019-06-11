@@ -20,16 +20,19 @@ namespace IndieStudio::ECS::System {
             auto &stat = manager.template getComponent<Stat>(data);
             MapPattern *tilemap = world->getPattern();
             
-            manager.template forEntitiesWith<IsPowerUp>(
+            manager.template forEntitiesWith<IsPowerUp, Position>(
                 [&manager, &playerPos, &stat, &speed, tilemap, this](auto &entity, [[gnu::unused]] auto id) {
+                    auto &powerUpPos = manager.template getComponent<Position>(entity); 
                     auto tilePlayerPos = MapPattern::positionToTile(playerPos.x, playerPos.z);
+                    auto &powerUp =  manager.template getComponent<IsPowerUp>(entity);
+                    auto tilePowerUpPos = MapPattern::positionToTile(powerUpPos.x, powerUpPos.z);
 
-                    if (this->isOnPowerUp(tilePlayerPos, tilemap)) {
+                    if (this->isOnPowerUp(tilePlayerPos, tilePowerUpPos, tilemap)) {
                         auto &node = manager.template getComponent<Node>(entity);
                         node.node->setVisible(false);
                         tilemap->set(tilePlayerPos.first, 1, tilePlayerPos.second, MapPattern::TileType::EMPTY);
                         manager.delEntity(entity);
-                        applyPowerUp(speed, stat);
+                        applyPowerUp(speed, stat, powerUp);
                     }
             });
         });
@@ -37,23 +40,25 @@ namespace IndieStudio::ECS::System {
 
     template<typename ManagerType>
     bool PickUpPowerUpSystem<ManagerType>::isOnPowerUp(
-        const std::pair<std::size_t, std::size_t> &player, MapPattern *map)
+        const std::pair<std::size_t, std::size_t> &player, 
+        const std::pair<std::size_t, std::size_t> &powerUp, MapPattern *map)
     {
-        if (map->get(player.first, 1, player.second) == MapPattern::TileType::POWER_UP)
+        if (player.first == powerUp.first && player.second == powerUp.second)
             return true;
-
         return false;
     }
 
     template<typename ManagerType>
-    void PickUpPowerUpSystem<ManagerType>::applyPowerUp(Speed &speed, Stat &stat)
+    void PickUpPowerUpSystem<ManagerType>::applyPowerUp(Speed &speed, Stat &stat, IsPowerUp &powerUp)
     {
-        std::cout << "POWER UP APPLIED !" << std::endl;
-        speed.x += 1;
-        speed.y += 1;
-        speed.z += 1;
-        stat.bomb += 1;
-        stat.range += 1;
+        if (powerUp.type == IsPowerUp::SPEED_POWERUP) {   
+            speed.x += 0.1;
+            speed.y += 0.1;
+            speed.z += 0.1;
+        } else if (powerUp.type == IsPowerUp::STOCK_POWERUP)
+            stat.bomb += 1;
+        else
+            stat.range += 1;
     }
 
     template class PickUpPowerUpSystem<WorldECS>;

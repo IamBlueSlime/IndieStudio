@@ -107,6 +107,17 @@ namespace IndieStudio::ECS::Component {
     };
 
     struct IsPowerUp {
+        enum {
+            SPEED_POWERUP = 0,
+            STOCK_POWERUP = 1,
+            RANGE_POWERUP = 2
+        };
+
+        IsPowerUp(int powerUpType = 0)
+        :
+        type(powerUpType) {}
+
+        int type;
     };
 
     struct IsBlock {
