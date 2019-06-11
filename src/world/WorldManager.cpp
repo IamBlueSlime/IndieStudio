@@ -52,8 +52,10 @@ namespace IndieStudio {
 
         file.close();
         this->assertValidWorld(buffer);
+        logger.debug("The world file is valid.");
 
         std::unique_ptr<World> world = std::make_unique<World>();
+        logger.debug("Unpacking world...");
         world->unpack(buffer);
         logger.info("Loaded world '" + world->getSettings().name + "'.");
 
@@ -61,13 +63,13 @@ namespace IndieStudio {
         return this->loadedWorld.get();
     }
 
-    void WorldManager::save(const std::string &path, World &world)
+    void WorldManager::save(const std::string &path, World *world)
     {
-        logger.info("Saving world '" + world.getSettings().name + "' at '" + path + "'...");
+        logger.info("Saving world '" + world->getSettings().name + "' at '" + path + "'...");
         std::ofstream file(path, std::ios::trunc);
 
         ByteBuffer buffer;
-        world.pack(buffer);
+        world->pack(buffer);
 
         World::FileHeader header;
         std::memcpy(header.magic, FILE_MAGIC, sizeof(header.magic));

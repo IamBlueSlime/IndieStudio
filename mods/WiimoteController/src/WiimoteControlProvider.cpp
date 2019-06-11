@@ -51,13 +51,8 @@ namespace IndieStudio::WiimoteController {
         if (event.EventType == irr::EEVENT_TYPE::EET_GUI_EVENT
         && event.GUIEvent.EventType == irr::gui::EGUI_EVENT_TYPE::EGET_BUTTON_CLICKED
         && event.GUIEvent.Caller->getID() - playerIdx == 4343) {
-            uint8_t ledBindings[4] = {
-                CWIID_LED1_ON, CWIID_LED2_ON, CWIID_LED3_ON, CWIID_LED4_ON
-            };
-
-            this->initializeWiimote(area, playerIdx);
-            cwiid_set_led(this->wiimotes[playerIdx], ledBindings[playerIdx]);
-
+            this->initializeWiimote(playerIdx);
+            area->getElementFromId(4343 + playerIdx)->setEnabled(false);
             return true;
         }
 
@@ -92,9 +87,12 @@ namespace IndieStudio::WiimoteController {
         return cpy;
     }
 
-    void WiimoteControlProvider::initializeWiimote(irr::gui::IGUIElement *area,
-        int idx)
+    void WiimoteControlProvider::initializeWiimote(int idx)
     {
+        uint8_t ledBindings[4] = {
+            CWIID_LED1_ON, CWIID_LED2_ON, CWIID_LED3_ON, CWIID_LED4_ON
+        };
+
         bdaddr_t wiimoteAddr;
         bdaddr_t broadcastAddr = {{0, 0, 0, 0, 0, 0}};
 
@@ -127,7 +125,7 @@ namespace IndieStudio::WiimoteController {
         usleep(1000 * 250);
         cwiid_set_rumble(this->wiimotes[idx], 0);
 
-        area->getElementFromId(4343 + idx)->setEnabled(false);
+        cwiid_set_led(this->wiimotes[idx], ledBindings[idx]);
     }
 
     void WiimoteControlProvider::onWiimoteMessage(cwiid_wiimote_t *wiimote, int msgsCount,
@@ -192,6 +190,12 @@ namespace IndieStudio::WiimoteController {
                 EVENTS_TO_PUSH.push_back(eventData);
             }
         }
+    }
+
+    void WiimoteControlProvider::unpack(ByteBuffer &buffer, int playerIdx)
+    {
+        (void) buffer;
+        this->initializeWiimote(playerIdx);
     }
 
 }

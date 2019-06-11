@@ -39,11 +39,7 @@ namespace IndieStudio::WiimoteController {
             (void) playerIdx;
         }
 
-        void unpack(ByteBuffer &buffer, int playerIdx) override
-        {
-            (void) buffer;
-            (void) playerIdx;
-        }
+        void unpack(ByteBuffer &buffer, int playerIdx) override;
 
     protected:
     private:
@@ -56,7 +52,7 @@ namespace IndieStudio::WiimoteController {
         WiimoteController &mod;
         cwiid_wiimote_t *wiimotes[4];
 
-        void initializeWiimote(irr::gui::IGUIElement *area, int idx);
+        void initializeWiimote(int idx);
         
         static void onWiimoteMessage(cwiid_wiimote_t *wiimote, int msgsCount,
             union cwiid_mesg msgs[], struct timespec *timestamp);

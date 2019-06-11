@@ -14,29 +14,28 @@ namespace IndieStudio {
 
     class ByteBufferUtils {
 	public:
-        template<typename L = std::size_t>
         static void writeString(ByteBuffer &buffer, const std::string &str)
         {
-            L len = str.size();
+            std::size_t len = str.size();
             buffer << len;
 
             for (char c : str)
                 buffer << c;
         }
 
-        template<typename L = std::size_t>
         static std::string readString(ByteBuffer &buffer)
         {
             std::string str;
 
-            L len; 
+            std::size_t len = 0;
             buffer >> len;
 
-            for (L i = 0; i < len; i += 1) {
+            for (std::size_t i = 0; i < len; i += 1) {
                 char c;
                 buffer >> c;
                 str += c;
             }
+
             return str;
         }
 

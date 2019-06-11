@@ -21,19 +21,7 @@ namespace IndieStudio {
     void KeyboardControlProvider::initConfigurationArea(irr::gui::IGUIEnvironment *guiEnv,
         irr::gui::IGUIElement *area, int playerIdx)
     {
-        ECS::Event::EventData eventData;
-        eventData.type = ECS::Event::EventType::INDIE_KEYBOARD_EVENT;
-        
-        eventData.keyInput.Key = DEFAULT_KEYS[playerIdx][0];
-        this->playerMappings[playerIdx].up = eventData;
-        eventData.keyInput.Key = DEFAULT_KEYS[playerIdx][1];
-        this->playerMappings[playerIdx].left = eventData;
-        eventData.keyInput.Key = DEFAULT_KEYS[playerIdx][2];
-        this->playerMappings[playerIdx].down = eventData;
-        eventData.keyInput.Key = DEFAULT_KEYS[playerIdx][3];
-        this->playerMappings[playerIdx].right = eventData;
-        eventData.keyInput.Key = DEFAULT_KEYS[playerIdx][4];
-        this->playerMappings[playerIdx].drop = eventData;
+        this->initPlayer(playerIdx);
 
         int dx = 20;
 
@@ -128,11 +116,29 @@ namespace IndieStudio {
 
     void KeyboardControlProvider::unpack(ByteBuffer &buffer, int playerIdx)
     {
+        this->initPlayer(playerIdx);
         buffer >> this->playerMappings[playerIdx].up.keyInput.Key;
         buffer >> this->playerMappings[playerIdx].left.keyInput.Key;
         buffer >> this->playerMappings[playerIdx].down.keyInput.Key;
         buffer >> this->playerMappings[playerIdx].right.keyInput.Key;
         buffer >> this->playerMappings[playerIdx].drop.keyInput.Key;
+    }
+
+    void KeyboardControlProvider::initPlayer(int playerIdx)
+    {
+        ECS::Event::EventData eventData;
+        eventData.type = ECS::Event::EventType::INDIE_KEYBOARD_EVENT;
+        
+        eventData.keyInput.Key = DEFAULT_KEYS[playerIdx][0];
+        this->playerMappings[playerIdx].up = eventData;
+        eventData.keyInput.Key = DEFAULT_KEYS[playerIdx][1];
+        this->playerMappings[playerIdx].left = eventData;
+        eventData.keyInput.Key = DEFAULT_KEYS[playerIdx][2];
+        this->playerMappings[playerIdx].down = eventData;
+        eventData.keyInput.Key = DEFAULT_KEYS[playerIdx][3];
+        this->playerMappings[playerIdx].right = eventData;
+        eventData.keyInput.Key = DEFAULT_KEYS[playerIdx][4];
+        this->playerMappings[playerIdx].drop = eventData;
     }
 
     void KeyboardControlProvider::updateButtons(irr::gui::IGUIElement *area,

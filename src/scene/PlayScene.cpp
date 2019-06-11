@@ -294,8 +294,9 @@ namespace IndieStudio {
 
     bool PlayScene::onEvent(SceneManager::Scene &scene, const irr::SEvent &event)
     {
-        World *world = static_cast<WorldManager &>(
-            Game::INSTANCE->getWorldManager()).getLoadedWorldImpl();
+        WorldManager &worldManager = static_cast<WorldManager &>(
+            Game::INSTANCE->getWorldManager());
+        World *world = worldManager.getLoadedWorldImpl();
 
         if (world->getSettings().elapsedSeconds == 0)
             return false;
@@ -305,6 +306,8 @@ namespace IndieStudio {
                 COUNTDOWN_SOUND.stop();
                 BACKGROUND_MUSIC.stop();
                 Scheduler::stopTask(PlayScene::TIMER_TASK);
+
+                worldManager.save("./snapshot.bmm", world);
 
                 scene.manager->setActiveScene(SceneManager::MAIN_MENU_ID);
                 return true;

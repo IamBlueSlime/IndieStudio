@@ -12,10 +12,10 @@ namespace IndieStudio {
 
     void WorldSettings::pack(ByteBuffer &buffer)
     {
-        ByteBufferUtils::writeString<unsigned short>(buffer, this->name);
+        ByteBufferUtils::writeString(buffer, this->name);
         buffer << this->width;
         buffer << this->height;
-        ByteBufferUtils::writeString<unsigned short>(buffer, this->worldGenerator);
+        ByteBufferUtils::writeString(buffer, this->worldGenerator);
         buffer << this->elapsedSeconds;
     }
 

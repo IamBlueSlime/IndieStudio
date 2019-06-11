@@ -27,7 +27,7 @@ namespace IndieStudio {
 
         World *create(WorldSettings &settings);
         World *load(const std::string &path);
-        void save(const std::string &path, World &world);
+        void save(const std::string &path, World *world);
 
         void registerGenerator(const std::string &name, IWorldGenerator *generator) override;
 

@@ -33,6 +33,7 @@ namespace IndieStudio {
         static const irr::EKEY_CODE DEFAULT_KEYS[4][5];
         Mappings playerMappings[4];
 
+        void initPlayer(int playerIdx);
         void updateButtons(irr::gui::IGUIElement *area, int playerIdx) const;
         bool isValidKeyboardKey(irr::EKEY_CODE code) const;
     };

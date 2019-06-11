@@ -6,6 +6,7 @@
 */
 
 #include "indiestudio/Game.hpp"
+#include "indiestudio/common/Error.hpp"
 #include "indiestudio/Constants.hpp"
 #include "indiestudio/common/Scheduler.hpp"
 #include "indiestudio/ecs/Events.hpp"
@@ -16,6 +17,7 @@
 #include "indiestudio/ecs/Initializer.hpp"
 #include "indiestudio/gameplay/BombFactory.hpp"
 #include "indiestudio/common/Error.hpp"
+#include "indiestudio/utils/ByteBufferUtils.hpp"
 
 namespace IndieStudio {
 
@@ -225,6 +227,12 @@ namespace IndieStudio {
     void World::pack(ByteBuffer &buffer)
     {
         this->settings.pack(buffer);
+
+        for (int i = 0; i < 4; i += 1) {
+            ByteBufferUtils::writeString(buffer, this->settings.players[i].controlProvider);
+            this->settings.players[i].controlProviderPtr->pack(buffer, i);
+        }
+
         this->pattern->pack(buffer);
 
         this->ecs.forEntitiesWith<Position, Stat>([&](auto &entity, std::size_t id) {
@@ -245,6 +253,21 @@ namespace IndieStudio {
     void World::unpack(ByteBuffer &buffer)
     {
         this->settings.unpack(buffer);
+
+        for (int i = 0; i < 4; i += 1) {
+            std::string controlProvider = ByteBufferUtils::readString(buffer);
+
+            try {
+                auto controlProviderPtr = Game::INSTANCE->getControlProviderManager().getControlProvider(controlProvider);
+                this->settings.players[i].controlProvider = controlProvider;
+                this->settings.players[i].controlProviderPtr = controlProviderPtr;
+                this->settings.players[i].controlProviderPtr->unpack(buffer, i);
+                this->settings.players[i].mappings = this->settings.players[i].controlProviderPtr->getPlayerMappings(i);
+            } catch (const ProviderError &ex) {
+                throw SaveError("Failed to find the control provider '" + controlProvider + "'");
+            }
+        }
+
         this->pattern = std::make_unique<MapPattern>(this->settings.width,
             this->settings.height);
         this->pattern->unpack(buffer);
