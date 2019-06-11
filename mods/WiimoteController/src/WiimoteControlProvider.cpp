@@ -59,6 +59,14 @@ namespace IndieStudio::WiimoteController {
         return false;
     }
 
+    void WiimoteControlProvider::onWorldQuit(int playerIdx)
+    {
+        if (this->wiimotes[playerIdx] != nullptr) {
+            cwiid_disconnect(this->wiimotes[playerIdx]);
+            this->wiimotes[playerIdx] = nullptr;
+        }
+    }
+
     IControlProvider::Mappings WiimoteControlProvider::getPlayerMappings(int playerIdx) const
     {
         ECS::Event::EventData eventData;

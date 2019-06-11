@@ -18,6 +18,11 @@ namespace IndieStudio {
         bool onConfigurationEvent(const irr::SEvent &event,
             irr::gui::IGUIElement *area, int playerIdx) override;
 
+        void onWorldQuit(int playerIdx) override
+        {
+            (void) playerIdx;
+        }
+
         Mappings getPlayerMappings(int playerIdx) const override;
         std::deque<ECS::Event::EventData> pollEvents() override
             { return std::deque<ECS::Event::EventData>(); }

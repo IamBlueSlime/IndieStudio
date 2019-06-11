@@ -31,6 +31,8 @@ namespace IndieStudio {
 			irr::gui::IGUIElement *area, int playerIdx) = 0;
 		virtual bool onConfigurationEvent(const irr::SEvent &event,
 			irr::gui::IGUIElement *area, int playerIdx) = 0;
+		
+		virtual void onWorldQuit(int playerIdx) = 0;
 
 		virtual Mappings getPlayerMappings(int playerIdx) const = 0;
 		virtual std::deque<ECS::Event::EventData> pollEvents() = 0;

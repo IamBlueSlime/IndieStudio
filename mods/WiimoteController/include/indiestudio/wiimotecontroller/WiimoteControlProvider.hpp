@@ -28,6 +28,8 @@ namespace IndieStudio::WiimoteController {
 		bool onConfigurationEvent(const irr::SEvent &event,
 			irr::gui::IGUIElement *area, int playerIdx) override;
 
+        void onWorldQuit(int playerIdx) override;
+
 		Mappings getPlayerMappings(int playerIdx) const override;
         std::deque<ECS::Event::EventData> pollEvents() override;
 

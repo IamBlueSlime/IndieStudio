@@ -30,6 +30,11 @@ namespace IndieStudio {
             return false;
         }
 
+        void onWorldQuit(int playerIdx) override
+        {
+            (void) playerIdx;
+        }
+
         Mappings getPlayerMappings(int playerIdx) const override
         {
             (void) playerIdx;

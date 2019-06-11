@@ -309,6 +309,9 @@ namespace IndieStudio {
 
                 worldManager.save("./snapshot.bmm", world);
 
+                for (int i = 0; i < 4; i += 1)
+                    world->getSettings().players[i].controlProviderPtr->onWorldQuit(i);
+
                 scene.manager->setActiveScene(SceneManager::MAIN_MENU_ID);
                 return true;
             }
