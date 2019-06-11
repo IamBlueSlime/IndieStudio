@@ -34,7 +34,7 @@ namespace IndieStudio {
     IControlProvider *ControlProviderManager::getControlProvider(const std::string &id)
     {
         if (!this->registry.has(id))
-            throw std::runtime_error("Failed to find control provider with id " + id);
+            throw ProviderError("Failed to find control provider with id " + id);
 
         return this->registry.get(id);
     }

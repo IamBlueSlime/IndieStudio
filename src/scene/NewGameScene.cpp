@@ -98,7 +98,7 @@ namespace IndieStudio {
             scene.scene->getMesh("assets/models/player.md3"), 0);
 
         if (!anms)
-            throw std::runtime_error("Failed to load player.md3");
+            throw RessourceError("Failed to load player.md3");
 
         anms->setMaterialFlag(irr::video::EMF_LIGHTING, false);
         anms->setMaterialTexture(0, scene.manager->textureManager.getTexture("assets/textures/player_" + Constants::PLAYER_COLORS[idx] + ".png").content);

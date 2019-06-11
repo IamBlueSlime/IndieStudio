@@ -8,6 +8,7 @@
 #include <fstream>
 #include <sstream>
 #include "indiestudio/common/Configuration.hpp"
+#include "indiestudio/common/Error.hpp"
 
 static const std::string DEFAULT = "___INTERNAL_DEFAULTVALUE___";
 
@@ -38,13 +39,13 @@ namespace IndieStudio {
             } else if (line[0] == '[') {
                 size_t end = line.find("]");
                 if (end == line.npos)
-                    throw std::runtime_error("Bad formatted section");
+                    throw SaveError("Bad formatted section");
                 currentSection = line.substr(1, end - 1);
                 continue;
             } else if (line[0]) {
                 size_t equal = line.find("=");
                 if (equal == 0)
-                    throw std::runtime_error("Bad formatted line");
+                    throw SaveError("Bad formatted line");
                 std::string key = line.substr(0, equal);
                 lskip(rstrip(key));
                 std::string value = "";
@@ -64,7 +65,7 @@ namespace IndieStudio {
             return;
         std::ofstream stream(this->filename);
         if (!stream.good())
-            throw std::runtime_error("Failed to open the configuration file");
+            throw SaveError("Failed to open the configuration file");
         for (auto sectionIt = this->sections.begin(); sectionIt != this->sections.end(); ++sectionIt) {
             std::map<std::string, std::string> section = sectionIt->second;
             if (sectionIt != this->sections.begin())
@@ -74,7 +75,7 @@ namespace IndieStudio {
                 stream << entryIt->first + "=" + entryIt->second << std::endl;
         }
     }
-    
+
     void Configuration::clear()
     {
         sections.clear();

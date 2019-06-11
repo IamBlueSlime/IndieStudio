@@ -10,6 +10,7 @@
 #include <sstream>
 #include "indiestudio/Game.hpp"
 #include "indiestudio/mod/ModManager.hpp"
+#include "indiestudio/common/Error.hpp"
 
 namespace IndieStudio {
 
@@ -42,7 +43,7 @@ namespace IndieStudio {
     {
         for (auto it = this->mods.begin(); it != this->mods.end(); ++it)
             it->second->onDisable(this->game);
-        
+
         this->mods.clear();
 
         for (LibraryWrapper &wrapper : this->modsLibraries)
@@ -57,7 +58,7 @@ namespace IndieStudio {
 
         try {
             wrapper = this->openLibrary(path);
-        } catch (const std::runtime_error &e) {
+        } catch (const IndieError &e) {
             this->logger.warning(e.what());
             return;
         }
@@ -67,7 +68,7 @@ namespace IndieStudio {
             wrapper.getSymbol<AMod::Descriptor *>("MOD_DESCRIPTOR");
 
         if (descriptor == nullptr) {
-            throw std::runtime_error(
+            throw IndieError(
                 "Failed to find the descriptor in the mod '" + wrapper.getName() + "'!"
             );
         }
@@ -108,7 +109,7 @@ namespace IndieStudio {
             ss << " (" << dlerror() << ")";
 #endif
 
-            throw std::runtime_error(ss.str());
+            throw IndieError(ss.str());
         }
 
         return wrapper;

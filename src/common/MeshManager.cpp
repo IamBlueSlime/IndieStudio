@@ -21,7 +21,7 @@ namespace IndieStudio {
         mesh.content = Singleton::getDevice()->getSceneManager()->getMesh(id.c_str());
 
         if (!mesh.content)
-            throw std::runtime_error("Failed to load the mesh " + id);
+            throw RessourceError("Failed to load the mesh " + id);
 
         this->registerMesh(id, mesh);
     }
@@ -36,7 +36,7 @@ namespace IndieStudio {
     MeshManager::Mesh &MeshManager::getMesh(const std::string &id)
     {
         if (!this->registry.has(id))
-            throw std::runtime_error("Failed to find mesh with id " + id);
+            throw RessourceError("Failed to find mesh with id " + id);
 
         return this->registry.get(id);
     }

@@ -20,7 +20,7 @@ namespace IndieStudio {
         texture.content = Singleton::getDevice()->getVideoDriver()->getTexture(id.c_str());
 
         if (!texture.content)
-            throw std::runtime_error("Failed to load the texture " + id);
+            throw RessourceError("Failed to load the texture " + id);
 
         this->registerTexture(id, texture);
     }
@@ -35,7 +35,7 @@ namespace IndieStudio {
     TextureManager::Texture &TextureManager::getTexture(const std::string &id)
     {
         if (!this->registry.has(id))
-            throw std::runtime_error("Failed to find texture with id " + id);
+            throw RessourceError("Failed to find texture with id " + id);
 
         return this->registry.get(id);
     }

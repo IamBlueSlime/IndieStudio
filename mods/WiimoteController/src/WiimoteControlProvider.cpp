@@ -9,6 +9,7 @@
 #include <sstream>
 #include "indiestudio/wiimotecontroller/WiimoteController.hpp"
 #include "indiestudio/wiimotecontroller/WiimoteControlProvider.hpp"
+#include "indiestudio/common/Error.hpp"
 
 namespace IndieStudio::WiimoteController {
 
@@ -55,7 +56,7 @@ namespace IndieStudio::WiimoteController {
             };
 
             this->initializeWiimote(area, playerIdx);
-            cwiid_set_led(this->wiimotes[playerIdx], ledBindings[playerIdx]);   
+            cwiid_set_led(this->wiimotes[playerIdx], ledBindings[playerIdx]);
 
             return true;
         }
@@ -105,14 +106,14 @@ namespace IndieStudio::WiimoteController {
 
         if (!bacmp(&wiimoteAddr, &broadcastAddr))
             if (cwiid_find_wiimote(&wiimoteAddr, -1))
-                throw std::runtime_error("Failed to find the Wiimote");
+                throw ProviderError("Failed to find the Wiimote");
 
         cwiid_set_err([](wiimote *wiimote, const char *str, va_list ap) {
             (void) wiimote;
             (void) str;
             (void) ap;
         });
-    
+
         while (this->wiimotes[idx] == nullptr)
             this->wiimotes[idx] = cwiid_open(&wiimoteAddr, CWIID_FLAG_MESG_IFC);
 
@@ -153,7 +154,7 @@ namespace IndieStudio::WiimoteController {
             uint16_t pressed = msgs[i].btn_mesg.buttons & ~LAST_WIIMOTE_DATA[wiimote];
             uint16_t released = ~msgs[i].btn_mesg.buttons & LAST_WIIMOTE_DATA[wiimote];
             LAST_WIIMOTE_DATA[wiimote] = msgs[i].btn_mesg.buttons;
-            
+
             int playerIdx = WIIMOTE_TO_IDX[wiimote];
             long uniqueTag = -1;
             bool press = true;

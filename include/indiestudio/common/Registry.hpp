@@ -10,6 +10,7 @@
 #include <functional>
 #include <sstream>
 #include <unordered_map>
+#include "indiestudio/common/Error.hpp"
 
 namespace IndieStudio {
 
@@ -23,7 +24,7 @@ namespace IndieStudio {
                     std::stringstream ss;
                     ss << key;
 
-                    throw std::runtime_error("Tried to register an object with an existing key (" + ss.str() + ")");
+                    throw RegistryError("Tried to register an object with an existing key (" + ss.str() + ")");
                 }
 
                 this->removeKey(key);
@@ -60,7 +61,7 @@ namespace IndieStudio {
                 std::stringstream ss;
                 ss << key;
 
-                throw std::runtime_error("Tried to get an unknown key (" + ss.str() + ")");
+                throw RegistryError("Tried to get an unknown key (" + ss.str() + ")");
             }
 
             return this->container[key];
