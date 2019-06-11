@@ -49,6 +49,9 @@ namespace IndieStudio {
     void PlayScene::updateStats(SceneManager::Scene &scene, int playerIdx,
         const ECS::Component::Stat &stats)
     {
+        static bool winned = false;
+        static bool equality = false;
+
         irr::gui::IGUIStaticText *killCount = static_cast<irr::gui::IGUIStaticText *>(
             scene.gui->getElementFromId(424242 + (playerIdx * 10)));
         killCount->setText(std::to_wstring(stats.kill).c_str());
@@ -61,6 +64,24 @@ namespace IndieStudio {
             scene.gui->getElementFromId(424242 + (playerIdx * 10) + 2));
         if (!stats.alive) {
             deathCross->setVisible(true);
+        }
+
+        irr::gui::IGUIImage *win = static_cast<irr::gui::IGUIImage *>(
+            scene.gui->getElementFromId(434343));
+
+        irr::gui::IGUIImage *draw = static_cast<irr::gui::IGUIImage *>(
+            scene.gui->getElementFromId(414141));
+
+        if (stats.winner) {
+            winned = true;
+        } else if (stats.draw) {
+            equality = true;
+        }
+        if (winned) {
+            win->setVisible(true);
+            Scheduler::stopTask(TIMER_TASK);
+        } else if (equality) {
+            draw->setVisible(true);
         }
     }
 
@@ -222,9 +243,25 @@ namespace IndieStudio {
                 iconPositions[i], {iconPositions[i].X + wi, iconPositions[i].Y + hi}
             ), guiRoot, 424242 + (i * 10) + 2);
             deathCross->setImage(scene.manager->textureManager.getTexture(
-                "assets/textures/icons/bomb.png").content);
+                "assets/textures/red-cross.png").content);
             deathCross->setScaleImage(true);
             deathCross->setVisible(false);
+
+            irr::gui::IGUIImage *win = guiEnv->addImage(irr::core::recti(
+                {350, 450}, { 350 + 592, 450 + 200 }
+            ), guiRoot, 434343);
+            win->setImage(scene.manager->textureManager.getTexture(
+                "assets/textures/win.png").content);
+            win->setScaleImage(true);
+            win->setVisible(false);
+
+            irr::gui::IGUIImage *draw = guiEnv->addImage(irr::core::recti(
+                {350, 450}, { 350 + 592, 450 + 200 }
+            ), guiRoot, 414141);
+            draw->setImage(scene.manager->textureManager.getTexture(
+                "assets/textures/draw.png").content);
+            draw->setScaleImage(true);
+            draw->setVisible(false);
         }
     }
 

@@ -163,6 +163,8 @@ namespace IndieStudio::ECS::Component {
         std::size_t range;
         std::size_t kill;
         bool alive;
+        bool winner;
+        bool draw;
     };
 
     struct Scale {

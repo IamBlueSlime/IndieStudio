@@ -462,6 +462,8 @@ namespace IndieStudio {
         auto statCmnt = Stat();
         statCmnt.playerIdx = playerId;
         statCmnt.bomb = 1;
+        statCmnt.draw = false;
+        statCmnt.winner = false;
 
         ecs.setComponent(player, statCmnt);
         auto animator = scene.scene->createCollisionResponseAnimator(this->meta, node_p, {5, 5, 5}, {0, 0, 0});
@@ -477,6 +479,11 @@ namespace IndieStudio {
             ecs.setComponent(player, RealPlayer());
             eventCB.addCallback(this->settings.players[playerId].mappings.up,
                 [&] (const EventData &event, auto, auto) {
+                    try {
+                        ecs.template getComponent<Alive>(player.id);
+                    } catch (...) {
+                        return;
+                    }
                     if (!event.keyInput.PressedDown) {
                         mov.up = event.keyInput.PressedDown;
                         return;
@@ -489,6 +496,11 @@ namespace IndieStudio {
             );
             eventCB.addCallback(this->settings.players[playerId].mappings.down,
                 [&] (const EventData &event, auto, auto) {
+                    try {
+                        ecs.template getComponent<Alive>(player);
+                    } catch (...) {
+                        return;
+                    }
                     if (!event.keyInput.PressedDown) {
                         mov.down = event.keyInput.PressedDown;
                         return;
@@ -501,6 +513,11 @@ namespace IndieStudio {
             );
             eventCB.addCallback(this->settings.players[playerId].mappings.left,
                 [&] (const EventData &event, auto, auto) {
+                    try {
+                        ecs.template getComponent<Alive>(player);
+                    } catch (...) {
+                        return;
+                    }
                     if (!event.keyInput.PressedDown) {
                         mov.left = event.keyInput.PressedDown;
                         return;
@@ -513,6 +530,11 @@ namespace IndieStudio {
             );
             eventCB.addCallback(this->settings.players[playerId].mappings.right,
                 [&] (const EventData &event, auto, auto) {
+                    try {
+                        ecs.template getComponent<Alive>(player);
+                    } catch (...) {
+                        return;
+                    }
                     if (!event.keyInput.PressedDown) {
                         mov.right = event.keyInput.PressedDown;
                         return;
@@ -525,6 +547,11 @@ namespace IndieStudio {
             );
             eventCB.addCallback(this->settings.players[playerId].mappings.drop,
                 [&] (auto, auto, auto) {
+                    try {
+                        ecs.template getComponent<Alive>(player);
+                    } catch (...) {
+                        return;
+                    }
                     auto &position = this->ecs.template getComponent<Position>(player);
                     auto posInTile = this->pattern->positionToTile(position.x, position.z);
 
