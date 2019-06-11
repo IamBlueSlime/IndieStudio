@@ -282,6 +282,7 @@ namespace IndieStudio {
             buffer << stat.playerIdx;
             buffer << stat.kill;
             buffer << stat.bomb;
+            buffer << stat.range;
             buffer << position.x;
             buffer << position.y;
             buffer << position.z;
@@ -322,6 +323,7 @@ namespace IndieStudio {
 
             buffer >> stat.kill;
             buffer >> stat.bomb;
+            buffer >> stat.range;
             buffer >> position.x;
             buffer >> position.y;
             buffer >> position.z;
