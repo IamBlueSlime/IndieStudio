@@ -28,7 +28,6 @@ namespace IndieStudio {
         static sf::Sound BACKGROUND_MUSIC;
         static std::size_t TIMER_TASK;
 
-        static void setupWaterBackground(SceneManager::Scene &scene);
         static void setupLight(SceneManager::Scene &scene);
         static void setupTravelling(SceneManager::Scene &scene);
         static void setupOverlay(SceneManager::Scene &scene);

@@ -34,8 +34,8 @@ namespace IndieStudio {
             irr::core::vector3df(Constants::TILE_SIZE_FACTOR * (settings.width / 2), 50 + Constants::TILE_SIZE_FACTOR * settings.width - 125, Constants::TILE_SIZE_FACTOR * 3),
             irr::core::vector3df(Constants::TILE_SIZE_FACTOR * (settings.width / 2), 50, Constants::TILE_SIZE_FACTOR * (settings.height / 2)));
 		camera->setFarValue(10000);
+        scene.scene->addSkyDomeSceneNode(scene.manager->textureManager->getTexture("assets/textures/skydome.jpg").content);
 
-        setupWaterBackground(scene);
         setupLight(scene);
         setupTravelling(scene);
         setupOverlay(scene);
@@ -64,24 +64,6 @@ namespace IndieStudio {
         }
     }
 
-    void PlayScene::setupWaterBackground(SceneManager::Scene &scene)
-    {
-        // irr::scene::IAnimatedMesh* mesh = scene.scene->addHillPlaneMesh("myHill",
-        //     irr::core::dimension2df(20, 20), irr::core::dimension2du(40, 40), 0, 0,
-        //     irr::core::dimension2df(0, 0), irr::core::dimension2df(10, 10));
-
-        // irr::scene::ISceneNode* water = scene.scene->addWaterSurfaceSceneNode(
-        //     mesh->getMesh(0), 1.0f, 500.0f, 10.0f);
-        // water->setPosition(irr::core::vector3df(150, 7, 100));
-        // water->setMaterialTexture(0, scene.manager->textureManager->getTexture("assets/textures/water_stones.jpg").content);
-        // water->setMaterialTexture(1, scene.manager->textureManager->getTexture("assets/textures/water.jpg").content);
-        // water->setMaterialType(irr::video::EMT_REFLECTION_2_LAYER);
-        scene.scene->addSkyDomeSceneNode(scene.manager->textureManager->getTexture("assets/textures/skydome.jpg").content);
-//        //node->setMaterialFlag(irr::video::EMF_NORMALIZE_NORMALS, true);
-        // scene.scene->setShadowColor(irr::video::SColor(100, 0, 0, 0));
-        // water->setMaterialFlag(irr::video::EMF_LIGHTING, true);
-    }
-
     void PlayScene::setupLight(SceneManager::Scene &scene)
     {
         irr::scene::ISceneNode* lightnode = scene.scene->addLightSceneNode(
@@ -93,17 +75,9 @@ namespace IndieStudio {
         light->setMaterialTexture(0, scene.manager->textureManager->getTexture("assets/textures/particlewhite.bmp").content);
         lightnode->addAnimator(scene.scene->createFlyCircleAnimator(lightnode->getAbsolutePosition(), 120, 0.0001));
 
-        lightnode = scene.scene->addLightSceneNode(
-            0, irr::core::vector3df(160, 150, 100),
-		    irr::video::SColorf(1.0f, 1.0f, 1.0f, 0.5f), 3500.0f);
-        light = scene.scene->addBillboardSceneNode(lightnode, irr::core::dimension2d<irr::f32>(50, 50));
-        light->setMaterialFlag(irr::video::EMF_LIGHTING, false);
-        light->setMaterialType(irr::video::EMT_TRANSPARENT_ADD_COLOR);
-        light->setMaterialTexture(0, scene.manager->textureManager->getTexture("assets/textures/particlewhite.bmp").content);
+        lightnode = lightnode->clone();
+        light->clone(lightnode);
         lightnode->addAnimator(scene.scene->createFlyCircleAnimator(lightnode->getAbsolutePosition(), 120, 0.0001, {0.0, 1.0, 0.0}, 0.5));
-
-        // scene.scene->addLightSceneNode(0, irr::core::vector3df(0, -50, 0),
-            // irr::video::SColorf(1.0f, 1.0f, 1.0f, 1.0f), 5000.0f);
     }
 
     void PlayScene::setupTravelling(SceneManager::Scene &scene)
@@ -112,9 +86,7 @@ namespace IndieStudio {
         irr::core::vector3df pos(cam->getAbsolutePosition());
         irr::core::array<irr::core::vector3df> points;
 
-        int y = 0;
-        y = 450;
-        points.push_back(irr::core::vector3df(pos.X + y, pos.Y + y, pos.Z + y));
+        points.push_back(irr::core::vector3df(pos.X + 450, pos.Y + 450, pos.Z + 450));
         points.push_back(irr::core::vector3df(pos.X, pos.Y, pos.Z));
 
         irr::scene::ISceneNodeAnimator* sa = scene.scene->createFollowSplineAnimator(
