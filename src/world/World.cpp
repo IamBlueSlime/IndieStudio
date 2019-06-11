@@ -357,16 +357,16 @@ namespace IndieStudio {
 
             auto &newBlock = ecs.addEntity();
             ecs.setComponent(newBlock, Node(static_cast<irr::scene::IAnimatedMeshSceneNode *>(node->clone())));
-            auto node = ecs.getComponent<Node>(newBlock).node;
-            auto selector = scene.scene->createTriangleSelectorFromBoundingBox(node);
-            node->setTriangleSelector(selector);
+            auto copyNode = ecs.getComponent<Node>(newBlock).node;
+            auto selector = scene.scene->createTriangleSelectorFromBoundingBox(copyNode);
+            copyNode->setTriangleSelector(selector);
             this->meta->addTriangleSelector(selector);
             selector->drop();
 
             ecs.setComponent(newBlock, Position(
-                node->getPosition().X + node->getScale().X * x,
-                node->getPosition().Y + node->getScale().Y * (y == 1 ? 1 : 0),
-                node->getPosition().Z + node->getScale().Z * z
+                copyNode->getPosition().X + copyNode->getScale().X * x,
+                copyNode->getPosition().Y + copyNode->getScale().Y * (y == 1 ? 1 : 0),
+                copyNode->getPosition().Z + copyNode->getScale().Z * z
             ));
 
             auto animatedNode = static_cast<irr::scene::IAnimatedMeshSceneNode *>
@@ -404,6 +404,8 @@ namespace IndieStudio {
                     std::make_pair(x, z)));
             }
         });
+
+        node->drop();
 
         this->initBlast();
     }
