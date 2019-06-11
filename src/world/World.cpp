@@ -419,10 +419,10 @@ namespace IndieStudio {
         ecs.setComponent(player, Movement());
         ecs.setComponent(player, IsPlayer());
         ecs.setComponent(player, Alive());
-        ecs.setComponent(player, MaxBomb(1));
 
         auto statCmnt = Stat();
         statCmnt.playerIdx = playerId;
+        statCmnt.bomb = 1;
 
         ecs.setComponent(player, statCmnt);
         auto animator = scene.scene->createCollisionResponseAnimator(this->meta, node_p, {5, 5, 5}, {0, 0, 0});
@@ -435,6 +435,7 @@ namespace IndieStudio {
         if (this->settings.players[playerId].controlProvider == "AI") {
             ecs.setComponent(player, IA());
         } else {
+            ecs.setComponent(player, RealPlayer());
             eventCB.addCallback(this->settings.players[playerId].mappings.up,
                 [&] (const EventData &event, auto, auto) {
                     if (!event.keyInput.PressedDown) {

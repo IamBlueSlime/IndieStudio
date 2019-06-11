@@ -55,7 +55,13 @@ namespace IndieStudio {
 
         irr::gui::IGUIStaticText *bombCount = static_cast<irr::gui::IGUIStaticText *>(
             scene.gui->getElementFromId(424242 + (playerIdx * 10) + 1));
-        bombCount->setText(std::to_wstring(stats.kill).c_str());
+        bombCount->setText(std::to_wstring(stats.bomb).c_str());
+
+        irr::gui::IGUIImage *deathCross = static_cast<irr::gui::IGUIImage *>(
+            scene.gui->getElementFromId(424242 + (playerIdx * 10) + 2));
+        if (!stats.alive) {
+            deathCross->setVisible(true);
+        }
     }
 
     void PlayScene::setupWaterBackground(SceneManager::Scene &scene)
@@ -211,6 +217,14 @@ namespace IndieStudio {
                 {bannerRect.UpperLeftCorner.X + 140 + 42, bannerRect.UpperLeftCorner.Y + 12 + 24}
             ), false, true, guiRoot, 424242 + (i * 10) + 1);
             bombCount->setOverrideColor(irr::video::SColor(255, 255, 255, 255));
+
+            irr::gui::IGUIImage *deathCross = guiEnv->addImage(irr::core::recti(
+                iconPositions[i], {iconPositions[i].X + wi, iconPositions[i].Y + hi}
+            ), guiRoot, 424242 + (i * 10) + 2);
+            deathCross->setImage(scene.manager->textureManager.getTexture(
+                "assets/textures/icons/bomb.png").content);
+            deathCross->setScaleImage(true);
+            deathCross->setVisible(false);
         }
     }
 

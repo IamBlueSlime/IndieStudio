@@ -100,6 +100,9 @@ namespace IndieStudio::ECS::Component {
         int bombType;
     };
 
+    struct RealPlayer {
+    };
+
     struct IsPlayer {
     };
 
@@ -142,12 +145,13 @@ namespace IndieStudio::ECS::Component {
     struct Stat {
         Stat()
         :
-        playerIdx(0), bomb(0), range(1), kill(0) {}
+        playerIdx(0), bomb(0), range(1), kill(0), alive(true) {}
 
         int playerIdx;
         std::size_t bomb;
         std::size_t range;
         std::size_t kill;
+        bool alive;
     };
 
     struct Scale {
@@ -232,14 +236,6 @@ namespace IndieStudio::ECS::Component {
         bool down = false;
         bool left = false;
         bool right = false;
-    };
-
-    struct MaxBomb {
-        MaxBomb(int _nb = 1)
-        :
-        nb(_nb) {}
-
-        int nb;
     };
 
     struct NotSolid {
