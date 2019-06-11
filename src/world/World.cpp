@@ -403,9 +403,6 @@ namespace IndieStudio {
                 this->breakableBlockMapping.insert(std::make_pair(newBlock.id,
                     std::make_pair(x, z)));
             }
-
-            //set the powerUp on TileMap
-            this->pattern->set(1, 1, 2, MapPattern::TileType::POWER_UP);
         });
 
         this->initBlast();
