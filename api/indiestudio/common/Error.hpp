@@ -18,6 +18,7 @@ class IndieError : public std::exception
 
         const char *what() const noexcept override { return _message.c_str(); };
         const std::string &getComponent() const { return _component; };
+
     protected:
         std::string _message;
         std::string _component;
