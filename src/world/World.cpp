@@ -194,6 +194,12 @@ namespace IndieStudio {
         else
             ecs.setComponent(powerup, MaterialTexture(0, "assets/textures/tmp_RangePowerUp.png"));
         IndieStudio::Initializer<WorldECS>::initAllEntities(this->ecs, this->scene.scene);
+        irr::scene::ISceneManager *scenemg = node->getSceneManager();
+        irr::core::vector3df newPos = node->getPosition();
+        newPos.Y += 10;
+        auto anim = scenemg->createFlyStraightAnimator(node->getPosition(), newPos, 1000, true, true);
+        node->addAnimator(anim);
+        anim->drop();
     }
 
     void World::move(const irr::core::vector3df &direction, ECS::Position &pos, ECS::Speed &speed, ECS::Node &node)
@@ -346,6 +352,7 @@ namespace IndieStudio {
             auto selector = scene.scene->createTriangleSelectorFromBoundingBox(node);
             node->setTriangleSelector(selector);
             this->meta->addTriangleSelector(selector);
+            selector->drop();
 
             ecs.setComponent(newBlock, Position(
                 node->getPosition().X + node->getScale().X * x,
