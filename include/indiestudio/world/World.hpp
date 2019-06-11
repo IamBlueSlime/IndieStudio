@@ -93,7 +93,7 @@ namespace IndieStudio {
         bool createBlast(const irr::core::vector3df &position, unsigned int timeMs = 1000);
         void createPowerUp(std::size_t type, const ECS::Position &position);
         void move(const irr::core::vector3df &direction, ECS::Position &pos, ECS::Speed &speed, ECS::Node &node);
-        void dropBomb(float bombPosX, float bombPosZ, std::size_t playerID);
+        void dropBomb(float bombPosX, float bombPosZ, std::size_t playerID, float range);
 
         /* ISerializable implementation */
         void pack(ByteBuffer &buffer) override;

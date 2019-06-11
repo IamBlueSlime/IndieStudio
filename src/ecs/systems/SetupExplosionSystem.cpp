@@ -8,6 +8,7 @@
 #include "indiestudio/ecs/Components.hpp"
 #include "indiestudio/ecs/systems/SetupExplosionSystem.hpp"
 #include "indiestudio/world/World.hpp"
+#include "indiestudio/Game.hpp"
 
 namespace IndieStudio::ECS::System {
 
@@ -26,8 +27,11 @@ namespace IndieStudio::ECS::System {
                 auto &stat = manager.template getComponent<Stat>(playerID.id);
 
                 if (std::time(nullptr) - Lifetime.lifeTime >= 3) {
+                    sf::Sound soundplayer;
                     manager.setComponent(data, IsExploding());
                     manager.setComponent(data, ExplosionLifeTime());
+                    soundplayer.setBuffer(Game::INSTANCE->getSoundManager().getSound("assets/sounds/bomb.wav").buffer);
+                    soundplayer.play();
                     manager.template unsetComponent<LifeTime>(data);
                     node.node->setVisible(false);
                     stat.bomb++;

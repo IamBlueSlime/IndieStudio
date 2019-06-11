@@ -65,7 +65,6 @@ namespace IndieStudio::ECS::System {
 
         manager.template forEntitiesWith<IsBomb, Position, IsExploding, ExplosionRange, ExplosionLifeTime>(
         [this, &manager, &pattern, &world](auto &data, auto id) {
-
             auto &bombPosition = manager.template getComponent<Position>(data);
             auto &bombRange = manager.template getComponent<ExplosionRange>(data);
             auto &explosionTime = manager.template getComponent<ExplosionLifeTime>(data);
