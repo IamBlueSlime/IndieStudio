@@ -10,15 +10,13 @@
 
 namespace IndieStudio {
 
-    ControlProviderManager::ControlProviderManager() : logger("controlprovidermanager"),
-        keyboardControlProvider(std::make_unique<KeyboardControlProvider>()),
-        aiControlProvider(std::make_unique<AIControlProvider>())
+    ControlProviderManager::ControlProviderManager() : logger("controlprovidermanager")
     {}
 
     void ControlProviderManager::init()
     {
-        this->registerControlProvider("Keyboard", this->keyboardControlProvider.get());
-        this->registerControlProvider("AI", this->aiControlProvider.get());
+        this->registerControlProvider("Keyboard", &this->keyboardControlProvider);
+        this->registerControlProvider("AI", &this->aiControlProvider);
     }
 
     void ControlProviderManager::registerControlProvider(std::string id,

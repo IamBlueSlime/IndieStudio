@@ -46,6 +46,7 @@ set(INDIE_SRC
     ${INDIE_SRC_DIR}/ecs/systems/PickUpPowerUpSystem.cpp
     ${INDIE_SRC_DIR}/ecs/systems/SetupExplosionSystem.cpp
     ${INDIE_SRC_DIR}/ecs/systems/SolidBombSystem.cpp
+    ${INDIE_SRC_DIR}/ecs/systems/WinLooseSystem.cpp
     ${INDIE_SRC_DIR}/mod/LibraryWrapper.cpp
     ${INDIE_SRC_DIR}/mod/ModManager.cpp
     ${INDIE_SRC_DIR}/player/AIControlProvider.cpp
@@ -59,6 +60,7 @@ set(INDIE_SRC
     ${INDIE_SRC_DIR}/statistic/StatisticManager.cpp
     ${INDIE_SRC_DIR}/world/BasicWorldGenerator.cpp
     ${INDIE_SRC_DIR}/world/MapPattern.cpp
+    ${INDIE_SRC_DIR}/world/VerticalWorldGenerator.cpp
     ${INDIE_SRC_DIR}/world/World.cpp
     ${INDIE_SRC_DIR}/world/WorldManager.cpp
     ${INDIE_SRC_DIR}/world/WorldSettings.cpp

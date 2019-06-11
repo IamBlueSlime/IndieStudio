@@ -67,10 +67,14 @@ namespace IndieStudio {
 
         WorldManager &worldManager = static_cast<WorldManager &>(Game::INSTANCE->getWorldManager());
         int i = 0;
+        int defaultWorldGenerator = 0;
         for (auto it = worldManager.getGenerators().begin(); it != worldManager.getGenerators().end(); ++it) {
-            generatorBox->addItem(std::wstring(it->first.begin(), it->first.end()).c_str(), i);
+            int idx = generatorBox->addItem(std::wstring(it->first.begin(), it->first.end()).c_str(), i);
+            if (it->first == WorldManager::BASIC_WORLD_GENERATOR)
+                defaultWorldGenerator = idx;
             i += 1;
         }
+        generatorBox->setSelected(defaultWorldGenerator);
 
         origin.X -= 240;
         origin.Y += 20;

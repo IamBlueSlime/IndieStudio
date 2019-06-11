@@ -22,10 +22,10 @@ namespace IndieStudio {
                 auto posInTile = MapPattern::positionToTile(BombPosX, BombPosZ);
                 auto pattern = world->getPattern();
                 auto actualTile = pattern->get(posInTile.first, 1, posInTile.second);
-                auto &maxBomb = manager.template getComponent<MaxBomb>(playerID);
+                auto &stat = manager.template getComponent<Stat>(playerID);
 
                 if (actualTile == MapPattern::TileType::BOMB ||
-                    maxBomb.nb == 0) {
+                    stat.bomb == 0) {
                     return;
                 }
                 auto &newBomb = manager.addEntity();
@@ -43,7 +43,7 @@ namespace IndieStudio {
                 manager.setComponent(newBomb, NotSolid());
                 manager.setComponent(newBomb, NodeCreate());
                 pattern->set(posInTile.first, 1, posInTile.second, MapPattern::TileType::BOMB);
-                maxBomb.nb--;
+                stat.bomb--;
                 IndieStudio::Initializer<WorldECS>::initAllEntities(manager, scenemg);
             };
     };

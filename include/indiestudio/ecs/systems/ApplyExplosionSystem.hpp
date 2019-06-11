@@ -8,6 +8,7 @@
 #pragma once
 
 #include "indiestudio/ecs/BaseSystem.hpp"
+#include "indiestudio/world/MapPattern.hpp"
 
 namespace IndieStudio::ECS::System {
 
@@ -15,7 +16,9 @@ namespace IndieStudio::ECS::System {
     class ApplyExplosionSystem : public BaseSystem<ManagerType> {
     public:
         void process(ManagerType &manager, World *world) override;
-
+        void chainBomb(ManagerType &manager, int entityID, int bombID);
+        int findBombByID(ManagerType &manager, MapPattern *pattern, std::pair<short, short> posInTile);
+        void destroyBlock(ManagerType &manager, World *world, std::pair<short, short> posInTile);
     protected:
     private:
         void dropPowerUp(World *world, std::pair<short, short> posInTile);

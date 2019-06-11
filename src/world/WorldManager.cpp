@@ -17,13 +17,15 @@ namespace IndieStudio {
         { '\\', 'B', 'M', 'M' };
     const unsigned char WorldManager::FILE_FORMAT_VERSION = 1;
 
+    const std::string WorldManager::BASIC_WORLD_GENERATOR = "Basic";
+
     WorldManager::WorldManager() : logger("worldmanager")
     {}
 
     void WorldManager::init()
     {
-        this->registerGenerator("Basic", &this->basicWorldGenerator);
-        // Create map entities
+        this->registerGenerator(BASIC_WORLD_GENERATOR, &this->basicWorldGenerator);
+        this->registerGenerator("Vertical", &this->verticalWorldGenerator);
     }
 
     World *WorldManager::create(WorldSettings &settings)

@@ -23,14 +23,14 @@ namespace IndieStudio::ECS::System {
                 auto &Lifetime = manager.template getComponent<LifeTime>(data);
                 auto &node = manager.template getComponent<Node>(data);
                 auto &playerID = manager.template getComponent<PosedBy>(data);
-                auto &maxBomb = manager.template getComponent<MaxBomb>(playerID.id);
+                auto &stat = manager.template getComponent<Stat>(playerID.id);
 
                 if (std::time(nullptr) - Lifetime.lifeTime >= 3) {
                     manager.setComponent(data, IsExploding());
                     manager.setComponent(data, ExplosionLifeTime());
                     manager.template unsetComponent<LifeTime>(data);
                     node.node->setVisible(false);
-                    maxBomb.nb++;
+                    stat.bomb++;
                 }
         });
     }
