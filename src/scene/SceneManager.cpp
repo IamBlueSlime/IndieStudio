@@ -59,7 +59,6 @@ namespace IndieStudio {
 
     void SceneManager::init()
     {
-        this->textureManager = &Game::INSTANCE->getTextureManager();
         meshManager.registerMesh("assets/models/cube.obj");
         meshManager.registerMesh("assets/models/player.md3");
         meshManager.registerMesh("assets/models/jesus.md3");

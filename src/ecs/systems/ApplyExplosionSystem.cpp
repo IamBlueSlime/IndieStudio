@@ -195,7 +195,7 @@ namespace IndieStudio::ECS::System {
         IndieStudio::MapPattern *pattern = world->getPattern();
         if (spawnRand != 1)
             return;
-        typeRand = rand() % 2;
+        typeRand = rand() % 3;
         world->createPowerUp(typeRand, Position(posInTile.first * 20 + 0.5, 80, posInTile.second * 20 + 0.5));
         pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::POWER_UP);
     }

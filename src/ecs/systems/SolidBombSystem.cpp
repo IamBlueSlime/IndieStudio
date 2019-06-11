@@ -27,8 +27,8 @@ namespace IndieStudio::ECS::System {
             const auto &player_pos = manager.template getComponent<Position>(PosedByID.id);
             const auto playerInTile = pattern->positionToTile(player_pos.x, player_pos.z);
 
-            if (BombInTile.first == playerInTile.first &&
-                BombInTile.second == playerInTile.second) {
+            if (BombInTile.first - playerInTile.first <= 1 &&
+                BombInTile.second - playerInTile.second <= 1) {
                 return;
             }
             auto node = manager.template getComponent<Node>(data).node;

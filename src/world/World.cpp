@@ -115,13 +115,17 @@ namespace IndieStudio {
                         move({1, 0, 0}, pos, speed, node);
                         did = true;
                     }
+
+                    irr::scene::IAnimatedMeshSceneNode *animatedNode =
+                        static_cast<irr::scene::IAnimatedMeshSceneNode *>(node.node);
+
                     if (!did) {
-                        if (node.node->getFrameNr() == 76 || node.node->getFrameNr() <= 27)
-                            node.node->setFrameLoop(27, 76);
+                        if (animatedNode->getFrameNr() == 76 || animatedNode->getFrameNr() <= 27)
+                            animatedNode->setFrameLoop(27, 76);
                         return;
                     }
-                    if (node.node->getFrameNr() > 27)
-		                node.node->setFrameLoop(0, 27);
+                    if (animatedNode->getFrameNr() > 27)
+		                animatedNode->setFrameLoop(0, 27);
                 }
             );
             this->ecs.getEventManager().clear_event_queue();
@@ -177,23 +181,34 @@ namespace IndieStudio {
     }
 
     void World::createPowerUp(std::size_t type, const Position &pos) {
-        auto node = scene.scene->addAnimatedMeshSceneNode(scene.scene->getMesh("assets/models/cube.obj"));
+        auto node = scene.scene->addBillboardSceneNode(nullptr, irr::core::dimension2df(
+            Constants::TILE_SIZE_FACTOR, Constants::TILE_SIZE_FACTOR),
+            irr::core::vector3df(pos.x, 73, pos.z)
+        );
         auto &powerup = ecs.addEntity();
 
         node->setVisible(true);
         ecs.setComponent(powerup, Node(node));
         ecs.setComponent(powerup, MaterialFlag(irr::video::EMF_LIGHTING, true));
-        ecs.setComponent(powerup, Scale(8, 8, 8));
+        ecs.setComponent(powerup, Scale(5, 5, 5));
         ecs.setComponent(powerup, Position(pos.x, 73, pos.z));
         ecs.setComponent(powerup, IsPowerUp(type));
         ecs.setComponent(powerup, Setup());
+
         if (type == IsPowerUp::SPEED_POWERUP)
-            ecs.setComponent(powerup, MaterialTexture(0, "assets/textures/tmp_SpeedPowerUp.png"));
+            ecs.setComponent(powerup, MaterialTexture(0, "assets/textures/powerups/speed_up.png"));
         else if (type == IsPowerUp::STOCK_POWERUP)
-            ecs.setComponent(powerup, MaterialTexture(0, "assets/textures/tmp_StockPowerUp.png"));
+            ecs.setComponent(powerup, MaterialTexture(0, "assets/textures/powerups/bomb_up.png"));
         else
-            ecs.setComponent(powerup, MaterialTexture(0, "assets/textures/tmp_RangePowerUp.png"));
+            ecs.setComponent(powerup, MaterialTexture(0, "assets/textures/powerups/bomb_range_up.png"));
+
         IndieStudio::Initializer<WorldECS>::initAllEntities(this->ecs, this->scene.scene);
+        irr::scene::ISceneManager *scenemg = node->getSceneManager();
+        irr::core::vector3df newPos = node->getPosition();
+        newPos.Y += 3;
+        auto anim = scenemg->createFlyStraightAnimator(node->getPosition(), newPos, 1500, true, true);
+        node->addAnimator(anim);
+        anim->drop();
     }
 
     void World::move(const irr::core::vector3df &direction, ECS::Position &pos, ECS::Speed &speed, ECS::Node &node)
@@ -267,6 +282,7 @@ namespace IndieStudio {
             buffer << stat.playerIdx;
             buffer << stat.kill;
             buffer << stat.bomb;
+            buffer << stat.range;
             buffer << position.x;
             buffer << position.y;
             buffer << position.z;
@@ -307,6 +323,7 @@ namespace IndieStudio {
 
             buffer >> stat.kill;
             buffer >> stat.bomb;
+            buffer >> stat.range;
             buffer >> position.x;
             buffer >> position.y;
             buffer >> position.z;
@@ -342,35 +359,39 @@ namespace IndieStudio {
 
             auto &newBlock = ecs.addEntity();
             ecs.setComponent(newBlock, Node(static_cast<irr::scene::IAnimatedMeshSceneNode *>(node->clone())));
-            auto node = ecs.getComponent<Node>(newBlock).node;
-            auto selector = scene.scene->createTriangleSelectorFromBoundingBox(node);
-            node->setTriangleSelector(selector);
+            auto copyNode = ecs.getComponent<Node>(newBlock).node;
+            auto selector = scene.scene->createTriangleSelectorFromBoundingBox(copyNode);
+            copyNode->setTriangleSelector(selector);
             this->meta->addTriangleSelector(selector);
+            selector->drop();
 
             ecs.setComponent(newBlock, Position(
-                node->getPosition().X + node->getScale().X * x,
-                node->getPosition().Y + node->getScale().Y * (y == 1 ? 1 : 0),
-                node->getPosition().Z + node->getScale().Z * z
+                copyNode->getPosition().X + copyNode->getScale().X * x,
+                copyNode->getPosition().Y + copyNode->getScale().Y * (y == 1 ? 1 : 0),
+                copyNode->getPosition().Z + copyNode->getScale().Z * z
             ));
 
+            auto animatedNode = static_cast<irr::scene::IAnimatedMeshSceneNode *>
+                (ecs.getComponent<Node>(newBlock).node);
+
 	    	if (tileType == MapPattern::TileType::FLOOR_FIRST) {
-                ecs.getComponent<Node>(newBlock).node->addShadowVolumeSceneNode();
+                animatedNode->addShadowVolumeSceneNode();
 	    		ecs.setComponent(newBlock, MaterialTexture(0, "assets/textures/block_ground_1.png"));
                 ecs.setComponent(newBlock, Scale(Constants::TILE_SIZE_FACTOR, Constants::TILE_SIZE_FACTOR, Constants::TILE_SIZE_FACTOR));
 	    	} else if (tileType == MapPattern::TileType::FLOOR_SECOND) {
-                ecs.getComponent<Node>(newBlock).node->addShadowVolumeSceneNode();
+                animatedNode->addShadowVolumeSceneNode();
 	    	    ecs.setComponent(newBlock, MaterialTexture(0, "assets/textures/block_ground_2.png"));
                 ecs.setComponent(newBlock, Scale(Constants::TILE_SIZE_FACTOR, Constants::TILE_SIZE_FACTOR, Constants::TILE_SIZE_FACTOR));
 	    	} else if (tileType == MapPattern::TileType::BORDER_WALL_BLOCK) {
-                ecs.getComponent<Node>(newBlock).node->addShadowVolumeSceneNode();
+                animatedNode->addShadowVolumeSceneNode();
 	    		ecs.setComponent(newBlock, MaterialTexture(0, "assets/textures/block_wall.png"));
                 ecs.setComponent(newBlock, Scale(Constants::TILE_SIZE_FACTOR, Constants::TILE_SIZE_FACTOR, Constants::TILE_SIZE_FACTOR));
 	    	} else if (tileType == MapPattern::TileType::INNER_WALL_BLOCK) {
-                ecs.getComponent<Node>(newBlock).node->addShadowVolumeSceneNode();
+                animatedNode->addShadowVolumeSceneNode();
 	    		ecs.setComponent(newBlock, MaterialTexture(0, "assets/textures/block_wall.png"));
                 ecs.setComponent(newBlock, Scale(Constants::TILE_SIZE_FACTOR * 0.9, Constants::TILE_SIZE_FACTOR * 0.9, Constants::TILE_SIZE_FACTOR * 0.9));
             } else if (tileType == MapPattern::TileType::BREAKABLE_BLOCK) {
-                ecs.getComponent<Node>(newBlock).node->addShadowVolumeSceneNode();
+                animatedNode->addShadowVolumeSceneNode();
 	    		ecs.setComponent(newBlock, MaterialTexture(0, "assets/textures/block_brick.png"));
                 ecs.setComponent(newBlock, Alive());
                 ecs.setComponent(newBlock, Scale(Constants::TILE_SIZE_FACTOR * 0.9, Constants::TILE_SIZE_FACTOR * 0.9, Constants::TILE_SIZE_FACTOR * 0.9));
@@ -384,10 +405,9 @@ namespace IndieStudio {
                 this->breakableBlockMapping.insert(std::make_pair(newBlock.id,
                     std::make_pair(x, z)));
             }
-
-            //set the powerUp on TileMap
-            this->pattern->set(1, 1, 2, MapPattern::TileType::POWER_UP);
         });
+
+        node->drop();
 
         this->initBlast();
     }
@@ -446,6 +466,8 @@ namespace IndieStudio {
         auto statCmnt = Stat();
         statCmnt.playerIdx = playerId;
         statCmnt.bomb = 1;
+        statCmnt.draw = false;
+        statCmnt.winner = false;
 
         ecs.setComponent(player, statCmnt);
         auto animator = scene.scene->createCollisionResponseAnimator(this->meta, node_p, {5, 5, 5}, {0, 0, 0});
@@ -461,6 +483,11 @@ namespace IndieStudio {
             ecs.setComponent(player, RealPlayer());
             eventCB.addCallback(this->settings.players[playerId].mappings.up,
                 [&] (const EventData &event, auto, auto) {
+                    try {
+                        ecs.template getComponent<Alive>(player.id);
+                    } catch (...) {
+                        return;
+                    }
                     if (!event.keyInput.PressedDown) {
                         mov.up = event.keyInput.PressedDown;
                         return;
@@ -473,6 +500,11 @@ namespace IndieStudio {
             );
             eventCB.addCallback(this->settings.players[playerId].mappings.down,
                 [&] (const EventData &event, auto, auto) {
+                    try {
+                        ecs.template getComponent<Alive>(player);
+                    } catch (...) {
+                        return;
+                    }
                     if (!event.keyInput.PressedDown) {
                         mov.down = event.keyInput.PressedDown;
                         return;
@@ -485,6 +517,11 @@ namespace IndieStudio {
             );
             eventCB.addCallback(this->settings.players[playerId].mappings.left,
                 [&] (const EventData &event, auto, auto) {
+                    try {
+                        ecs.template getComponent<Alive>(player);
+                    } catch (...) {
+                        return;
+                    }
                     if (!event.keyInput.PressedDown) {
                         mov.left = event.keyInput.PressedDown;
                         return;
@@ -497,6 +534,11 @@ namespace IndieStudio {
             );
             eventCB.addCallback(this->settings.players[playerId].mappings.right,
                 [&] (const EventData &event, auto, auto) {
+                    try {
+                        ecs.template getComponent<Alive>(player);
+                    } catch (...) {
+                        return;
+                    }
                     if (!event.keyInput.PressedDown) {
                         mov.right = event.keyInput.PressedDown;
                         return;
@@ -509,6 +551,11 @@ namespace IndieStudio {
             );
             eventCB.addCallback(this->settings.players[playerId].mappings.drop,
                 [&] (auto, auto, auto) {
+                    try {
+                        ecs.template getComponent<Alive>(player);
+                    } catch (...) {
+                        return;
+                    }
                     auto &position = this->ecs.template getComponent<Position>(player);
                     auto posInTile = this->pattern->positionToTile(position.x, position.z);
 

@@ -27,7 +27,7 @@ namespace IndieStudio::ECS::System {
                     auto &powerUp =  manager.template getComponent<IsPowerUp>(entity);
                     auto tilePowerUpPos = MapPattern::positionToTile(powerUpPos.x, powerUpPos.z);
 
-                    if (this->isOnPowerUp(tilePlayerPos, tilePowerUpPos, tilemap)) {
+                    if (this->isOnPowerUp(tilePlayerPos, tilePowerUpPos)) {
                         auto &node = manager.template getComponent<Node>(entity);
                         node.node->setVisible(false);
                         tilemap->set(tilePlayerPos.first, 1, tilePlayerPos.second, MapPattern::TileType::EMPTY);
@@ -41,7 +41,7 @@ namespace IndieStudio::ECS::System {
     template<typename ManagerType>
     bool PickUpPowerUpSystem<ManagerType>::isOnPowerUp(
         const std::pair<std::size_t, std::size_t> &player, 
-        const std::pair<std::size_t, std::size_t> &powerUp, MapPattern *map)
+        const std::pair<std::size_t, std::size_t> &powerUp)
     {
         if (player.first == powerUp.first && player.second == powerUp.second)
             return true;
