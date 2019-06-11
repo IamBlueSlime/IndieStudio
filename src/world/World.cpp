@@ -15,6 +15,7 @@
 #include "indiestudio/Singleton.hpp"
 #include "indiestudio/ecs/Initializer.hpp"
 #include "indiestudio/gameplay/BombFactory.hpp"
+#include "indiestudio/common/Error.hpp"
 
 namespace IndieStudio {
 
@@ -43,7 +44,7 @@ namespace IndieStudio {
             }
         }
         if (generator == nullptr)
-            throw std::runtime_error(
+            throw IndieError(
                 "Failed to find the world generator " + this->settings.worldGenerator);
 
         // auto &powerup = ecs.addEntity();
@@ -274,7 +275,7 @@ namespace IndieStudio {
             if (it->second == pos)
                 return it->first;
 
-        throw std::runtime_error("wtf");
+        throw IndieError("wtf");
     }
 
     void World::createTerrain()

@@ -24,10 +24,10 @@ namespace IndieStudio {
         Font font;
         font.content = Singleton::getDevice()->getSceneManager()->
             getGUIEnvironment()->getFont(id.c_str());
-        
+
         if (!font.content)
-            throw std::runtime_error("Failed to load the font " + id);
-        
+            throw RessourceError("Failed to load the font " + id);
+
         this->registerFont(id, font);
     }
 
@@ -41,8 +41,8 @@ namespace IndieStudio {
     FontManager::Font &FontManager::getFont(const std::string &id)
     {
         if (!this->registry.has(id))
-            throw std::runtime_error("Failed to find font with id " + id);
-        
+            throw RessourceError("Failed to find font with id " + id);
+
         return this->registry.get(id);
     }
 

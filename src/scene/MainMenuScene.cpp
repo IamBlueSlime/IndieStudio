@@ -8,6 +8,7 @@
 #include "indiestudio/Game.hpp"
 #include "indiestudio/scene/MainMenuScene.hpp"
 #include "indiestudio/Singleton.hpp"
+#include "indiestudio/common/Error.hpp"
 #include "indiestudio/scene/PlayScene.hpp"
 
 namespace IndieStudio {
@@ -63,7 +64,7 @@ namespace IndieStudio {
             scene.scene->getMesh("assets/models/jesus.md3"), 0, 666);
 
         if (!jesusModel)
-            throw std::runtime_error("Failed to load player.md3");
+            throw RessourceError("Failed to load player.md3");
 
         jesusModel->setMaterialFlag(irr::video::EMF_LIGHTING, false);
         jesusModel->setMaterialTexture(0, scene.manager->textureManager.getTexture("assets/textures/jesus.png").content);
@@ -80,7 +81,7 @@ namespace IndieStudio {
             scene.scene->getMesh("assets/models/player.md3"), 0, 42);
 
         if (!anms)
-            throw std::runtime_error("Failed to load player.md3");
+            throw RessourceError("Failed to load player.md3");
 
         anms->setMaterialFlag(irr::video::EMF_LIGHTING, false);
         anms->setMaterialTexture(0, scene.manager->textureManager.getTexture("assets/textures/player_white.png").content);
@@ -200,7 +201,7 @@ namespace IndieStudio {
             } else if (event.GUIEvent.EventType == irr::gui::EGET_FILE_SELECTED) {
                 const wchar_t *path = static_cast<irr::gui::IGUIFileOpenDialog *>(
                     event.GUIEvent.Caller)->getFileName();
-                
+
                 if (path == nullptr)
                     return true;
 
@@ -208,7 +209,7 @@ namespace IndieStudio {
 
                 SceneManager::Scene &playScene = scene.manager->getScene(SceneManager::PLAY_ID);
                 playScene.scene->clear();
-                
+
                 WorldManager &manager = static_cast<WorldManager &>(
                     Game::INSTANCE->getWorldManager());
 
@@ -228,7 +229,7 @@ namespace IndieStudio {
                 }
             }
         }
-        
+
         return false;
     }
 

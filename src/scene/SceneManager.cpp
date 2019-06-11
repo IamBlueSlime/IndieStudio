@@ -13,6 +13,7 @@
 #include "indiestudio/scene/PlayScene.hpp"
 #include "indiestudio/scene/SceneManager.hpp"
 #include "indiestudio/Singleton.hpp"
+#include "indiestudio/common/Error.hpp"
 
 namespace IndieStudio {
 
@@ -96,7 +97,7 @@ namespace IndieStudio {
             this->guiRoot->addTab(irr::core::recti(0, 0, screenSize.Width, screenSize.Height),
             0, this->container.size()));
         if (this->container.find(key) == this->container.end())
-            throw std::runtime_error("Failed to create scene");
+            throw IndieError("Failed to create scene");
         this->setActiveScene(key);
         return this->container[key];
     }
@@ -104,14 +105,14 @@ namespace IndieStudio {
     void SceneManager::subscribeEvent(std::function<bool(const irr::SEvent &)> onEvent)
     {
         if (this->container.find(this->active) == this->container.end())
-            throw std::runtime_error("subscribeEvent: Failed to get actve scene");
+            throw IndieError("subscribeEvent: Failed to get actve scene");
         this->container[this->active].onEvent = onEvent;
     }
 
     void SceneManager::setActiveScene(const std::string &key)
     {
         if (this->container.find(key) == this->container.end())
-            throw std::runtime_error("setActiveScene: Failed to create scene");
+            throw IndieError("setActiveScene: Failed to create scene");
         for (auto it = this->container.begin(); it != this->container.end(); ++it)
             it->second.gui->setVisible(false);
         this->active = key;
@@ -121,7 +122,7 @@ namespace IndieStudio {
     SceneManager::Scene &SceneManager::getScene(const std::string &key)
     {
         if (this->container.find(key) == this->container.end())
-            throw std::runtime_error("Cannot find get");
+            throw IndieError("Cannot find get");
         return this->container[key];
     }
 
