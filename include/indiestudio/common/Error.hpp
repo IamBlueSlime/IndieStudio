@@ -13,8 +13,8 @@
 class IndieError : public std::exception
 {
     public:
-        IndieError(std::string const &message,
-                std::string const &component = "Unknown");
+        IndieError(std::string const &message, std::string const &component = "Unknown")
+            : std::exception(),  _message(message), _component(component) {};
 
         const char *what() const noexcept override { return _message.c_str(); };
         const std::string &getComponent() const { return _component; };
