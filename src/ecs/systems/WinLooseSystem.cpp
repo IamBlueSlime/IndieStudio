@@ -16,7 +16,7 @@ namespace IndieStudio::ECS::System {
     using namespace ECS::Component;
 
     template <typename ManagerType>
-    void WinLooseSystem<ManagerType>::process(ManagerType &manager, IndieStudio::World *world) {
+    void WinLooseSystem<ManagerType>::process(ManagerType &manager, [[gnu::unused]] IndieStudio::World *world) {
         int deadPlayer = 0;
         int winnerPlayerID = 0;
         static int already = 0;

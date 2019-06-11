@@ -17,7 +17,7 @@ namespace IndieStudio {
     	public:
 
             template <typename ManagerType>
-            static void dropBomb(ManagerType &manager, IWorld *world, irr::scene::ISceneManager *scenemg, float BombPosX, float BombPosZ, std::size_t playerID) {
+            static void dropBomb(ManagerType &manager, IWorld *world, irr::scene::ISceneManager *scenemg, float BombPosX, float BombPosZ, std::size_t playerID, float range) {
 
                 auto posInTile = MapPattern::positionToTile(BombPosX, BombPosZ);
                 auto pattern = world->getPattern();
@@ -36,7 +36,7 @@ namespace IndieStudio {
                 manager.setComponent(newBomb, Scale(3.5, 3.5, 3.5));
                 manager.setComponent(newBomb, Position(BombPosX, 61, BombPosZ));
                 manager.setComponent(newBomb, IsBomb());
-                manager.setComponent(newBomb, ExplosionRange());
+                manager.setComponent(newBomb, ExplosionRange(range));
                 manager.setComponent(newBomb, LifeTime());
                 manager.setComponent(newBomb, PosedBy(playerID));
                 manager.setComponent(newBomb, Setup());

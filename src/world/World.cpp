@@ -256,10 +256,10 @@ namespace IndieStudio {
         anim->drop();
     }
 
-    void World::dropBomb(float bombPosX, float bombPosZ, std::size_t playerID)
+    void World::dropBomb(float bombPosX, float bombPosZ, std::size_t playerID, float range)
     {
         IndieStudio::BombFactory::dropBomb<WorldECS>(
-            this->ecs, this, this->scene.scene, bombPosX, bombPosZ, playerID);
+            this->ecs, this, this->scene.scene, bombPosX, bombPosZ, playerID, range);
     }
 
     void World::pack(ByteBuffer &buffer)
@@ -464,6 +464,8 @@ namespace IndieStudio {
         auto statCmnt = Stat();
         statCmnt.playerIdx = playerId;
         statCmnt.bomb = 1;
+        statCmnt.range = 2;
+        statCmnt.alive = true;
         statCmnt.draw = false;
         statCmnt.winner = false;
 
@@ -555,10 +557,11 @@ namespace IndieStudio {
                         return;
                     }
                     auto &position = this->ecs.template getComponent<Position>(player);
+                    auto stat = this->ecs.template getComponent<Stat>(player);
                     auto posInTile = this->pattern->positionToTile(position.x, position.z);
 
                     this->dropBomb(posInTile.first * 20 + 0.5,
-                        posInTile.second * 20 + 0.5, player.id);
+                        posInTile.second * 20 + 0.5, player.id, stat.range);
                 }
             );
         }
