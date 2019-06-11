@@ -221,11 +221,11 @@ namespace IndieStudio::ECS::Component {
     };
 
     struct Node {
-        Node(irr::scene::IAnimatedMeshSceneNode *_node = nullptr)
+        Node(irr::scene::ISceneNode *_node = nullptr)
         :
         node(_node) {}
 
-        irr::scene::IAnimatedMeshSceneNode *node;
+        irr::scene::ISceneNode *node;
     };
 
     struct Particle {
