@@ -31,7 +31,7 @@ namespace IndieStudio {
             std::function<bool()> callback;
 
             // Internal usage only
-            std::time_t expirationTime;
+            time_t expirationTime;
         };
 
         static std::vector<Task> tasks;

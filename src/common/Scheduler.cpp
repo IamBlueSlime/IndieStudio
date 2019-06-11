@@ -17,7 +17,7 @@ namespace IndieStudio {
     void Scheduler::tick()
     {
         auto now = std::chrono::system_clock::now();
-        std::time_t nowTime = std::chrono::system_clock::to_time_t(now);
+        time_t nowTime = std::chrono::system_clock::to_time_t(now);
 
         std::vector<Task> toSchedule;
 
