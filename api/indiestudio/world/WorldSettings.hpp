@@ -27,7 +27,7 @@ namespace IndieStudio {
             this->players[0].controlProvider = "Keyboard";
         }
     
-        std::string name;
+        std::string name = "My Awesome World";
         unsigned short width = 17;
         unsigned short height = 11;
         std::string worldGenerator = "Basic";
