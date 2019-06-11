@@ -58,7 +58,7 @@ namespace IndieStudio {
 
         try {
             wrapper = this->openLibrary(path);
-        } catch (const std::runtime_error &e) {
+        } catch (const IndieError &e) {
             this->logger.warning(e.what());
             return;
         }
