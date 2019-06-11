@@ -38,7 +38,14 @@ set(INDIE_SRC
     ${INDIE_SRC_DIR}/common/MeshManager.cpp
     ${INDIE_SRC_DIR}/common/Scheduler.cpp
     ${INDIE_SRC_DIR}/ecs/Signature.cpp
-    ${INDIE_SRC_DIR}/ecs/systems/PickUpPowerUp.cpp
+    ${INDIE_SRC_DIR}/ecs/systems/ApplyExplosionSystem.cpp
+    ${INDIE_SRC_DIR}/ecs/systems/DeathSystem.cpp
+    ${INDIE_SRC_DIR}/ecs/systems/EventSystem.cpp
+    ${INDIE_SRC_DIR}/ecs/systems/ExplosionDurationSystem.cpp
+    ${INDIE_SRC_DIR}/ecs/systems/MovePlayerSystem.cpp
+    ${INDIE_SRC_DIR}/ecs/systems/PickUpPowerUpSystem.cpp
+    ${INDIE_SRC_DIR}/ecs/systems/SetupExplosionSystem.cpp
+    ${INDIE_SRC_DIR}/ecs/systems/SolidBombSystem.cpp
     ${INDIE_SRC_DIR}/mod/LibraryWrapper.cpp
     ${INDIE_SRC_DIR}/mod/ModManager.cpp
     ${INDIE_SRC_DIR}/player/AIControlProvider.cpp

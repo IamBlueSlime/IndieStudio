@@ -218,9 +218,10 @@ namespace IndieStudio {
                     PlayScene::initialize(playScene);
                     scene.manager->setActiveScene(SceneManager::PLAY_ID);
                     world->focusECS(playScene);
-                } catch (const std::logic_error &) {
+                } catch (const std::logic_error &ex) {
+                    std::string tmp(ex.what());
                     msgBox = Singleton::getDevice()->getGUIEnvironment()->addMessageBox(
-                    L"Failed to load the map", L"Please select a valid Bomberman map!", true,
+                    L"Failed to load the map", std::wstring(tmp.begin(), tmp.end()).c_str(), true,
                     irr::gui::EMBF_OK, scene.gui, MSG_BOX_QUIT);
                     msgBox->setDraggable(false);
 

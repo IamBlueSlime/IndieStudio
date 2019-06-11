@@ -7,29 +7,17 @@
 
 #pragma once
 
-#include "indiestudio/ecs/Components.hpp"
 #include "indiestudio/ecs/BaseSystem.hpp"
 
 namespace IndieStudio::ECS::System {
 
-    using namespace ECS::Component;
-
     template<typename ManagerType>
-    class MovePlayer : public BaseSystem<ManagerType> {
+    class MovePlayerSystem : public BaseSystem<ManagerType> {
     public:
-        bool isColliding(short playerX, short playerZ, short directionX, short directionZ, World *world);
-        void process(ManagerType &manager, World *world) override {
-            (void) world;
-            manager.template forEntitiesWith<Position, Speed, Movable>(
-                [&manager](auto &data, [[gnu::unused]] auto id) {
-                    auto &pos = manager.template getComponent<Position>(data);
-                    auto &speed = manager.template getComponent<Speed>(data);
-                    pos.x += speed.x;
-                    pos.y += speed.y;
-                    pos.z += speed.z;
-            });
-        }
+        void process(ManagerType &manager, World *world) override;
+
     protected:
     private:
     };
+
 }

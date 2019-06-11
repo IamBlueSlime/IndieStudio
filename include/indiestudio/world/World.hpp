@@ -59,13 +59,13 @@ namespace IndieStudio {
     using WorldECSSystems = ECS::SystemsImpl<
         WorldECS,
         ECS::System::EventSystem<WorldECS>,
-        ECS::System::ExplosionDuration<WorldECS>,
-        ECS::System::ApplyExplosion<WorldECS>,
-        ECS::System::MovePlayer<WorldECS>,
-        ECS::System::SetupExplosion<WorldECS>,
-        ECS::System::PickUpPowerUp<WorldECS>,
+        ECS::System::ExplosionDurationSystem<WorldECS>,
+        ECS::System::ApplyExplosionSystem<WorldECS>,
+        ECS::System::MovePlayerSystem<WorldECS>,
+        ECS::System::SetupExplosionSystem<WorldECS>,
+        ECS::System::PickUpPowerUpSystem<WorldECS>,
         ECS::System::IASystem<WorldECS>,
-        ECS::System::SolidBomb<WorldECS>,
+        ECS::System::SolidBombSystem<WorldECS>,
         ECS::System::DeathSystem<WorldECS>
     >;
 
@@ -88,22 +88,22 @@ namespace IndieStudio {
         void focusECS(SceneManager::Scene &scene);
         void forwardEvent(ECS::Event::EventData event);
 
-        void eject(irr::scene::ISceneNode *node, irr::core::vector3df &bombPos) override;
-        bool createBlast(const irr::core::vector3df &position, unsigned int timeMs = 1000) override;
+        void eject(irr::scene::ISceneNode *node, irr::core::vector3df &bombPos);
+        bool createBlast(const irr::core::vector3df &position, unsigned int timeMs = 1000);
         void move(const irr::core::vector3df &direction, ECS::Position &pos, ECS::Speed &speed, ECS::Node &node);
-        void dropBomb(float bombPosX, float bombPosZ, std::size_t playerID) override;
+        void dropBomb(float bombPosX, float bombPosZ, std::size_t playerID);
 
         /* ISerializable implementation */
         void pack(ByteBuffer &buffer) override;
         void unpack(ByteBuffer &buffer) override;
 
-        std::size_t getBlockEntityIdByPos(short x, short z) override;
+        std::size_t getBlockEntityIdByPos(short x, short z);
 
         WorldSettings &getSettings() { return this->settings; }
         MapPattern *getPattern() override { return this->pattern.get(); }
         const WorldSettings &getSettings() const { return this->settings; }
-        irr::scene::IMetaTriangleSelector *getMeta() override { return this->meta; }
-        SceneManager::Scene &getScene() override { return this->scene; }
+        irr::scene::IMetaTriangleSelector *getMeta() { return this->meta; }
+        SceneManager::Scene &getScene() { return this->scene; }
 
     protected:
     private:

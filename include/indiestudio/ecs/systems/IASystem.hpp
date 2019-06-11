@@ -520,7 +520,7 @@ namespace IndieStudio::ECS::System {
                 // TODO: poser bombe
 //                world->poseBomb(player_coord.first * 20 + 0.5, player_coord.second * 20 + 0.5, id);
                     //std::cerr << "Posing bomb!! :0" << std::endl;
-                    world->dropBomb(player_coord.first * 20 + 0.5, player_coord.second * 20 + 0.5, id);
+// UNCOMMENT ME                    world->dropBomb(player_coord.first * 20 + 0.5, player_coord.second * 20 + 0.5, id);
                 // TODO: ajouter du bruit aléatoire, et prendre en compte les stats du player
                 return std::nullopt;
             }
@@ -550,7 +550,7 @@ namespace IndieStudio::ECS::System {
                     //std::cerr << "Posing bomb!! :0" << std::endl;
 //                }
                 // TODO: poser bomb
-                world->dropBomb(player_coord.first * 20 + 0.5, player_coord.second * 20 + 0.5, id);
+// UNCOMMENT ME                world->dropBomb(player_coord.first * 20 + 0.5, player_coord.second * 20 + 0.5, id);
                 // l'action sera reroll, mais cancel immédiatement à l iteration suivante pour échapper à sa propre bombe
                 return std::nullopt;
             }
