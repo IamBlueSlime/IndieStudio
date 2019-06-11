@@ -21,8 +21,6 @@
 
 namespace IndieStudio {
 
-#define ABS(x) (x > 0 ? x : -x)
-
     World::World(WorldSettings settings)
         : settings(settings),
         pattern(std::make_unique<MapPattern>(settings.width, settings.height)),
@@ -219,7 +217,7 @@ namespace IndieStudio {
         irr::core::vector3df pos(node->getAbsolutePosition());
         irr::core::vector3df dir(pos.X - bombPos.X, 100, pos.Z - bombPos.Z);
 
-        float height = dir.Y - ((ABS(dir.X) - ABS(dir.Z)));
+        float height = dir.Y - std::abs(dir.X) - std::abs(dir.Z);
         if (height > 90)
             dir.Y = 10;
         else
