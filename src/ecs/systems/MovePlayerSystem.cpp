@@ -15,16 +15,44 @@ namespace IndieStudio::ECS::System {
     template<typename ManagerType>
     void MovePlayerSystem<ManagerType>::process(ManagerType &manager, World *world)
     {
-        (void) world;
+        manager.template forEntitiesWith<Movement, Alive>(
+                [&](auto &data, [[gnu::unused]] std::size_t id)
+                {
+                    if (world->getSettings().elapsedSeconds == 0)
+                        return;
 
-        manager.template forEntitiesWith<Position, Speed, Movable>(
-            [&manager](auto &data, [[gnu::unused]] auto id) {
-                auto &pos = manager.template getComponent<Position>(data);
-                auto &speed = manager.template getComponent<Speed>(data);
-                pos.x += speed.x;
-                pos.y += speed.y;
-                pos.z += speed.z;
-        });
+                    Movement &mov = manager.template getComponent<Movement>(data);
+                    auto &speed = manager.template getComponent<Speed>(data);
+                    auto &pos = manager.template getComponent<Position>(data);
+                    auto &node = manager.template getComponent<Node>(data);
+
+                    bool did = false;
+                    if (mov.up) {
+                        world->move({0, 0, 1}, pos, speed, node);
+                        did = true;
+                    } if (mov.down) {
+                        world->move({0, 0, -1}, pos, speed, node);
+                        did = true;
+                    } if (mov.left) {
+                        world->move({-1, 0, 0}, pos, speed, node);
+                        did = true;
+                    } if (mov.right) {
+                        world->move({1, 0, 0}, pos, speed, node);
+                        did = true;
+                    }
+
+                    irr::scene::IAnimatedMeshSceneNode *animatedNode =
+                        static_cast<irr::scene::IAnimatedMeshSceneNode *>(node.node);
+
+                    if (!did) {
+                        if (animatedNode->getFrameNr() == 76 || animatedNode->getFrameNr() <= 27)
+                            animatedNode->setFrameLoop(27, 76);
+                        return;
+                    }
+                    if (animatedNode->getFrameNr() > 27)
+		                animatedNode->setFrameLoop(0, 27);
+                }
+            );
     }
 
     template class MovePlayerSystem<WorldECS>;
