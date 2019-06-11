@@ -46,6 +46,24 @@ namespace IndieStudio {
             for (unsigned short x = 1; x < this->width - 1; x += 1)
                 for (unsigned short z = 1; z < this->height - 1; z += 1)
                     this->set(x, 0, z, TileType::FLOOR_FIRST);
+            
+            // This code generate the alternate floor texture
+            for (unsigned short x = 2; x < this->width - 2; x += 1) {
+                this->set(x, 0, 2, TileType::FLOOR_SECOND);
+                this->set(x, 0, this->height - 3, TileType::FLOOR_SECOND);
+            }
+            for (unsigned short x = 2; x < (this->width / 2 - 1); x += 2) {
+                if (x % 4 != 0) {
+                    for (unsigned short z = 2; z < this->height - 2; z += 1) {
+                        this->set(x, 0, z, TileType::FLOOR_SECOND);
+                        this->set(x + 1, 0, z, TileType::FLOOR_SECOND);
+
+                        int oppositeX = this->width - x - 2;
+                        this->set(oppositeX, 0, z, TileType::FLOOR_SECOND);
+                        this->set(oppositeX + 1, 0, z, TileType::FLOOR_SECOND);
+                    }
+                }
+            }
 
             for (unsigned short x = 1; x < this->width - 1; x += 1)
                 for (unsigned short z = 1; z < this->height - 1; z += 1)

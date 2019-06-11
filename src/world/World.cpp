@@ -61,6 +61,21 @@ namespace IndieStudio {
 
         generator->generate(this->pattern.get());
 
+        // Because we fill the empty space randomly, we ensure that
+        // the spawn areas are usable.
+        this->pattern->set(1, 1, 1, MapPattern::TileType::EMPTY);
+        this->pattern->set(1, 1, 2, MapPattern::TileType::EMPTY);
+        this->pattern->set(2, 1, 1, MapPattern::TileType::EMPTY);
+        this->pattern->set(this->pattern->getWidth() - 2, 1, 1, MapPattern::TileType::EMPTY);
+        this->pattern->set(this->pattern->getWidth() - 2, 1, 2, MapPattern::TileType::EMPTY);
+        this->pattern->set(this->pattern->getWidth() - 3, 1, 1, MapPattern::TileType::EMPTY);
+        this->pattern->set(1, 1, this->pattern->getHeight() - 2, MapPattern::TileType::EMPTY);
+        this->pattern->set(1, 1, this->pattern->getHeight() - 3, MapPattern::TileType::EMPTY);
+        this->pattern->set(2, 1, this->pattern->getHeight() - 2, MapPattern::TileType::EMPTY);
+        this->pattern->set(this->pattern->getWidth() - 2, 1, this->pattern->getHeight() - 2, MapPattern::TileType::EMPTY);
+        this->pattern->set(this->pattern->getWidth() - 2, 1, this->pattern->getHeight() - 3, MapPattern::TileType::EMPTY);
+        this->pattern->set(this->pattern->getWidth() - 3, 1, this->pattern->getHeight() - 2, MapPattern::TileType::EMPTY);
+
         this->createTerrain();
 
         for (int i = 0; i < 4; i += 1)

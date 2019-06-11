@@ -11,6 +11,7 @@
 #include <string>
 #include "indiestudio/common/Logger.hpp"
 #include "indiestudio/world/BasicWorldGenerator.hpp"
+#include "indiestudio/world/VerticalWorldGenerator.hpp"
 #include "indiestudio/world/IWorldManager.hpp"
 #include "indiestudio/world/World.hpp"
 
@@ -20,6 +21,8 @@ namespace IndieStudio {
     public:
         static const unsigned char FILE_MAGIC[sizeof(World::FileHeader::magic)];
         static const unsigned char FILE_FORMAT_VERSION;
+
+        static const std::string BASIC_WORLD_GENERATOR;
 
         WorldManager();
 
@@ -44,6 +47,7 @@ namespace IndieStudio {
         Logger logger;
         std::unordered_map<std::string, IWorldGenerator *> generators;
         BasicWorldGenerator basicWorldGenerator;
+        VerticalWorldGenerator verticalWorldGenerator;
         std::unique_ptr<World> loadedWorld;
 
         static void assertValidWorld(ByteBuffer &buffer);

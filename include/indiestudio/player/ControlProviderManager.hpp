@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include <memory>
 #include "indiestudio/common/Logger.hpp"
 #include "indiestudio/common/Registry.hpp"
 #include "indiestudio/player/AIControlProvider.hpp"
@@ -30,9 +29,8 @@ namespace IndieStudio {
     private:
         Logger logger;
         Registry<std::string, IControlProvider *> registry;
-
-        std::unique_ptr<KeyboardControlProvider> keyboardControlProvider;
-        std::unique_ptr<AIControlProvider> aiControlProvider;
+        KeyboardControlProvider keyboardControlProvider;
+        AIControlProvider aiControlProvider;
     };
 
 }

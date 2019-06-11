@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <memory>
 #include "indiestudio/mod/AMod.hpp"
 #include "indiestudio/wiimotecontroller/WiimoteControlProvider.hpp"
 
