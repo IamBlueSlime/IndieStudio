@@ -36,7 +36,7 @@ namespace IndieStudio::ECS::System {
         meta->removeTriangleSelector(node.node->getTriangleSelector());
         node.node->setVisible(false);
         manager.delEntity(entity);
-        world->createBlast(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1000);
+        world->createBlast(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1100);
         pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::EMPTY);
         this->dropPowerUp(world, posInTile);
     }
@@ -65,7 +65,7 @@ namespace IndieStudio::ECS::System {
 
         manager.template forEntitiesWith<IsBomb, Position, IsExploding, ExplosionRange, ExplosionLifeTime>(
         [this, &manager, &pattern, &world](auto &data, auto id) {
-            
+
             auto &bombPosition = manager.template getComponent<Position>(data);
             auto &bombRange = manager.template getComponent<ExplosionRange>(data);
             auto &explosionTime = manager.template getComponent<ExplosionLifeTime>(data);
@@ -88,7 +88,7 @@ namespace IndieStudio::ECS::System {
                 } else if (tile == IndieStudio::MapPattern::TileType::BREAKABLE_BLOCK) {
                     destroyBlock(manager, world, posInTile);
                     bombRange.explosionRangeUp = i;
-                    world->createBlast(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1000);
+                    world->createBlast(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1100);
                     pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::EMPTY);
                     this->dropPowerUp(world, posInTile);
                     break;
@@ -96,10 +96,10 @@ namespace IndieStudio::ECS::System {
                     std::size_t entityID = findBombByID(manager, pattern, posInTile);
                     chainBomb(manager, entityID, id);
                     pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::BOMB_EXPLOSION);
-                    world->createBlast(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1000);
+                    world->createBlast(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1100);
                 } else {
                     if (pattern->get(posInTile.first, 1, posInTile.second) != IndieStudio::MapPattern::TileType::BOMB_EXPLOSION) {
-                        world->createBlast(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1000);
+                        world->createBlast(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1100);
                         pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::BOMB_EXPLOSION);
                     }
                 }
@@ -115,7 +115,7 @@ namespace IndieStudio::ECS::System {
                 } else if (tile == IndieStudio::MapPattern::TileType::BREAKABLE_BLOCK) {
                     destroyBlock(manager, world, posInTile);
                     bombRange.explosionRangeDown = i;
-                    world->createBlast(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1000);
+                    world->createBlast(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1100);
                     pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::EMPTY);
                     this->dropPowerUp(world, posInTile);
                     break;
@@ -123,11 +123,11 @@ namespace IndieStudio::ECS::System {
                     std::size_t entityID = findBombByID(manager, pattern, posInTile);
                     chainBomb(manager, entityID, id);
                     pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::BOMB_EXPLOSION);
-                    world->createBlast(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1000);
+                    world->createBlast(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1100);
                 } else {
                     if (pattern->get(posInTile.first, 1, posInTile.second) != IndieStudio::MapPattern::TileType::BOMB_EXPLOSION) {
                         pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::BOMB_EXPLOSION);
-                        world->createBlast(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1000);
+                        world->createBlast(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1100);
                     }
                 }
             }
@@ -142,7 +142,7 @@ namespace IndieStudio::ECS::System {
                 } else if (tile == IndieStudio::MapPattern::TileType::BREAKABLE_BLOCK) {
                     destroyBlock(manager, world, posInTile);
                     bombRange.explosionRangeLeft = i;
-                    world->createBlast(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1000);
+                    world->createBlast(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1100);
                     pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::EMPTY);
                     this->dropPowerUp(world, posInTile);
                     break;
@@ -150,10 +150,10 @@ namespace IndieStudio::ECS::System {
                     std::size_t entityID = findBombByID(manager, pattern, posInTile);
                     chainBomb(manager, entityID, id);
                     pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::BOMB_EXPLOSION);
-                    world->createBlast(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1000);
+                    world->createBlast(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1100);
                 } else {
                     if (pattern->get(posInTile.first, 1, posInTile.second) != IndieStudio::MapPattern::TileType::BOMB_EXPLOSION) {
-                        world->createBlast(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1000);
+                        world->createBlast(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1100);
                         pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::BOMB_EXPLOSION);
                     }
                 }
@@ -169,7 +169,7 @@ namespace IndieStudio::ECS::System {
                 } else if (tile == IndieStudio::MapPattern::TileType::BREAKABLE_BLOCK) {
                     destroyBlock(manager, world, posInTile);
                     bombRange.explosionRangeRight = i;
-                    world->createBlast(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1000);
+                    world->createBlast(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1100);
                     pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::EMPTY);
                     this->dropPowerUp(world, posInTile);
                     break;
@@ -177,10 +177,10 @@ namespace IndieStudio::ECS::System {
                     std::size_t entityID = findBombByID(manager, pattern, posInTile);
                     chainBomb(manager, entityID, id);
                     pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::BOMB_EXPLOSION);
-                    world->createBlast(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1000);
+                    world->createBlast(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1100);
                 } else {
                     if (pattern->get(posInTile.first, 1, posInTile.second) != IndieStudio::MapPattern::TileType::BOMB_EXPLOSION) {
-                        world->createBlast(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1000);
+                        world->createBlast(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1100);
                         pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::BOMB_EXPLOSION);
                     }
                 }

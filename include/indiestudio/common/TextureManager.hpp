@@ -17,6 +17,7 @@ namespace IndieStudio {
 	public:
 		TextureManager();
 
+        void init();
         void registerTexture(std::string id) override;
         void registerTexture(std::string id, Texture &Texture,
             bool overrideExisting = false) override;

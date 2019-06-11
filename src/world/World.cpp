@@ -177,9 +177,9 @@ namespace IndieStudio {
     }
 
     void World::createPowerUp(std::size_t type, const Position &pos) {
-        auto node = scene.scene->addAnimatedMeshSceneNode(scene.scene->getMesh("assets/models/cube.obj"));        
+        auto node = scene.scene->addAnimatedMeshSceneNode(scene.scene->getMesh("assets/models/cube.obj"));
         auto &powerup = ecs.addEntity();
-        
+
         node->setVisible(true);
         ecs.setComponent(powerup, Node(node));
         ecs.setComponent(powerup, MaterialFlag(irr::video::EMF_LIGHTING, true));

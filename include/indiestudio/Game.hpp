@@ -11,6 +11,7 @@
 #include "indiestudio/IGame.hpp"
 #include "indiestudio/common/Logger.hpp"
 #include "indiestudio/common/SoundManager.hpp"
+#include "indiestudio/common/TextureManager.hpp"
 #include "indiestudio/common/FontManager.hpp"
 #include "indiestudio/mod/ModManager.hpp"
 #include "indiestudio/player/ControlProviderManager.hpp"
@@ -32,6 +33,7 @@ namespace IndieStudio {
         IStatisticManager &getStatisticManager() override { return this->statisticManager; }
         IAchievementManager &getAchievementManager() override { return this->achievementManager; }
         ISoundManager &getSoundManager() override { return this->soundManager; }
+        ITextureManager &getTextureManager() override { return this->textureManager; }
         IFontManager &getFontManager() override { return this->fontManager; }
         IControlProviderManager &getControlProviderManager() override { return this->controlProviderManager; }
         IWorldManager &getWorldManager() override { return this->worldManager; }
@@ -42,6 +44,7 @@ namespace IndieStudio {
 	private:
         Logger logger;
         StatisticManager statisticManager;
+        TextureManager textureManager;
         AchievementManager achievementManager;
         SoundManager soundManager;
         FontManager fontManager;
