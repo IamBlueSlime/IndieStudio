@@ -61,13 +61,13 @@ namespace IndieStudio {
         ECS::System::EventSystem<WorldECS>,
         ECS::System::ExplosionDurationSystem<WorldECS>,
         ECS::System::ApplyExplosionSystem<WorldECS>,
-        ECS::System::MovePlayerSystem<WorldECS>,
         ECS::System::SetupExplosionSystem<WorldECS>,
         ECS::System::PickUpPowerUpSystem<WorldECS>,
         ECS::System::IASystem<WorldECS>,
         ECS::System::SolidBombSystem<WorldECS>,
         ECS::System::DeathSystem<WorldECS>,
-        ECS::System::WinLooseSystem<WorldECS>
+        ECS::System::WinLooseSystem<WorldECS>,
+        ECS::System::MovePlayerSystem<WorldECS>
     >;
 
     class WorldManager;

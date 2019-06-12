@@ -219,7 +219,7 @@ namespace IndieStudio {
                     PlayScene::initialize(playScene);
                     scene.manager->setActiveScene(SceneManager::PLAY_ID);
                     world->focusECS(playScene);
-                } catch (const std::logic_error &ex) {
+                } catch (const IndieError &ex) {
                     std::string tmp(ex.what());
                     msgBox = Singleton::getDevice()->getGUIEnvironment()->addMessageBox(
                     L"Failed to load the map", std::wstring(tmp.begin(), tmp.end()).c_str(), true,

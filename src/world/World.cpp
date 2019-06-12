@@ -90,51 +90,12 @@ namespace IndieStudio {
             this->ecs.getEventManager().switch_event_queue();
             scene.scene->getVideoDriver()->beginScene(true, true);
             systems.process();
-            this->ecs.forEntitiesWith<Movement, Alive>(
-                [&](auto &data, [[gnu::unused]] std::size_t id)
-                {
-                    if (settings.elapsedSeconds == 0)
-                        return;
-
-                    Movement &mov = this->ecs.getComponent<Movement>(data);
-                    auto &speed = this->ecs.getComponent<Speed>(data);
-                    auto &pos = this->ecs.getComponent<Position>(data);
-                    auto &node = this->ecs.getComponent<Node>(data);
-
-                    bool did = false;
-                    if (mov.up) {
-                        move({0, 0, 1}, pos, speed, node);
-                        did = true;
-                    } if (mov.down) {
-                        move({0, 0, -1}, pos, speed, node);
-                        did = true;
-                    } if (mov.left) {
-                        move({-1, 0, 0}, pos, speed, node);
-                        did = true;
-                    } if (mov.right) {
-                        move({1, 0, 0}, pos, speed, node);
-                        did = true;
-                    }
-
-                    irr::scene::IAnimatedMeshSceneNode *animatedNode =
-                        static_cast<irr::scene::IAnimatedMeshSceneNode *>(node.node);
-
-                    if (!did) {
-                        if (animatedNode->getFrameNr() == 76 || animatedNode->getFrameNr() <= 27)
-                            animatedNode->setFrameLoop(27, 76);
-                        return;
-                    }
-                    if (animatedNode->getFrameNr() > 27)
-		                animatedNode->setFrameLoop(0, 27);
-                }
-            );
             this->ecs.getEventManager().clear_event_queue();
             scene.scene->drawAll();
             scene.gui->draw();
             scene.scene->getVideoDriver()->endScene();
             Scheduler::tick();
-            this->ecs.forEntitiesWith<Stat>([&](auto &data, std::size_t id) {
-                (void) id;
+            this->ecs.forEntitiesWith<Stat>([&](auto &data, auto) {
                 const Stat &stats = this->ecs.getComponent<Stat>(data);
                 PlayScene::updateStats(this->scene, stats.playerIdx, stats);
             });
@@ -452,7 +413,7 @@ namespace IndieStudio {
         };
 
         auto node_p = scene.scene->addAnimatedMeshSceneNode(scene.scene->getMesh("assets/models/player.md3"));
-        node_p->setFrameLoop(0, 27);
+        node_p->setFrameLoop(27, 76);
         ecs.setComponent(player, Node(node_p));
         ecs.setComponent(player, MaterialTexture(0, "assets/textures/player_" + Constants::PLAYER_COLORS[playerId] + ".png"));
         ecs.setComponent(player, MaterialFlag(irr::video::EMF_LIGHTING, false));
