@@ -22,6 +22,8 @@ namespace IndieStudio {
         registerTexture("assets/textures/water.jpg");
         registerTexture("assets/textures/particlewhite.bmp");
         registerTexture("assets/textures/jesus.png");
+        registerTexture("assets/textures/red-cross.png");
+        registerTexture("assets/textures/win.png");
 
         for (const std::string &color : Constants::PLAYER_COLORS) {
             registerTexture("assets/textures/player_" + color + ".png");
