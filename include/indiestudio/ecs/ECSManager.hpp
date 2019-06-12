@@ -43,6 +43,7 @@ namespace IndieStudio::ECS {
         //
         // Lambda parameters are a reference on the currently inspected entity and its ID
         // This custom forEach is used by the systems to apply logic on matching entities
+
         template<typename... components_searched>
         void forEntitiesWith(const std::function<void (EntityType&, std::size_t id)> func) {
             const auto mask = generateMask<components_searched...>();

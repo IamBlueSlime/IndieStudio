@@ -16,5 +16,6 @@ namespace IndieStudio {
         virtual ~IWorld() = default;
 
         virtual MapPattern *getPattern() = 0;
+        virtual void dropBomb(float bombPosX, float bombPosZ, std::size_t playerID, float range) = 0;
     };
 }
