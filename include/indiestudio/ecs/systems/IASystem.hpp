@@ -443,10 +443,10 @@ namespace IndieStudio::ECS::System {
         }
 
         void move(std::optional<typename Poti<ManagerType>::Direction> direction, Movement &movement) {
-                movement.up = false;
-                movement.down = false;
-                movement.left = false;
-                movement.right = false;
+            movement.up = false;
+            movement.down = false;
+            movement.left = false;
+            movement.right = false;
                 //std::cout << "Moving at ";
             if (!direction.has_value()) {
                 //std::cout << "nothing" << std::endl;
@@ -680,6 +680,7 @@ namespace IndieStudio::ECS::System {
                     world->dropBomb(player_coord.first * 20 + 0.5, player_coord.second * 20 + 0.5, id, stat.range);
                     return std::nullopt;
                 } else {
+                    return std::nullopt;
                    //std::cout << "Simulated bomb... not a good idea to drop one" << std::endl;
                 }
 
