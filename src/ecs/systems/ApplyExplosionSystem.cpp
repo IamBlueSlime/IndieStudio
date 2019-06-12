@@ -34,7 +34,7 @@ namespace IndieStudio::ECS::System {
         auto &node = manager.template getComponent<Node>(entity);
         irr::scene::IMetaTriangleSelector *meta = world->getMeta();
         meta->removeTriangleSelector(node.node->getTriangleSelector());
-        node.node->setVisible(false);
+        node.node->remove(); // ALED
         manager.delEntity(entity);
         world->createBlast(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1100);
         pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::EMPTY);

@@ -23,11 +23,6 @@ namespace IndieStudio {
 
     void PlayScene::initialize(SceneManager::Scene &scene)
     {
-        irr::core::list<irr::gui::IGUIElement *> children = scene.gui->getChildren();
-
-        for (irr::gui::IGUIElement *element : children)
-            scene.gui->removeChild(element);
-
         WorldSettings &settings = static_cast<WorldManager &>(
             Game::INSTANCE->getWorldManager()).getLoadedWorldImpl()->getSettings();
         irr::scene::ICameraSceneNode *camera = scene.scene->addCameraSceneNode(0,
@@ -50,7 +45,7 @@ namespace IndieStudio {
         const ECS::Component::Stat &stats)
     {
         static bool winned = false;
-        static bool equality = false;
+        // static bool equality = false;
 
         irr::gui::IGUIStaticText *killCount = static_cast<irr::gui::IGUIStaticText *>(
             scene.gui->getElementFromId(424242 + (playerIdx * 10)));

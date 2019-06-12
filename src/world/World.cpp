@@ -78,6 +78,10 @@ namespace IndieStudio {
 
         while (Game::INSTANCE->getSceneManager().getActive() == SceneManager::PLAY_ID
         && Singleton::getDevice()->run()) {
+            // Ultimate security system \o/
+            if (Game::INSTANCE->getSceneManager().getActive() != SceneManager::PLAY_ID)
+                break;
+
             for (int i = 0; i < 4; i += 1) {
                 auto events = this->settings.players[i].controlProviderPtr->pollEvents();
 
@@ -100,6 +104,14 @@ namespace IndieStudio {
                 PlayScene::updateStats(this->scene, stats.playerIdx, stats);
             });
         }
+
+        irr::core::list<irr::gui::IGUIElement *> children = scene.gui->getChildren();
+
+        for (irr::gui::IGUIElement *element : children)
+            scene.gui->removeChild(element);
+
+        this->meta->drop();
+        scene.scene->getRootSceneNode()->removeAll();
     }
 
     void World::forwardEvent(ECS::Event::EventData event)
@@ -149,7 +161,6 @@ namespace IndieStudio {
         auto &powerup = ecs.addEntity();
         std::pair<short, short> coord = MapPattern::positionToTile(pos.x, pos.z);
         this->pattern->set(coord.first, 1, coord.second, MapPattern::TileType::POWER_UP);
-        node->setVisible(true);
         ecs.setComponent(powerup, Node(node));
         ecs.setComponent(powerup, MaterialFlag(irr::video::EMF_LIGHTING, true));
         ecs.setComponent(powerup, Scale(5, 5, 5));
@@ -369,7 +380,7 @@ namespace IndieStudio {
             }
         });
 
-        node->drop();
+        node->remove();
 
         this->initBlast();
     }

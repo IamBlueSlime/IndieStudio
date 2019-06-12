@@ -183,7 +183,6 @@ namespace IndieStudio {
                     getPlayerMappings(i);
 
             SceneManager::Scene &playScene = scene.manager->getScene(SceneManager::PLAY_ID);
-            playScene.scene->clear();
             World *world = manager.create(settings);
             PlayScene::initialize(playScene);
             scene.manager->setActiveScene(SceneManager::PLAY_ID);
