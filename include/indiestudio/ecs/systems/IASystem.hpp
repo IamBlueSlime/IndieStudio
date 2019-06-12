@@ -317,16 +317,16 @@ private:
             return;
         }
 
-        if (hitmap[coord.y][coord.x - 1].delta > current + 1) {
+        if (coord.x > 0 && hitmap[coord.y][coord.x - 1].delta > current + 1) {
             fill_hitmap(hitmap, {coord.x - 1, coord.y}, current + 1, false);
         }
-        if (hitmap[coord.y][coord.x + 1].delta > current + 1) {
+        if (coord.x < hitmap[coord.y].size() && hitmap[coord.y][coord.x + 1].delta > current + 1) {
             fill_hitmap(hitmap, {coord.x + 1, coord.y}, current + 1, false);
         }
-        if (hitmap[coord.y - 1][coord.x].delta > current + 1) {
+        if (coord.y > 0 && hitmap[coord.y - 1][coord.x].delta > current + 1) {
             fill_hitmap(hitmap, {coord.x, coord.y - 1}, current + 1, false);
         }
-        if (hitmap[coord.y + 1][coord.x].delta > current + 1) {
+        if (coord.y < hitmap.size() && hitmap[coord.y + 1][coord.x].delta > current + 1) {
             fill_hitmap(hitmap, {coord.x, coord.y + 1}, current + 1, false);
         }
     }
