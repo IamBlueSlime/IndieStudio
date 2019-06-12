@@ -166,7 +166,7 @@ namespace IndieStudio {
             if (event.KeyInput.Key == irr::KEY_ESCAPE && event.KeyInput.PressedDown) {
                 if (!msgBox) {
                     msgBox = Singleton::getDevice()->getGUIEnvironment()->addMessageBox(
-                    L"Quit", L"Are You Sure ?", true,
+                    L"Quit", L"Are you sure?", true,
                     irr::gui::EMBF_YES | irr::gui::EMBF_NO, scene.gui, MSG_BOX_QUIT);
                     msgBox->setDraggable(false);
                 } else {
@@ -208,7 +208,6 @@ namespace IndieStudio {
                 std::wstring tmp = std::wstring(path);
 
                 SceneManager::Scene &playScene = scene.manager->getScene(SceneManager::PLAY_ID);
-                playScene.scene->clear();
 
                 WorldManager &manager = static_cast<WorldManager &>(
                     Game::INSTANCE->getWorldManager());
@@ -216,6 +215,7 @@ namespace IndieStudio {
                 try {
                     World *world = manager.load(std::string(tmp.begin(), tmp.end()));
 
+                    BACKGROUND_MUSIC.stop();
                     PlayScene::initialize(playScene);
                     scene.manager->setActiveScene(SceneManager::PLAY_ID);
                     world->focusECS(playScene);
@@ -225,9 +225,9 @@ namespace IndieStudio {
                     L"Failed to load the map", std::wstring(tmp.begin(), tmp.end()).c_str(), true,
                     irr::gui::EMBF_OK, scene.gui, MSG_BOX_QUIT);
                     msgBox->setDraggable(false);
-
-                    return true;
                 }
+
+                return true;
             }
         }
 

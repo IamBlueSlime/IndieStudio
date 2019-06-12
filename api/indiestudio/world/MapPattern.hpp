@@ -43,6 +43,8 @@ namespace IndieStudio {
             this->ground = std::make_unique<TileType[]>(width * height);
             this->walls = std::make_unique<TileType[]>(width * height);
 
+            this->clear();
+
             for (unsigned short x = 1; x < this->width - 1; x += 1)
                 for (unsigned short z = 1; z < this->height - 1; z += 1)
                     this->set(x, 0, z, TileType::FLOOR_FIRST);
@@ -90,6 +92,14 @@ namespace IndieStudio {
                     callback(x, 1, z, this->get(x, 1, z));
                 }
             }
+        }
+
+        void clear()
+        {
+            for (unsigned short x = 0; x < this->width; x += 1)
+                for (unsigned short y = 0; y < 2; y += 1)
+                    for (unsigned short z = 0; z < this->height; z += 1)
+                        this->set(x, y, z, TileType::EMPTY);
         }
 
         void set(unsigned short x, unsigned short y, unsigned short z, TileType value)

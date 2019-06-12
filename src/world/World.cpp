@@ -29,9 +29,7 @@ namespace IndieStudio {
     {}
 
     World::World() : World(WorldSettings())
-    {
-        srand(std::time(nullptr));
-    }
+    {}
 
     void World::create(WorldManager &manager)
     {
@@ -282,6 +280,7 @@ namespace IndieStudio {
 
         this->pattern = std::make_unique<MapPattern>(this->settings.width,
             this->settings.height);
+        this->pattern->clear();
         this->pattern->unpack(buffer);
 
         this->createTerrain();
@@ -319,7 +318,7 @@ namespace IndieStudio {
         auto driver = IndieStudio::Singleton::getDevice()->getVideoDriver();
 
         auto node = scene.scene->addAnimatedMeshSceneNode(scene.scene->getMesh("assets/models/cube.obj"));
-        node->addShadowVolumeSceneNode();
+        // node->addShadowVolumeSceneNode();
         node->setMaterialTexture(0, driver->getTexture("assets/textures/block_ground_1.png"));
 		node->setMaterialFlag(irr::video::EMF_LIGHTING, true);
 		node->setScale(irr::core::vector3df(Constants::TILE_SIZE_FACTOR, Constants::TILE_SIZE_FACTOR, Constants::TILE_SIZE_FACTOR));
@@ -379,8 +378,6 @@ namespace IndieStudio {
                     std::make_pair(x, z)));
             }
         });
-
-        node->remove();
 
         this->initBlast();
     }
