@@ -51,30 +51,40 @@ public:
         // Hitmap hitmap = this->init_hitmap(manager, map, false);
         // this->fill_hitmap(hitmap, {x, y}, 0);
 
-        std::cout << "Displaying hitmap" << std::endl << std::endl;
+       //std::cout << "Displaying hitmap" << std::endl << std::endl;
         for (auto &tmp : hitmap) {
             for (auto &tile : tmp) {
-                std::cout << static_cast<int>(tile.type) << " ";
+               //std::cout << static_cast<int>(tile.type) << " ";
             }
-        std::cout << std::endl;
+       //std::cout << std::endl;
         }
-        std::cout << "With target" << std::endl;
+       //std::cout << "With target" << std::endl;
         for (auto &tmp : hitmap) {
             for (auto &tile : tmp) {
-//                std::cout << static_cast<int>(tile.type) << " ";
+//               //std::cout << static_cast<int>(tile.type) << " ";
                 if (tile.delta == static_cast<std::size_t>(-1)) {
-                    std::cout << "\\ ";
+                   //std::cout << "\\ ";
                 } else {
-                    std::cout << tile.delta << " ";
+                   //std::cout << tile.delta << " ";
                 }
             }
-        std::cout << std::endl;
+       //std::cout << std::endl;
         }
     }
 
 
     std::optional<std::pair<Direction, std::size_t>> search_for(ManagerType &manager, MapPattern::TileType target, MapPattern *map, std::size_t x, std::size_t y, bool should_go_through_explosions) {
         Hitmap hitmap = this->init_hitmap(manager, map, should_go_through_explosions);
+        std::pair<short, short> my_coord = MapPattern::positionToTile(x, y);
+        manager.template forEntitiesWith<ECS::Component::IsPlayer, ECS::Component::Alive>([&manager, &hitmap, my_coord](auto &player, std::size_t id) {
+            auto &position = manager.template getComponent<ECS::Component::Position>(id);
+            std::pair<short, short> player_coord = MapPattern::positionToTile(position.x, position.z);
+            Tile &tile = hitmap[player_coord.second][player_coord.first];
+            if (my_coord.first == player_coord.first && my_coord.second == player_coord.second) return;
+            if (tile.type != MapPattern::TileType::BOMB) {
+                tile.type = MapPattern::TileType::PLAYER;
+            }
+        });
         this->fill_hitmap(hitmap, {x, y}, 0);
         std::optional<std::pair<Coord, std::size_t>> target_coord = this->find_nearest_target(target, hitmap);
         if (target_coord == std::nullopt) {
@@ -101,8 +111,8 @@ public:
         Hitmap hitmap = this->init_hitmap(manager, map, should_go_through_explosions);
         //std::cout << "Placed potential bomb on " << bomb.x << "x " << bomb.y << "y" << std::endl;
         hitmap[bomb.y][bomb.x] = {static_cast<std::size_t>(-1), MapPattern::TileType::BOMB};
-        std::cout << "Simulating bomb on " << bomb.x << "x " << bomb.y << "y" << std::endl;
-        std::cout << "Map recalculated with it" << std::endl;
+       //std::cout << "Simulating bomb on " << bomb.x << "x " << bomb.y << "y" << std::endl;
+       //std::cout << "Map recalculated with it" << std::endl;
 
 
  // recalculating map
@@ -113,8 +123,8 @@ public:
 
              for (std::size_t i = 0 ; i < bomb_range ; i++) {
                 auto &tile = hitmap[bomb_coord.second - i][bomb_coord.first];
-                std::cout << "testing " << bomb_coord.second - i << "y " << bomb_coord.first << "x" << std::endl;
-                std::cout << static_cast<int>(tile.type) << std::endl;
+               //std::cout << "testing " << bomb_coord.second - i << "y " << bomb_coord.first << "x" << std::endl;
+               //std::cout << static_cast<int>(tile.type) << std::endl;
                 if (tile.type == MapPattern::TileType::BREAKABLE_BLOCK ||
                 tile.type == MapPattern::TileType::BORDER_WALL_BLOCK ||
                 tile.type == MapPattern::TileType::INNER_WALL_BLOCK ||
@@ -125,18 +135,14 @@ public:
                 if (tile.type == MapPattern::TileType::BOMB) {
                     continue;
                 }
-                std::cout << "Deflag " << bomb_coord.second - i << "y " << bomb_coord.first << "x" << std::endl;
-                if (should_go_through_explosions) {
+               //std::cout << "Deflag " << bomb_coord.second - i << "y " << bomb_coord.first << "x" << std::endl;
                     tile.type = MapPattern::TileType::POTENTIAL_EXPLOSION;
-                } else {
-                    tile.type = MapPattern::TileType::SOLID_POTENTIAL_EXPLOSION;
-                }
             }
 
             for (std::size_t i = 0 ; i < bomb_range ; i++) {
-                std::cout << "testing " << bomb_coord.second + i << "y " << bomb_coord.first << "x" << std::endl;
+               //std::cout << "testing " << bomb_coord.second + i << "y " << bomb_coord.first << "x" << std::endl;
                 auto &tile = hitmap[bomb_coord.second + i][bomb_coord.first];
-                std::cout << static_cast<int>(tile.type) << std::endl;
+               //std::cout << static_cast<int>(tile.type) << std::endl;
                 if (tile.type == MapPattern::TileType::BREAKABLE_BLOCK ||
                 tile.type == MapPattern::TileType::BORDER_WALL_BLOCK ||
                 tile.type == MapPattern::TileType::INNER_WALL_BLOCK ||
@@ -147,18 +153,14 @@ public:
                 if (tile.type == MapPattern::TileType::BOMB) {
                     continue;
                 }
-                std::cout << "Deflag " << bomb_coord.second + i << "y " << bomb_coord.first << "x" << std::endl;
-                if (should_go_through_explosions) {
+               //std::cout << "Deflag " << bomb_coord.second + i << "y " << bomb_coord.first << "x" << std::endl;
                     tile.type = MapPattern::TileType::POTENTIAL_EXPLOSION;
-                } else {
-                    tile.type = MapPattern::TileType::SOLID_POTENTIAL_EXPLOSION;
-                }
             }
 
             for (std::size_t i = 0 ; i < bomb_range ; i++) {
-                std::cout << "testing " << bomb_coord.second << "y " << bomb_coord.first - i << "x" << std::endl;
+               //std::cout << "testing " << bomb_coord.second << "y " << bomb_coord.first - i << "x" << std::endl;
                 auto &tile = hitmap[bomb_coord.second][bomb_coord.first - i];
-                std::cout << static_cast<int>(tile.type) << std::endl;
+               //std::cout << static_cast<int>(tile.type) << std::endl;
                 if (tile.type == MapPattern::TileType::BREAKABLE_BLOCK ||
                 tile.type == MapPattern::TileType::BORDER_WALL_BLOCK ||
                 tile.type == MapPattern::TileType::INNER_WALL_BLOCK ||
@@ -169,18 +171,14 @@ public:
                 if (tile.type == MapPattern::TileType::BOMB) {
                     continue;
                 }
-                std::cout << "Deflag " << bomb_coord.second << "y " << bomb_coord.first - i<< "x" << std::endl;
-                if (should_go_through_explosions) {
+               //std::cout << "Deflag " << bomb_coord.second << "y " << bomb_coord.first - i<< "x" << std::endl;
                     tile.type = MapPattern::TileType::POTENTIAL_EXPLOSION;
-                } else {
-                    tile.type = MapPattern::TileType::SOLID_POTENTIAL_EXPLOSION;
-                }
             }
 
             for (std::size_t i = 0 ; i < bomb_range ; i++) {
-                std::cout << "testing " << bomb_coord.second << "y " << bomb_coord.first + i<< "x" << std::endl;
+               //std::cout << "testing " << bomb_coord.second << "y " << bomb_coord.first + i<< "x" << std::endl;
                 auto &tile = hitmap[bomb_coord.second][bomb_coord.first + i];
-                std::cout << static_cast<int>(tile.type) << std::endl;
+               //std::cout << static_cast<int>(tile.type) << std::endl;
                 if (tile.type == MapPattern::TileType::BREAKABLE_BLOCK ||
                 tile.type == MapPattern::TileType::BORDER_WALL_BLOCK ||
                 tile.type == MapPattern::TileType::INNER_WALL_BLOCK ||
@@ -191,12 +189,8 @@ public:
                 if (tile.type == MapPattern::TileType::BOMB) {
                     continue;
                 }
-                std::cout << "Deflag " << bomb_coord.second << "y " << bomb_coord.first + i << "x" << std::endl;
-                if (should_go_through_explosions) {
+               //std::cout << "Deflag " << bomb_coord.second << "y " << bomb_coord.first + i << "x" << std::endl;
                     tile.type = MapPattern::TileType::POTENTIAL_EXPLOSION;
-                } else {
-                    tile.type = MapPattern::TileType::SOLID_POTENTIAL_EXPLOSION;
-                }
             }
 
 
@@ -543,9 +537,9 @@ namespace IndieStudio::ECS::System {
 
             std::pair<short, short> coord = MapPattern::positionToTile(position.x, position.z);
 
-            std::optional<std::pair<typename Poti<ManagerType>::Direction, std::size_t>> empty = this->marron.search_for_with_bomb(manager, MapPattern::TileType::EMPTY, tilemap, coord.first, coord.second, true, bomb, player_id);
-            std::optional<std::pair<typename Poti<ManagerType>::Direction, std::size_t>> player = this->marron.search_for_with_bomb(manager, MapPattern::TileType::PLAYER, tilemap, coord.first, coord.second, true, bomb, player_id);
-            std::optional<std::pair<typename Poti<ManagerType>::Direction, std::size_t>> powerup = this->marron.search_for_with_bomb(manager, MapPattern::TileType::POWER_UP, tilemap, coord.first, coord.second, true, bomb, player_id);
+            std::optional<std::pair<typename Poti<ManagerType>::Direction, std::size_t>> empty = this->marron.search_for_with_bomb(manager, MapPattern::TileType::EMPTY, tilemap, coord.first, coord.second, false, bomb, player_id);
+            std::optional<std::pair<typename Poti<ManagerType>::Direction, std::size_t>> player = this->marron.search_for_with_bomb(manager, MapPattern::TileType::PLAYER, tilemap, coord.first, coord.second, false, bomb, player_id);
+            std::optional<std::pair<typename Poti<ManagerType>::Direction, std::size_t>> powerup = this->marron.search_for_with_bomb(manager, MapPattern::TileType::POWER_UP, tilemap, coord.first, coord.second, false, bomb, player_id);
             if (empty.has_value() && empty.value().second == 0) {
                 //std::cout << "Safe on empty" << std::endl;
                 return false;
@@ -598,13 +592,13 @@ namespace IndieStudio::ECS::System {
 
 
             std::pair<short, short> coord = MapPattern::positionToTile(position.x, position.z);
-            std::cout << "Simulating bomb at " << coord.first << "x, " << coord.second << "y!" << std::endl;
+           //std::cout << "Simulating bomb at " << coord.first << "x, " << coord.second << "y!" << std::endl;
 
-            std::optional<std::pair<typename Poti<ManagerType>::Direction, std::size_t>> decision = this->marron.search_for_with_bomb(manager, MapPattern::TileType::PLAYER, tilemap, coord.first, coord.second, true, bomb, player_id);
+            std::optional<std::pair<typename Poti<ManagerType>::Direction, std::size_t>> decision = this->marron.search_for_with_bomb(manager, MapPattern::TileType::PLAYER, tilemap, coord.first, coord.second, false, bomb, player_id);
 
             std::optional<typename Poti<ManagerType>::Direction> tmp = std::make_optional(Poti<ManagerType>::Direction::NONE);
             bool test = this->emergency_move_with_bomb(manager, tmp, position, world, bomb, player_id);
-            std::cout << "test = " << test << ", tmp.has_value = " << tmp.has_value() << ", tmp.value = " << static_cast<int>(tmp.value()) << std::endl;
+           //std::cout << "test = " << test << ", tmp.has_value = " << tmp.has_value() << ", tmp.value = " << static_cast<int>(tmp.value()) << std::endl;
             if (test == false || (tmp.has_value() && tmp.value() != Poti<ManagerType>::Direction::NONE)) {
                 return true;
             }
@@ -648,17 +642,16 @@ namespace IndieStudio::ECS::System {
             }
 
             if (decision.value().second <= 3) {
-                //std::cout << "Attacked! :D i finished my move!" << std::endl;
-                std::pair<short, short> player_coord = MapPattern::positionToTile(position.x, position.z);
-                (void) player_coord;
-                // TODO: poser bombe
-//                world->poseBomb(player_coord.first * 20 + 0.5, player_coord.second * 20 + 0.5, id);
-                    //std::cerr << "Posing bomb!! :0" << std::endl;
-//                    world->dropBomb(player_coord.first * 20 + 0.5, player_coord.second * 20 + 0.5, id);
-//                    tilemap->set(player_coord.first, 1, player_coord.second, MapPattern::TileType::BOMB);
+                // std::pair<short, short> player_coord = MapPattern::positionToTile(position.x, position.z);
 
-                // TODO: ajouter du bruit aléatoire, et prendre en compte les stats du player
-                return std::nullopt;
+                // if (this->simulate_bomb({static_cast<std::size_t>(player_coord.first), static_cast<std::size_t>(player_coord.second)}, manager, position, world, id)) {
+                //    //std::cout << "Dropping bomb!! :0" << std::endl;
+                //     auto &stat = manager.template getComponent<Stat>(id);
+                //     world->dropBomb(player_coord.first * 20 + 0.5, player_coord.second * 20 + 0.5, id, stat.range);
+                    return std::nullopt;
+                // } else {
+                //    //std::cout << "Simulated bomb... not a good idea to drop one" << std::endl;
+                // }
             }
 
             return std::make_optional(decision.value().first);
@@ -667,14 +660,14 @@ namespace IndieStudio::ECS::System {
         std::optional<typename Poti<ManagerType>::Direction> destroy_wall(ManagerType &manager, Position position, IWorld *world, [[gnu::unused]] std::size_t id) {
             MapPattern *tilemap = world->getPattern();
 
-            std::cout << "Breacking wall!" << std::endl;
+           //std::cout << "Breacking wall!" << std::endl;
             std::pair<short, short> coord = MapPattern::positionToTile(position.x, position.z);
-            std::cout << "Player position: " << coord.first << "x " << coord.second << "y " << std::endl;
+           //std::cout << "Player position: " << coord.first << "x " << coord.second << "y " << std::endl;
 
             std::optional<std::pair<typename Poti<ManagerType>::Direction, std::size_t>> decision = this->marron.search_for(manager, MapPattern::TileType::BREAKABLE_BLOCK, tilemap, coord.first, coord.second, false);
 
             if (decision == std::nullopt) {
-                std::cout << "No wall in range :(!" << std::endl;
+               //std::cout << "No wall in range :(!" << std::endl;
                 return std::nullopt;
             }
 
@@ -682,12 +675,12 @@ namespace IndieStudio::ECS::System {
                 std::pair<short, short> player_coord = MapPattern::positionToTile(position.x, position.z);
 
                 if (this->simulate_bomb({static_cast<std::size_t>(player_coord.first), static_cast<std::size_t>(player_coord.second)}, manager, position, world, id)) {
-                    std::cout << "Dropping bomb!! :0" << std::endl;
+                   //std::cout << "Dropping bomb!! :0" << std::endl;
                     auto &stat = manager.template getComponent<Stat>(id);
                     world->dropBomb(player_coord.first * 20 + 0.5, player_coord.second * 20 + 0.5, id, stat.range);
                     return std::nullopt;
                 } else {
-                    std::cout << "Simulated bomb... not a good idea to drop one" << std::endl;
+                   //std::cout << "Simulated bomb... not a good idea to drop one" << std::endl;
                 }
 
                 // l'action sera reroll, mais cancel immédiatement à l iteration suivante pour échapper à sa propre bombe

@@ -46,7 +46,7 @@ namespace IndieStudio {
             for (unsigned short x = 1; x < this->width - 1; x += 1)
                 for (unsigned short z = 1; z < this->height - 1; z += 1)
                     this->set(x, 0, z, TileType::FLOOR_FIRST);
-            
+
             // This code generate the alternate floor texture
             for (unsigned short x = 2; x < this->width - 2; x += 1) {
                 this->set(x, 0, 2, TileType::FLOOR_SECOND);
