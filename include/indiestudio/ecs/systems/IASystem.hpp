@@ -46,37 +46,9 @@ public:
         std::size_t pathLen;
     };
 
-
-    void display_hitmap(ManagerType &manager, Hitmap &hitmap, std::size_t x, std::size_t y) {
-        // Hitmap hitmap = this->init_hitmap(manager, map, false);
-        // this->fill_hitmap(hitmap, {x, y}, 0);
-
-       //std::cout << "Displaying hitmap" << std::endl << std::endl;
-        for (auto &tmp : hitmap) {
-            for (auto &tile : tmp) {
-               //std::cout << static_cast<int>(tile.type) << " ";
-            }
-       //std::cout << std::endl;
-        }
-       //std::cout << "With target" << std::endl;
-        for (auto &tmp : hitmap) {
-            for (auto &tile : tmp) {
-//               //std::cout << static_cast<int>(tile.type) << " ";
-                if (tile.delta == static_cast<std::size_t>(-1)) {
-                   //std::cout << "\\ ";
-                } else {
-                   //std::cout << tile.delta << " ";
-                }
-            }
-       //std::cout << std::endl;
-        }
-    }
-
-
     std::optional<std::pair<Direction, std::size_t>> search_for(ManagerType &manager, MapPattern::TileType target, MapPattern *map, std::size_t x, std::size_t y, bool should_go_through_explosions, std::size_t player_id) {
         Hitmap hitmap = this->init_hitmap(manager, map, should_go_through_explosions);
-        std::pair<short, short> my_coord = MapPattern::positionToTile(x, y);
-        manager.template forEntitiesWith<ECS::Component::IsPlayer, ECS::Component::Alive>([&manager, &hitmap, my_coord, player_id](auto &player, std::size_t id) {
+        manager.template forEntitiesWith<ECS::Component::IsPlayer, ECS::Component::Alive>([&manager, &hitmap, player_id](auto &, std::size_t id) {
             auto &position = manager.template getComponent<ECS::Component::Position>(id);
             std::pair<short, short> player_coord = MapPattern::positionToTile(position.x, position.z);
             Tile &tile = hitmap[player_coord.second][player_coord.first];
@@ -92,39 +64,20 @@ public:
         }
         this->reset_hitmap(hitmap);
         this->fill_hitmap(hitmap, {target_coord.value().first.x, target_coord.value().first.y}, 0);
-                //std::cout << "Displaying hitmap" << std::endl;
-        for (auto &tmp : hitmap) {
-            for (auto &tile : tmp) {
-                if (tile.delta == static_cast<std::size_t>(-1)) {
-                    //std::cout << "\\ ";
-                } else {
-                    //std::cout << tile.delta << " ";
-                }
-            }
-            //std::cout << std::endl;
-        }
 
         return std::make_optional(std::make_pair(this->get_direction(hitmap, {x, y}), target_coord.value().second));
     }
 
     std::optional<std::pair<Direction, std::size_t>> search_for_with_bomb(ManagerType &manager, MapPattern::TileType target, MapPattern *map, std::size_t x, std::size_t y, bool should_go_through_explosions, Coord bomb, std::size_t player_id) {
         Hitmap hitmap = this->init_hitmap(manager, map, should_go_through_explosions);
-        //std::cout << "Placed potential bomb on " << bomb.x << "x " << bomb.y << "y" << std::endl;
         hitmap[bomb.y][bomb.x] = {static_cast<std::size_t>(-1), MapPattern::TileType::BOMB};
-       //std::cout << "Simulating bomb on " << bomb.x << "x " << bomb.y << "y" << std::endl;
-       //std::cout << "Map recalculated with it" << std::endl;
 
-
- // recalculating map
             auto &stats = manager.template getComponent<ECS::Component::Stat>(player_id);
             std::size_t bomb_range = stats.range;
             std::pair<short, short> bomb_coord = {bomb.x, bomb.y};
 
-
-             for (std::size_t i = 0 ; i < bomb_range ; i++) {
+            for (std::size_t i = 0 ; i < bomb_range ; i++) {
                 auto &tile = hitmap[bomb_coord.second - i][bomb_coord.first];
-               //std::cout << "testing " << bomb_coord.second - i << "y " << bomb_coord.first << "x" << std::endl;
-               //std::cout << static_cast<int>(tile.type) << std::endl;
                 if (tile.type == MapPattern::TileType::BREAKABLE_BLOCK ||
                 tile.type == MapPattern::TileType::BORDER_WALL_BLOCK ||
                 tile.type == MapPattern::TileType::INNER_WALL_BLOCK ||
@@ -135,14 +88,11 @@ public:
                 if (tile.type == MapPattern::TileType::BOMB || tile.type == MapPattern::TileType::SOLID_POTENTIAL_EXPLOSION || tile.type == MapPattern::TileType::BOMB_EXPLOSION) {
                     continue;
                 }
-               //std::cout << "Deflag " << bomb_coord.second - i << "y " << bomb_coord.first << "x" << std::endl;
-                    tile.type = MapPattern::TileType::POTENTIAL_EXPLOSION;
+                tile.type = MapPattern::TileType::POTENTIAL_EXPLOSION;
             }
 
             for (std::size_t i = 0 ; i < bomb_range ; i++) {
-               //std::cout << "testing " << bomb_coord.second + i << "y " << bomb_coord.first << "x" << std::endl;
                 auto &tile = hitmap[bomb_coord.second + i][bomb_coord.first];
-               //std::cout << static_cast<int>(tile.type) << std::endl;
                 if (tile.type == MapPattern::TileType::BREAKABLE_BLOCK ||
                 tile.type == MapPattern::TileType::BORDER_WALL_BLOCK ||
                 tile.type == MapPattern::TileType::INNER_WALL_BLOCK ||
@@ -153,14 +103,11 @@ public:
                 if (tile.type == MapPattern::TileType::BOMB || tile.type == MapPattern::TileType::SOLID_POTENTIAL_EXPLOSION || tile.type == MapPattern::TileType::BOMB_EXPLOSION) {
                     continue;
                 }
-               //std::cout << "Deflag " << bomb_coord.second + i << "y " << bomb_coord.first << "x" << std::endl;
-                    tile.type = MapPattern::TileType::POTENTIAL_EXPLOSION;
+                tile.type = MapPattern::TileType::POTENTIAL_EXPLOSION;
             }
 
             for (std::size_t i = 0 ; i < bomb_range ; i++) {
-               //std::cout << "testing " << bomb_coord.second << "y " << bomb_coord.first - i << "x" << std::endl;
                 auto &tile = hitmap[bomb_coord.second][bomb_coord.first - i];
-               //std::cout << static_cast<int>(tile.type) << std::endl;
                 if (tile.type == MapPattern::TileType::BREAKABLE_BLOCK ||
                 tile.type == MapPattern::TileType::BORDER_WALL_BLOCK ||
                 tile.type == MapPattern::TileType::INNER_WALL_BLOCK ||
@@ -171,14 +118,11 @@ public:
                 if (tile.type == MapPattern::TileType::BOMB || tile.type == MapPattern::TileType::SOLID_POTENTIAL_EXPLOSION || tile.type == MapPattern::TileType::BOMB_EXPLOSION) {
                     continue;
                 }
-               //std::cout << "Deflag " << bomb_coord.second << "y " << bomb_coord.first - i<< "x" << std::endl;
-                    tile.type = MapPattern::TileType::POTENTIAL_EXPLOSION;
+                tile.type = MapPattern::TileType::POTENTIAL_EXPLOSION;
             }
 
             for (std::size_t i = 0 ; i < bomb_range ; i++) {
-               //std::cout << "testing " << bomb_coord.second << "y " << bomb_coord.first + i<< "x" << std::endl;
                 auto &tile = hitmap[bomb_coord.second][bomb_coord.first + i];
-               //std::cout << static_cast<int>(tile.type) << std::endl;
                 if (tile.type == MapPattern::TileType::BREAKABLE_BLOCK ||
                 tile.type == MapPattern::TileType::BORDER_WALL_BLOCK ||
                 tile.type == MapPattern::TileType::INNER_WALL_BLOCK ||
@@ -189,15 +133,10 @@ public:
                 if (tile.type == MapPattern::TileType::BOMB || tile.type == MapPattern::TileType::SOLID_POTENTIAL_EXPLOSION || tile.type == MapPattern::TileType::BOMB_EXPLOSION) {
                     continue;
                 }
-               //std::cout << "Deflag " << bomb_coord.second << "y " << bomb_coord.first + i << "x" << std::endl;
-                    tile.type = MapPattern::TileType::POTENTIAL_EXPLOSION;
+                tile.type = MapPattern::TileType::POTENTIAL_EXPLOSION;
             }
-
-
-
 
         this->fill_hitmap(hitmap, {x, y}, 0);
-        this->display_hitmap(manager, hitmap, x, y);
         std::optional<std::pair<Coord, std::size_t>> target_coord = this->find_nearest_target(target, hitmap);
         if (target_coord == std::nullopt) {
             return std::nullopt;
@@ -212,14 +151,11 @@ private:
 
     Hitmap init_hitmap(ManagerType &manager, MapPattern *map, bool should_go_through_explosion) {
         Hitmap hitmap;
-        //std::cout << "Creating hitmap: " << std::endl;
         for (std::size_t i = 0 ; i < map->getHeight() ; i++) {
             hitmap.push_back(std::vector<Tile>());
             for (std::size_t j = 0 ; j < map->getWidth() ; j++) {
-                //std::cout << static_cast<int>(map->get(j, 1, i)) << " ";
                 hitmap[i].push_back({static_cast<std::size_t>(-1), map->get(j, 1, i)});
             }
-            //std::cout << std::endl;
         }
         this->add_futur_explosion(manager, hitmap, should_go_through_explosion);
         return hitmap;
@@ -346,17 +282,10 @@ private:
     }
 
     void reset_hitmap(Hitmap &hitmap) {
-        //std::cout << "Displaying hitmap" << std::endl;
         for (auto &tmp : hitmap) {
             for (auto &tile : tmp) {
-                if (tile.delta == static_cast<std::size_t>(-1)) {
-                    //std::cout << "\\ ";
-                } else {
-                    //std::cout << tile.delta << " ";
-                }
                 tile.delta = -1;
             }
-            //std::cout << std::endl;
         }
     }
 
@@ -447,93 +376,60 @@ namespace IndieStudio::ECS::System {
             movement.down = false;
             movement.left = false;
             movement.right = false;
-                //std::cout << "Moving at ";
+
             if (!direction.has_value()) {
-                //std::cout << "nothing" << std::endl;
             } else if (direction.value() == Poti<ManagerType>::Direction::BOT) {
-                //std::cout << "bot" << std::endl;
                 movement.up = true;
             } else if (direction.value() == Poti<ManagerType>::Direction::TOP) {
-                //std::cout << "top" << std::endl;
                 movement.down = true;
             } else if (direction.value() == Poti<ManagerType>::Direction::LEFT) {
-                //std::cout << "left" << std::endl;
                 movement.left = true;
             } else if (direction.value() == Poti<ManagerType>::Direction::RIGHT) {
-                //std::cout << "right" << std::endl;
                 movement.right = true;
-            } else {
-                //std::cout << "nothing" << std::endl;
             }
         }
 
         bool emergency_move(ManagerType &manager, std::optional<typename Poti<ManagerType>::Direction> &decision, Position position, IWorld *world, std::size_t player_id) {
 
             MapPattern *tilemap = world->getPattern();
-            //std::cout << "Emergency move" << std::endl;
 
             std::pair<short, short> coord = MapPattern::positionToTile(position.x, position.z);
-
-//            this->marron.display_hitmap(manager, tilemap, coord.first, coord.second);
 
             std::optional<std::pair<typename Poti<ManagerType>::Direction, std::size_t>> empty = this->marron.search_for(manager, MapPattern::TileType::EMPTY, tilemap, coord.first, coord.second, true, player_id);
             std::optional<std::pair<typename Poti<ManagerType>::Direction, std::size_t>> player = this->marron.search_for(manager, MapPattern::TileType::PLAYER, tilemap, coord.first, coord.second, true, player_id);
             std::optional<std::pair<typename Poti<ManagerType>::Direction, std::size_t>> powerup = this->marron.search_for(manager, MapPattern::TileType::POWER_UP, tilemap, coord.first, coord.second, true, player_id);
             if (empty.has_value() && empty.value().second == 0) {
-                //std::cout << "Safe on empty" << std::endl;
                 return false;
             }
             if (player.has_value() && player.value().second == 0) {
-                //std::cout << "Safe on player" << std::endl;
                 return false;
             }
             if (powerup.has_value() && powerup.value().second == 0) {
-                //std::cout << "Safe on powerup" << std::endl;
                 return false;
             }
             if (!empty.has_value() && !player.has_value() && !powerup.has_value()) {
-                //std::cout << "No safe place. Just die. sorry" << std::endl;
                 decision = std::make_optional(Poti<ManagerType>::Direction::NONE);
                 return true;
             }
-            //std::cout << "You are not in a safe place!!" << std::endl;
 
             std::optional<std::pair<typename Poti<ManagerType>::Direction, std::size_t>> nearest;
-            if (empty.has_value()) {
-                //std::cout << "empty: " << empty.value().second << std::endl;
-            }
-            if (player.has_value()) {
-                //std::cout << "player: " << player.value().second << std::endl;
-            }
-            if (powerup.has_value()) {
-                //std::cout << "powerup: " << powerup.value().second << std::endl;
-            }
             if (empty.has_value() && (!player.has_value() || (player.has_value() && empty.value().second <= player.value().second)) && (!powerup.has_value() || (powerup.has_value() && empty.value().second <= powerup.value().second))) {
-                //std::cout << "Nearest on empty" << std::endl;
                 nearest = empty;
             }
             if (player.has_value() && (!empty.has_value() || (empty.has_value() && player.value().second <= empty.value().second)) && (!powerup.has_value() || (powerup.has_value() && player.value().second <= powerup.value().second))) {
-                //std::cout << "Nearest on player" << std::endl;
                 nearest = player;
             }
             if (powerup.has_value() && (!empty.has_value() || (empty.has_value() && powerup.value().second <= empty.value().second)) && (!player.has_value() || (player.has_value() && powerup.value().second <= player.value().second))) {
-                //std::cout << "Nearest on powerup" << std::endl;
                 nearest = powerup;
             }
 
-//            try {
             decision = std::make_optional(nearest.value().first);
-            // } catch (const std::exception& e) {
-            //     //std::cout << "GOTCHA" << std::endl;
-            // }
             return true;
         }
-
 
         bool emergency_move_with_bomb(ManagerType &manager, std::optional<typename Poti<ManagerType>::Direction> &decision, Position position, IWorld *world, typename Poti<ManagerType>::Coord bomb, std::size_t player_id) {
 
             MapPattern *tilemap = world->getPattern();
-            //std::cout << "Emergency move with bomb on " << bomb.x << "x " << bomb.y << "y" << std::endl;
 
             std::pair<short, short> coord = MapPattern::positionToTile(position.x, position.z);
 
@@ -541,44 +437,27 @@ namespace IndieStudio::ECS::System {
             std::optional<std::pair<typename Poti<ManagerType>::Direction, std::size_t>> player = this->marron.search_for_with_bomb(manager, MapPattern::TileType::PLAYER, tilemap, coord.first, coord.second, false, bomb, player_id);
             std::optional<std::pair<typename Poti<ManagerType>::Direction, std::size_t>> powerup = this->marron.search_for_with_bomb(manager, MapPattern::TileType::POWER_UP, tilemap, coord.first, coord.second, false, bomb, player_id);
             if (empty.has_value() && empty.value().second == 0) {
-                //std::cout << "Safe on empty" << std::endl;
                 return false;
             }
             if (player.has_value() && player.value().second == 0) {
-                //std::cout << "Safe on player" << std::endl;
                 return false;
             }
             if (powerup.has_value() && powerup.value().second == 0) {
-                //std::cout << "Safe on powerup" << std::endl;
                 return false;
             }
             if (!empty.has_value() && !player.has_value() && !powerup.has_value()) {
-                //std::cout << "No safe place. Just die. sorry" << std::endl;
                 decision = std::make_optional(Poti<ManagerType>::Direction::NONE);
                 return true;
             }
-            //std::cout << "You are not in a safe place!!" << std::endl;
 
             std::optional<std::pair<typename Poti<ManagerType>::Direction, std::size_t>> nearest;
-            if (empty.has_value()) {
-                //std::cout << "empty: " << empty.value().second << std::endl;
-            }
-            if (player.has_value()) {
-                //std::cout << "player: " << player.value().second << std::endl;
-            }
-            if (powerup.has_value()) {
-                //std::cout << "powerup: " << powerup.value().second << std::endl;
-            }
             if (empty.has_value() && (!player.has_value() || (player.has_value() && empty.value().second <= player.value().second)) && (!powerup.has_value() || (powerup.has_value() && empty.value().second <= powerup.value().second))) {
-                //std::cout << "Nearest on empty" << std::endl;
                 nearest = empty;
             }
             if (player.has_value() && (!empty.has_value() || (empty.has_value() && player.value().second <= empty.value().second)) && (!powerup.has_value() || (powerup.has_value() && player.value().second <= powerup.value().second))) {
-                //std::cout << "Nearest on player" << std::endl;
                 nearest = player;
             }
             if (powerup.has_value() && (!empty.has_value() || (empty.has_value() && powerup.value().second <= empty.value().second)) && (!player.has_value() || (player.has_value() && powerup.value().second <= player.value().second))) {
-                //std::cout << "Nearest on powerup" << std::endl;
                 nearest = powerup;
             }
 
@@ -586,19 +465,16 @@ namespace IndieStudio::ECS::System {
             return true;
         }
 
-
         bool simulate_bomb(typename Poti<ManagerType>::Coord bomb, ManagerType &manager, Position position, IWorld *world, std::size_t player_id) {
             MapPattern *tilemap = world->getPattern();
 
 
             std::pair<short, short> coord = MapPattern::positionToTile(position.x, position.z);
-            //std::cout << "Simulating bomb at " << coord.first << "x, " << coord.second << "y!" << std::endl;
 
-            std::optional<std::pair<typename Poti<ManagerType>::Direction, std::size_t>> decision = this->marron.search_for_with_bomb(manager, MapPattern::TileType::PLAYER, tilemap, coord.first, coord.second, false, bomb, player_id);
+            this->marron.search_for_with_bomb(manager, MapPattern::TileType::PLAYER, tilemap, coord.first, coord.second, false, bomb, player_id);
 
             std::optional<typename Poti<ManagerType>::Direction> tmp = std::make_optional(Poti<ManagerType>::Direction::NONE);
             bool test = this->emergency_move_with_bomb(manager, tmp, position, world, bomb, player_id);
-            //std::cout << "test = " << test << ", tmp.has_value = " << tmp.has_value() << ", tmp.value = " << static_cast<int>(tmp.value()) << std::endl;
             if (test == false || (tmp.has_value() && tmp.value() != Poti<ManagerType>::Direction::NONE)) {
                 return true;
             }
@@ -630,14 +506,11 @@ namespace IndieStudio::ECS::System {
 
             MapPattern *tilemap = world->getPattern();
 
-            //std::cout << "Attacking!" << std::endl;
             std::pair<short, short> coord = MapPattern::positionToTile(position.x, position.z);
-            //std::cout << "Player position: " << coord.first << "x " << coord.second << "y " << std::endl;
 
             std::optional<std::pair<typename Poti<ManagerType>::Direction, std::size_t>> decision = this->marron.search_for(manager, MapPattern::TileType::PLAYER, tilemap, coord.first, coord.second, false, id);
 
             if (decision == std::nullopt) {
-                //std::cout << "No player in range :(!" << std::endl;
                 return std::nullopt;
             }
 
@@ -645,12 +518,9 @@ namespace IndieStudio::ECS::System {
                 std::pair<short, short> player_coord = MapPattern::positionToTile(position.x, position.z);
 
                 if (this->simulate_bomb({static_cast<std::size_t>(player_coord.first), static_cast<std::size_t>(player_coord.second)}, manager, position, world, id)) {
-                   //std::cout << "Dropping bomb!! :0" << std::endl;
                     auto &stat = manager.template getComponent<Stat>(id);
                     world->dropBomb(player_coord.first * 20 + 0.5, player_coord.second * 20 + 0.5, id, stat.range);
                     return std::nullopt;
-                } else {
-                   //std::cout << "Simulated bomb... not a good idea to drop one" << std::endl;
                 }
             }
 
@@ -660,14 +530,11 @@ namespace IndieStudio::ECS::System {
         std::optional<typename Poti<ManagerType>::Direction> destroy_wall(ManagerType &manager, Position position, IWorld *world, [[gnu::unused]] std::size_t id) {
             MapPattern *tilemap = world->getPattern();
 
-           //std::cout << "Breacking wall!" << std::endl;
             std::pair<short, short> coord = MapPattern::positionToTile(position.x, position.z);
-           //std::cout << "Player position: " << coord.first << "x " << coord.second << "y " << std::endl;
 
             std::optional<std::pair<typename Poti<ManagerType>::Direction, std::size_t>> decision = this->marron.search_for(manager, MapPattern::TileType::BREAKABLE_BLOCK, tilemap, coord.first, coord.second, false, id);
 
             if (decision == std::nullopt) {
-               //std::cout << "No wall in range :(!" << std::endl;
                 return std::nullopt;
             }
 
@@ -675,16 +542,13 @@ namespace IndieStudio::ECS::System {
                 std::pair<short, short> player_coord = MapPattern::positionToTile(position.x, position.z);
 
                 if (this->simulate_bomb({static_cast<std::size_t>(player_coord.first), static_cast<std::size_t>(player_coord.second)}, manager, position, world, id)) {
-                   //std::cout << "Dropping bomb!! :0" << std::endl;
                     auto &stat = manager.template getComponent<Stat>(id);
                     world->dropBomb(player_coord.first * 20 + 0.5, player_coord.second * 20 + 0.5, id, stat.range);
                     return std::nullopt;
                 } else {
                     return std::nullopt;
-                   //std::cout << "Simulated bomb... not a good idea to drop one" << std::endl;
                 }
 
-                // l'action sera reroll, mais cancel immédiatement à l iteration suivante pour échapper à sa propre bombe
             }
             return std::make_optional(decision.value().first);
         }
@@ -692,21 +556,14 @@ namespace IndieStudio::ECS::System {
         std::optional<typename Poti<ManagerType>::Direction> pick_powerup(ManagerType &manager, Position position, IWorld *world, [[gnu::unused]] std::size_t id) {
             MapPattern *tilemap = world->getPattern();
 
-            //std::cout << "Picking powerup!" << std::endl;
             std::pair<short, short> coord = MapPattern::positionToTile(position.x, position.z);
-            //std::cout << "Player position: " << coord.first << "x " << coord.second << "y " << std::endl;
 
             if (tilemap->get(coord.second, 1, coord.first) == MapPattern::TileType::POWER_UP) {
-                //std::cout << "Powerup picked!" << std::endl;
-                // TODO: apply powerup effect
-                // TODO: delete le powerup
-                // TODO: update la tilemap
                 return std::nullopt;
             }
 
             std::optional<std::pair<typename Poti<ManagerType>::Direction, std::size_t>> decision = this->marron.search_for(manager, MapPattern::TileType::POWER_UP, tilemap, coord.first, coord.second, false, id);
             if (decision == std::nullopt) {
-                //std::cout << "No powerup in range :(!" << std::endl;
                 return std::nullopt;
             }
 

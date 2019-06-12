@@ -86,11 +86,11 @@ namespace IndieStudio::ECS::Event {
     class EventManager {
     public:
         std::unordered_map<EventData, bool> &getEventQueue() {
-            if (this->event_queue_switch) {
-                return this->event_queue2;
-            } else {
+            // if (this->event_queue_switch) {
+            //     return this->event_queue2;
+            // } else {
                 return this->event_queue1;
-            }
+            // }
         }
 
         void clear_event_queue() {
@@ -102,11 +102,11 @@ namespace IndieStudio::ECS::Event {
         }
 
         void push_event(const EventData event) {
-            if (this->event_queue_switch) {
+            // if (this->event_queue_switch) {
                 this->event_queue1[event] = true;
-            } else {
-                this->event_queue2[event] = true;
-            }
+            // } else {
+            //     this->event_queue2[event] = true;
+            // }
         }
 
     private:
