@@ -19,10 +19,10 @@ namespace IndieStudio::ECS::System {
             auto &speed = manager.template getComponent<Speed>(data);
             auto &stat = manager.template getComponent<Stat>(data);
             MapPattern *tilemap = world->getPattern();
-            
+
             manager.template forEntitiesWith<IsPowerUp, Position>(
                 [&manager, &playerPos, &stat, &speed, tilemap, this](auto &entity, [[gnu::unused]] auto id) {
-                    auto &powerUpPos = manager.template getComponent<Position>(entity); 
+                    auto &powerUpPos = manager.template getComponent<Position>(entity);
                     auto tilePlayerPos = MapPattern::positionToTile(playerPos.x, playerPos.z);
                     auto &powerUp =  manager.template getComponent<IsPowerUp>(entity);
                     auto tilePowerUpPos = MapPattern::positionToTile(powerUpPos.x, powerUpPos.z);
@@ -40,7 +40,7 @@ namespace IndieStudio::ECS::System {
 
     template<typename ManagerType>
     bool PickUpPowerUpSystem<ManagerType>::isOnPowerUp(
-        const std::pair<std::size_t, std::size_t> &player, 
+        const std::pair<std::size_t, std::size_t> &player,
         const std::pair<std::size_t, std::size_t> &powerUp)
     {
         if (player.first == powerUp.first && player.second == powerUp.second)
@@ -51,7 +51,7 @@ namespace IndieStudio::ECS::System {
     template<typename ManagerType>
     void PickUpPowerUpSystem<ManagerType>::applyPowerUp(Speed &speed, Stat &stat, IsPowerUp &powerUp)
     {
-        if (powerUp.type == IsPowerUp::SPEED_POWERUP) {   
+        if (powerUp.type == IsPowerUp::SPEED_POWERUP) {
             speed.x += 0.1;
             speed.y += 0.1;
             speed.z += 0.1;

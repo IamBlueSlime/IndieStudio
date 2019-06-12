@@ -147,7 +147,8 @@ namespace IndieStudio {
             irr::core::vector3df(pos.x, 73, pos.z)
         );
         auto &powerup = ecs.addEntity();
-
+        std::pair<short, short> coord = MapPattern::positionToTile(pos.x, pos.z);
+        this->pattern->set(coord.first, 1, coord.second, MapPattern::TileType::POWER_UP);
         node->setVisible(true);
         ecs.setComponent(powerup, Node(node));
         ecs.setComponent(powerup, MaterialFlag(irr::video::EMF_LIGHTING, true));
