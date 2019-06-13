@@ -39,7 +39,6 @@ set(INDIE_SRC
     ${INDIE_SRC_DIR}/common/Scheduler.cpp
     ${INDIE_SRC_DIR}/ecs/Signature.cpp
     ${INDIE_SRC_DIR}/ecs/systems/ApplyExplosionSystem.cpp
-    ${INDIE_SRC_DIR}/ecs/systems/DeathSystem.cpp
     ${INDIE_SRC_DIR}/ecs/systems/EventSystem.cpp
     ${INDIE_SRC_DIR}/ecs/systems/ExplosionDurationSystem.cpp
     ${INDIE_SRC_DIR}/ecs/systems/MovePlayerSystem.cpp

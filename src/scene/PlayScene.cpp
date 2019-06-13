@@ -66,6 +66,8 @@ namespace IndieStudio {
 
         if (stats.winner) {
             winned = true;
+        } else {
+            winned = false;
         }
         if (winned) {
             win->setVisible(true);

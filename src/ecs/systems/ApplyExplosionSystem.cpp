@@ -63,11 +63,12 @@ namespace IndieStudio::ECS::System {
     {
         IndieStudio::MapPattern *pattern = world->getPattern();
 
-        manager.template forEntitiesWith<IsBomb, Position, IsExploding, ExplosionRange, ExplosionLifeTime>(
+        manager.template forEntitiesWith<IsBomb, Position, IsExploding, ExplosionRange, ExplosionLifeTime, PosedBy>(
         [this, &manager, &pattern, &world](auto &data, auto id) {
             auto &bombPosition = manager.template getComponent<Position>(data);
             auto &bombRange = manager.template getComponent<ExplosionRange>(data);
             auto &explosionTime = manager.template getComponent<ExplosionLifeTime>(data);
+            auto &posedID = manager.template getComponent<PosedBy>(data);
             std::pair<short, short> posInTile;
 
             if (std::time(nullptr) - explosionTime.explosionLifeTime >= 1) {
@@ -102,6 +103,23 @@ namespace IndieStudio::ECS::System {
                         pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::BOMB_EXPLOSION);
                     }
                 }
+                manager.template forEntitiesWith<IsPlayer, Position, Node, Stat>(
+                [&] (auto &player, [[gnu::unused]] auto id) {
+                    const auto &playerPosition = manager.template getComponent<Position>(player);
+                    auto playerInTile = pattern->positionToTile(playerPosition.x, playerPosition.z);
+                    auto &node = manager.template getComponent<Node>(player);
+                    auto &stat = manager.template getComponent<Stat>(player);
+                    auto &enemyStat = manager.template getComponent<Stat>(posedID.id);
+                    irr::core::vector3df explosionCenter(bombPosition.x, 61, bombPosition.z);
+                    if (playerInTile.first == posInTile.first &&
+                        playerInTile.second == posInTile.second &&
+                        stat.alive) {
+                        manager.template unsetComponent<Alive>(player);
+                        stat.alive = false;
+                        enemyStat.kill += 1;
+                        world->eject(node.node, explosionCenter);
+                    }
+                });
             }
 
             for (float i = 0; i < bombRange.explosionRangeDown; i += 1.0f) {
@@ -129,6 +147,23 @@ namespace IndieStudio::ECS::System {
                         world->createBlast(irr::core::vector3df(posInTile.first * 20 + 0.5, 70, posInTile.second * 20 + 0.5), 1100);
                     }
                 }
+                manager.template forEntitiesWith<IsPlayer, Position, Node, Stat>(
+                [&] (auto &player, [[gnu::unused]] auto id) {
+                    const auto &playerPosition = manager.template getComponent<Position>(player);
+                    auto playerInTile = pattern->positionToTile(playerPosition.x, playerPosition.z);
+                    auto &node = manager.template getComponent<Node>(player);
+                    auto &stat = manager.template getComponent<Stat>(player);
+                    auto &enemyStat = manager.template getComponent<Stat>(posedID.id);
+                    irr::core::vector3df explosionCenter(bombPosition.x, 61, bombPosition.z);
+                    if (playerInTile.first == posInTile.first &&
+                        playerInTile.second == posInTile.second &&
+                        stat.alive) {
+                        manager.template unsetComponent<Alive>(player);
+                        stat.alive = false;
+                        enemyStat.kill++;
+                        world->eject(node.node, explosionCenter);
+                    }
+                });
             }
 
             for (float i = 0; i < bombRange.explosionRangeLeft; i += 1.0f) {
@@ -156,6 +191,23 @@ namespace IndieStudio::ECS::System {
                         pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::BOMB_EXPLOSION);
                     }
                 }
+                manager.template forEntitiesWith<IsPlayer, Position, Node, Stat>(
+                [&] (auto &player, [[gnu::unused]] auto id) {
+                    const auto &playerPosition = manager.template getComponent<Position>(player);
+                    auto playerInTile = pattern->positionToTile(playerPosition.x, playerPosition.z);
+                    auto &node = manager.template getComponent<Node>(player);
+                    auto &stat = manager.template getComponent<Stat>(player);
+                    auto &enemyStat = manager.template getComponent<Stat>(posedID.id);
+                    irr::core::vector3df explosionCenter(bombPosition.x, 61, bombPosition.z);
+                    if (playerInTile.first == posInTile.first &&
+                        playerInTile.second == posInTile.second &&
+                        stat.alive) {
+                        manager.template unsetComponent<Alive>(player);
+                        stat.alive = false;
+                        enemyStat.kill++;
+                        world->eject(node.node, explosionCenter);
+                    }
+                });
             }
 
             for (float i = 0; i < bombRange.explosionRangeRight; i += 1.0f) {
@@ -183,6 +235,23 @@ namespace IndieStudio::ECS::System {
                         pattern->set(posInTile.first, 1, posInTile.second, IndieStudio::MapPattern::TileType::BOMB_EXPLOSION);
                     }
                 }
+                manager.template forEntitiesWith<IsPlayer, Position, Node, Stat>(
+                [&] (auto &player, [[gnu::unused]] auto id) {
+                    const auto &playerPosition = manager.template getComponent<Position>(player);
+                    auto playerInTile = pattern->positionToTile(playerPosition.x, playerPosition.z);
+                    auto &node = manager.template getComponent<Node>(player);
+                    auto &stat = manager.template getComponent<Stat>(player);
+                    auto &enemyStat = manager.template getComponent<Stat>(posedID.id);
+                    irr::core::vector3df explosionCenter(bombPosition.x, 61, bombPosition.z);
+                    if (playerInTile.first == posInTile.first &&
+                        playerInTile.second == posInTile.second &&
+                        stat.alive) {
+                        manager.template unsetComponent<Alive>(player);
+                        stat.alive = false;
+                        enemyStat.kill++;
+                        world->eject(node.node, explosionCenter);
+                    }
+                });
             }
         });
     }

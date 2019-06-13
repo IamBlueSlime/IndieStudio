@@ -15,5 +15,4 @@
 #include "indiestudio/ecs/systems/IASystem.hpp"
 #include "indiestudio/ecs/systems/PickUpPowerUpSystem.hpp"
 #include "indiestudio/ecs/systems/SolidBombSystem.hpp"
-#include "indiestudio/ecs/systems/DeathSystem.hpp"
 #include "indiestudio/ecs/systems/WinLooseSystem.hpp"

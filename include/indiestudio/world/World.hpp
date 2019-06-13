@@ -65,7 +65,6 @@ namespace IndieStudio {
         ECS::System::PickUpPowerUpSystem<WorldECS>,
         ECS::System::IASystem<WorldECS>,
         ECS::System::SolidBombSystem<WorldECS>,
-        ECS::System::DeathSystem<WorldECS>,
         ECS::System::WinLooseSystem<WorldECS>,
         ECS::System::MovePlayerSystem<WorldECS>
     >;
