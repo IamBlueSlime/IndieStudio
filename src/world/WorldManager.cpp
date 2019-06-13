@@ -26,6 +26,7 @@ namespace IndieStudio {
     {
         this->registerGenerator(BASIC_WORLD_GENERATOR, &this->basicWorldGenerator);
         this->registerGenerator("Vertical", &this->verticalWorldGenerator);
+        this->registerGenerator("Empty", &this->emptyWorldGenerator);
     }
 
     World *WorldManager::create(WorldSettings &settings)

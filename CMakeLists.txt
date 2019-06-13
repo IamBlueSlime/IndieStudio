@@ -58,6 +58,7 @@ set(INDIE_SRC
     ${INDIE_SRC_DIR}/statistic/AchievementManager.cpp
     ${INDIE_SRC_DIR}/statistic/StatisticManager.cpp
     ${INDIE_SRC_DIR}/world/BasicWorldGenerator.cpp
+    ${INDIE_SRC_DIR}/world/EmptyWorldGenerator.cpp
     ${INDIE_SRC_DIR}/world/MapPattern.cpp
     ${INDIE_SRC_DIR}/world/VerticalWorldGenerator.cpp
     ${INDIE_SRC_DIR}/world/World.cpp

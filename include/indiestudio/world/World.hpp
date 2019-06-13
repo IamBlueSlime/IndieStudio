@@ -93,6 +93,7 @@ namespace IndieStudio {
         void createPowerUp(std::size_t type, const ECS::Position &position);
         void move(const irr::core::vector3df &direction, ECS::Position &pos, ECS::Speed &speed, ECS::Node &node);
         void dropBomb(float bombPosX, float bombPosZ, std::size_t playerID, float range) override;
+        void dropRandomBomb();
 
         /* ISerializable implementation */
         void pack(ByteBuffer &buffer) override;

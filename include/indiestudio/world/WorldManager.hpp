@@ -11,6 +11,7 @@
 #include <string>
 #include "indiestudio/common/Logger.hpp"
 #include "indiestudio/world/BasicWorldGenerator.hpp"
+#include "indiestudio/world/EmptyWorldGenerator.hpp"
 #include "indiestudio/world/VerticalWorldGenerator.hpp"
 #include "indiestudio/world/IWorldManager.hpp"
 #include "indiestudio/world/World.hpp"
@@ -48,6 +49,7 @@ namespace IndieStudio {
         std::unordered_map<std::string, IWorldGenerator *> generators;
         BasicWorldGenerator basicWorldGenerator;
         VerticalWorldGenerator verticalWorldGenerator;
+        EmptyWorldGenerator emptyWorldGenerator;
         std::unique_ptr<World> loadedWorld;
 
         static void assertValidWorld(ByteBuffer &buffer);

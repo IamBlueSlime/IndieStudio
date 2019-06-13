@@ -257,6 +257,10 @@ namespace IndieStudio {
                         Game::INSTANCE->getWorldManager()).getLoadedWorldImpl();
 
                     world->getSettings().elapsedSeconds += 1;
+
+                    // if (world->getSettings().elapsedSeconds >= 90)
+                    //     world->dropRandomBomb();
+
                     updateTimer(scene);
                     return true;
                 });

@@ -167,8 +167,8 @@ namespace IndieStudio {
             int mapScale = static_cast<irr::gui::IGUIScrollBar *>(
                 scene.gui->getElementFromId(32)
             )->getPos();
-            settings.width = 17 * mapScale;
-            settings.height = 11 * mapScale;
+            settings.width = 17 + (2 * mapScale);
+            settings.height = 11 + (2 * mapScale);
 
             irr::gui::IGUIComboBox *generatorBox = static_cast<irr::gui::IGUIComboBox *>(
                 scene.gui->getElementFromId(33));

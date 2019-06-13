@@ -233,6 +233,22 @@ namespace IndieStudio {
             this->ecs, this, this->scene.scene, bombPosX, bombPosZ, playerID, range);
     }
 
+    void World::dropRandomBomb()
+    {
+        unsigned short realWidth = this->settings.width - 2;
+        unsigned short realHeight = this->settings.height - 2;
+        float posX = 1 + std::rand() % realWidth;
+        float posZ = 1 + std::rand() % realHeight;
+
+        bool done = false;
+
+        this->ecs.forEntitiesWith<ECS::Component::Stat, ECS::Component::Alive>([&](auto, std::size_t id) {
+            ECS::Component::Stat &stats = this->ecs.getComponent<ECS::Component::Stat>(id);
+            done = true;
+            this->dropBomb(posX, posZ, id, stats.range);
+        });
+    }
+
     void World::pack(ByteBuffer &buffer)
     {
         this->settings.pack(buffer);
@@ -320,14 +336,14 @@ namespace IndieStudio {
         auto node = scene.scene->addAnimatedMeshSceneNode(scene.scene->getMesh("assets/models/cube.obj"));
         // node->addShadowVolumeSceneNode();
         node->setMaterialTexture(0, driver->getTexture("assets/textures/block_ground_1.png"));
-		node->setMaterialFlag(irr::video::EMF_LIGHTING, true);
-		node->setScale(irr::core::vector3df(Constants::TILE_SIZE_FACTOR, Constants::TILE_SIZE_FACTOR, Constants::TILE_SIZE_FACTOR));
-		node->setPosition(irr::core::vector3df(0.5, 50, 0.5));
+                node->setMaterialFlag(irr::video::EMF_LIGHTING, true);
+                node->setScale(irr::core::vector3df(Constants::TILE_SIZE_FACTOR, Constants::TILE_SIZE_FACTOR, Constants::TILE_SIZE_FACTOR));
+                node->setPosition(irr::core::vector3df(0.5, 50, 0.5));
         node->addShadowVolumeSceneNode(node->getMesh());
 
         this->pattern->forEach([&](int x, int y, int z, MapPattern::TileType tileType) {
-	    	if (tileType == MapPattern::TileType::EMPTY)
-	    		return;
+                if (tileType == MapPattern::TileType::EMPTY)
+                        return;
 
             auto &newBlock = ecs.addEntity();
             ecs.setComponent(newBlock, Node(static_cast<irr::scene::IAnimatedMeshSceneNode *>(node->clone())));
@@ -346,25 +362,25 @@ namespace IndieStudio {
             auto animatedNode = static_cast<irr::scene::IAnimatedMeshSceneNode *>
                 (ecs.getComponent<Node>(newBlock).node);
 
-	    	if (tileType == MapPattern::TileType::FLOOR_FIRST) {
+                if (tileType == MapPattern::TileType::FLOOR_FIRST) {
                 animatedNode->addShadowVolumeSceneNode();
-	    		ecs.setComponent(newBlock, MaterialTexture(0, "assets/textures/block_ground_1.png"));
+                        ecs.setComponent(newBlock, MaterialTexture(0, "assets/textures/block_ground_1.png"));
                 ecs.setComponent(newBlock, Scale(Constants::TILE_SIZE_FACTOR, Constants::TILE_SIZE_FACTOR, Constants::TILE_SIZE_FACTOR));
-	    	} else if (tileType == MapPattern::TileType::FLOOR_SECOND) {
+                } else if (tileType == MapPattern::TileType::FLOOR_SECOND) {
                 animatedNode->addShadowVolumeSceneNode();
-	    	    ecs.setComponent(newBlock, MaterialTexture(0, "assets/textures/block_ground_2.png"));
+                    ecs.setComponent(newBlock, MaterialTexture(0, "assets/textures/block_ground_2.png"));
                 ecs.setComponent(newBlock, Scale(Constants::TILE_SIZE_FACTOR, Constants::TILE_SIZE_FACTOR, Constants::TILE_SIZE_FACTOR));
-	    	} else if (tileType == MapPattern::TileType::BORDER_WALL_BLOCK) {
+                } else if (tileType == MapPattern::TileType::BORDER_WALL_BLOCK) {
                 animatedNode->addShadowVolumeSceneNode();
-	    		ecs.setComponent(newBlock, MaterialTexture(0, "assets/textures/block_wall.png"));
+                        ecs.setComponent(newBlock, MaterialTexture(0, "assets/textures/block_wall.png"));
                 ecs.setComponent(newBlock, Scale(Constants::TILE_SIZE_FACTOR, Constants::TILE_SIZE_FACTOR, Constants::TILE_SIZE_FACTOR));
-	    	} else if (tileType == MapPattern::TileType::INNER_WALL_BLOCK) {
+                } else if (tileType == MapPattern::TileType::INNER_WALL_BLOCK) {
                 animatedNode->addShadowVolumeSceneNode();
-	    		ecs.setComponent(newBlock, MaterialTexture(0, "assets/textures/block_wall.png"));
+                        ecs.setComponent(newBlock, MaterialTexture(0, "assets/textures/block_wall.png"));
                 ecs.setComponent(newBlock, Scale(Constants::TILE_SIZE_FACTOR * 0.9, Constants::TILE_SIZE_FACTOR * 0.9, Constants::TILE_SIZE_FACTOR * 0.9));
             } else if (tileType == MapPattern::TileType::BREAKABLE_BLOCK) {
                 animatedNode->addShadowVolumeSceneNode();
-	    		ecs.setComponent(newBlock, MaterialTexture(0, "assets/textures/block_brick.png"));
+                        ecs.setComponent(newBlock, MaterialTexture(0, "assets/textures/block_brick.png"));
                 ecs.setComponent(newBlock, Alive());
                 ecs.setComponent(newBlock, Scale(Constants::TILE_SIZE_FACTOR * 0.9, Constants::TILE_SIZE_FACTOR * 0.9, Constants::TILE_SIZE_FACTOR * 0.9));
                 ecs.setComponent(newBlock, Alive());
@@ -428,14 +444,14 @@ namespace IndieStudio {
         ecs.setComponent(player, MaterialFlag(irr::video::EMF_LIGHTING, false));
         ecs.setComponent(player, Scale(Constants::TILE_SIZE_FACTOR, Constants::TILE_SIZE_FACTOR, Constants::TILE_SIZE_FACTOR));
         ecs.setComponent(player, Position(positions[playerId].first, 61, positions[playerId].second));
-        ecs.setComponent(player, Speed(1, 1, 1));
+        ecs.setComponent(player, Speed(5, 5, 5));
         ecs.setComponent(player, Movement());
         ecs.setComponent(player, IsPlayer());
         ecs.setComponent(player, Alive());
 
         auto statCmnt = Stat();
         statCmnt.playerIdx = playerId;
-        statCmnt.bomb = 1;
+        statCmnt.bomb = 10;
         statCmnt.range = 2;
         statCmnt.alive = true;
         statCmnt.draw = false;
