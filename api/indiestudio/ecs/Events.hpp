@@ -31,7 +31,7 @@ namespace IndieStudio::ECS::Event {
             }
 
             switch (this->type) {
-                case EventType::INDIE_KEYBOARD_EVENT: return this->keyInput.Key == other.keyInput.Key && this->keyInput.PressedDown == other.keyInput.PressedDown;
+                case EventType::INDIE_KEYBOARD_EVENT: return this->keyInput.Key == other.keyInput.Key;
                 case EventType::INDIE_JOYSTICK_EVENT:
                     return this->joystickEvent.Axis == other.joystickEvent.Axis
                     && this->joystickEvent.ButtonStates == other.joystickEvent.ButtonStates
@@ -66,7 +66,7 @@ namespace std {
         {
             switch (event.type) {
                 case IndieStudio::ECS::Event::EventType::INDIE_KEYBOARD_EVENT:
-                    return ((hash<int>()(static_cast<int>(event.type))) ^ (hash<int>()(static_cast<int>(event.keyInput.Key) << 1)) >> 1) ^ (hash<bool>()(event.keyInput.PressedDown) << 1);
+                    return (hash<int>()(static_cast<int>(event.type))) ^ (hash<int>()(static_cast<int>(event.keyInput.Key) << 1)) >> 1;
                 case IndieStudio::ECS::Event::EventType::INDIE_JOYSTICK_EVENT: return 0;
                 case IndieStudio::ECS::Event::EventType::INDIE_MOUSE_EVENT:
                     return (hash<int>()(static_cast<int>(event.type))) ^ (hash<int>()(static_cast<int>(event.mouseInput.Event) << 1)) >> 1;
@@ -85,7 +85,7 @@ namespace IndieStudio::ECS::Event {
 
     class EventManager {
     public:
-        std::unordered_map<EventData, bool> &getEventQueue() {
+        std::unordered_map<EventData, EventData> &getEventQueue() {
             // if (this->event_queue_switch) {
             //     return this->event_queue2;
             // } else {
@@ -103,15 +103,15 @@ namespace IndieStudio::ECS::Event {
 
         void push_event(const EventData event) {
             // if (this->event_queue_switch) {
-                this->event_queue1[event] = true;
+            this->event_queue1[event] = event;
             // } else {
             //     this->event_queue2[event] = true;
             // }
         }
 
     private:
-        std::unordered_map<EventData, bool> event_queue1;
-        std::unordered_map<EventData, bool> event_queue2;
+        std::unordered_map<EventData, EventData> event_queue1;
+        std::unordered_map<EventData, EventData> event_queue2;
         bool event_queue_switch = false;
     };
 

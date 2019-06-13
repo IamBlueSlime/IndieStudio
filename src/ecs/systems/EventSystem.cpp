@@ -21,7 +21,7 @@ namespace IndieStudio::ECS::System {
                 const auto &callbacks = manager.template getComponent<EventCallbacks<ManagerType>>(data).getCallbacks();
 
                 for (const auto &event : event_manager.getEventQueue()) {
-                    const auto &callback = callbacks.find(event.first);
+                    const auto &callback = callbacks.find(event.second);
                     if (callback != callbacks.end()) {
                         auto &funcs = callback->second;
                         for (const auto &func : funcs) {
