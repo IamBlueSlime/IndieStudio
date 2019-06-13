@@ -455,70 +455,22 @@ namespace IndieStudio {
             ecs.setComponent(player, RealPlayer());
             eventCB.addCallback(this->settings.players[playerId].mappings.up,
                 [&] (const EventData &event, auto, auto) {
-                    try {
-                        ecs.template getComponent<Alive>(player.id);
-                    } catch (...) {
-                        return;
-                    }
-                    if (!event.keyInput.PressedDown) {
-                        mov.up = event.keyInput.PressedDown;
-                        return;
-                    }
                     mov.up = event.keyInput.PressedDown;
-                    mov.down = false;
-                    mov.left = false;
-                    mov.right = false;
                 }
             );
             eventCB.addCallback(this->settings.players[playerId].mappings.down,
                 [&] (const EventData &event, auto, auto) {
-                    try {
-                        ecs.template getComponent<Alive>(player);
-                    } catch (...) {
-                        return;
-                    }
-                    if (!event.keyInput.PressedDown) {
-                        mov.down = event.keyInput.PressedDown;
-                        return;
-                    }
                     mov.down = event.keyInput.PressedDown;
-                    mov.up = false;
-                    mov.left = false;
-                    mov.right = false;
                 }
             );
             eventCB.addCallback(this->settings.players[playerId].mappings.left,
                 [&] (const EventData &event, auto, auto) {
-                    try {
-                        ecs.template getComponent<Alive>(player);
-                    } catch (...) {
-                        return;
-                    }
-                    if (!event.keyInput.PressedDown) {
-                        mov.left = event.keyInput.PressedDown;
-                        return;
-                    }
                     mov.left = event.keyInput.PressedDown;
-                    mov.up = false;
-                    mov.down = false;
-                    mov.right = false;
                 }
             );
             eventCB.addCallback(this->settings.players[playerId].mappings.right,
                 [&] (const EventData &event, auto, auto) {
-                    try {
-                        ecs.template getComponent<Alive>(player);
-                    } catch (...) {
-                        return;
-                    }
-                    if (!event.keyInput.PressedDown) {
-                        mov.right = event.keyInput.PressedDown;
-                        return;
-                    }
                     mov.right = event.keyInput.PressedDown;
-                    mov.up = false;
-                    mov.down = false;
-                    mov.left = false;
                 }
             );
             eventCB.addCallback(this->settings.players[playerId].mappings.drop,
