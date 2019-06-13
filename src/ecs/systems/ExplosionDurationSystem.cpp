@@ -5,6 +5,9 @@
 ** ecs systems ApplyExplosionSystem.hpp
 */
 
+#include <chrono>
+#include <ctime>
+
 #include "indiestudio/ecs/systems/ExplosionDurationSystem.hpp"
 #include "indiestudio/world/World.hpp"
 
@@ -21,7 +24,9 @@ namespace IndieStudio::ECS::System {
                 auto pattern = world->getPattern();
                 std::pair<short, short> posInTile;
 
-                if (std::time(nullptr) - explosionTime.explosionLifeTime >= 1) {
+                std::chrono::duration<double> elapsed_time = std::chrono::system_clock::now() - explosionTime.explosionLifeTime;
+
+                if (elapsed_time.count() >= 0.3) {
                     manager.delEntity(data);
                     for (float i = 0; i < range.explosionRangeUp; i++) {
                         posInTile = pattern->positionToTile(position.x, position.z + (i * 20));

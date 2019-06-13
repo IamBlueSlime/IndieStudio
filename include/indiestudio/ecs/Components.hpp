@@ -13,6 +13,7 @@
 #include <vector>
 #include <functional>
 #include <ctime>
+#include <chrono>
 
 #include "indiestudio/ecs/Events.hpp"
 
@@ -57,16 +58,15 @@ namespace IndieStudio::ECS::Component {
         :
         lifeTime(_lifeTime) {}
 
-//TODO: std::chrono
         int lifeTime;
     };
 
     struct ExplosionLifeTime {
-        ExplosionLifeTime(int _explosionLifeTime = std::time(nullptr))
+        ExplosionLifeTime(std::chrono::time_point<std::chrono::system_clock> _explosionLifeTime = std::chrono::system_clock::now())
         :
         explosionLifeTime(_explosionLifeTime) {}
 
-        int explosionLifeTime;
+        std::chrono::time_point<std::chrono::system_clock> explosionLifeTime;
     };
 
     struct IsExploding {
