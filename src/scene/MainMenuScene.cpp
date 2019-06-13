@@ -7,6 +7,7 @@
 
 #include "indiestudio/Game.hpp"
 #include "indiestudio/scene/MainMenuScene.hpp"
+#include "indiestudio/scene/NewGameScene.hpp"
 #include "indiestudio/Singleton.hpp"
 #include "indiestudio/common/Error.hpp"
 #include "indiestudio/scene/PlayScene.hpp"
