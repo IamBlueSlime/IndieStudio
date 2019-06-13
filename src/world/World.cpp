@@ -136,14 +136,14 @@ namespace IndieStudio {
             }
 
             clone->setPosition(position);
-            auto del = clone->getSceneManager()->createDeleteAnimator(timeMs);
+            auto del = clone->getSceneManager()->createDeleteAnimator(timeMs + 300);
             if (!del) {
                 ret = false;
                 return;
             }
 
             clone->addAnimator(del);
-            auto anim = clone->getSceneManager()->createTextureAnimator(textureArray, timeMs / textureArray.size(), false);
+            auto anim = clone->getSceneManager()->createTextureAnimator(textureArray, (timeMs + 300) / textureArray.size(), false);
             clone->addAnimator(anim);
             clone->setVisible(true);
         });

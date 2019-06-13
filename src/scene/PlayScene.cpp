@@ -23,6 +23,7 @@ namespace IndieStudio {
 
     void PlayScene::initialize(SceneManager::Scene &scene)
     {
+        ECS::System::WinLooseSystem<WorldECS>::resetAnimation();
         WorldSettings &settings = static_cast<WorldManager &>(
             Game::INSTANCE->getWorldManager()).getLoadedWorldImpl()->getSettings();
         irr::scene::ICameraSceneNode *camera = scene.scene->addCameraSceneNode(0,

@@ -19,27 +19,24 @@ namespace IndieStudio::ECS::System {
     void WinLooseSystem<ManagerType>::process(ManagerType &manager, [[gnu::unused]] IndieStudio::World *world) {
         int deadPlayer = 0;
         int winnerPlayerID = 0;
-        static int already = 0;
 
-        if (already == 1)
+        if (WinLooseSystem::already)
             return;
 
         manager.template forEntitiesWith<RealPlayer>(
         [&] (auto &data, [[gnu::unused]] auto id) {
-            try {
-                manager.template getComponent<Alive>(data);
+            if (manager.template hasComponent<Alive>(data)) {
                 winnerPlayerID = id;
-            } catch (...) {
+            } else {
                 deadPlayer++;
             }
         });
 
         manager.template forEntitiesWith<IA>(
         [&] (auto &data, [[gnu::unused]] auto id) {
-            try {
-                manager.template getComponent<Alive>(data);
+            if (manager.template hasComponent<Alive>(data)) {
                 winnerPlayerID = id;
-            } catch (...) {
+            } else {
                 deadPlayer++;
             }
         });
@@ -60,7 +57,7 @@ namespace IndieStudio::ECS::System {
             W->getScene().scene->getActiveCamera()->setTarget({position.x, position.y, position.z});
             animCircle->drop();
             stat.winner = true;
-            already = 1;
+            WinLooseSystem::already = true;
         }
     }
     template class WinLooseSystem<WorldECS>;
