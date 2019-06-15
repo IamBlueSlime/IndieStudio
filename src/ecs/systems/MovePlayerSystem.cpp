@@ -21,41 +21,37 @@ namespace IndieStudio::ECS::System {
                     if (world->getSettings().elapsedSeconds == 0)
                         return;
 
+                    auto &node = manager.template getComponent<Node>(data);
+                    auto &pos = manager.template getComponent<Position>(data);
+                    auto absPos = node.node->getAbsolutePosition();
+
+                    pos.x = absPos.X;
+                    pos.y = absPos.Y;
+                    pos.z = absPos.Z;
+
                     Movement &mov = manager.template getComponent<Movement>(data);
                     auto &speed = manager.template getComponent<Speed>(data);
-                    auto &pos = manager.template getComponent<Position>(data);
-                    auto &node = manager.template getComponent<Node>(data);
+                    irr::core::vector3df vect(0, 0, 0);
 
-                    bool did = false;
                     if (mov.up) {
-                        std::cout << "up ; ";
-                        world->move({0, 0, 1}, pos, speed, node);
-                        did = true;
+                        vect.Z += 1;
+                    } if (mov.down) {
+                        vect.Z -= 1;
+                    } if (mov.left) {
+                        vect.X -= 1;
+                    } if (mov.right) {
+                        vect.X += 1;
                     }
-                    if (mov.down) {
-                        std::cout << "down ; ";
-                        world->move({0, 0, -1}, pos, speed, node);
-                        did = true;
-                    }
-                    if (mov.left) {
-                        std::cout << "left ; ";
-                        world->move({-1, 0, 0}, pos, speed, node);
-                        did = true;
-                    }
-                    if (mov.right) {
-                        std::cout << "right ; ";
-                        world->move({1, 0, 0}, pos, speed, node);
-                        did = true;
-                    }
-                    std::cout << std::endl;
 
                     irr::scene::IAnimatedMeshSceneNode *animatedNode =
                         static_cast<irr::scene::IAnimatedMeshSceneNode *>(node.node);
 
-                    if (!did) {
+                    if (vect.X == 0 && vect.Z == 0) {
                         if (animatedNode->getFrameNr() == 76 || animatedNode->getFrameNr() <= 27)
                             animatedNode->setFrameLoop(27, 76);
                         return;
+                    } else {
+                        world->move(vect, pos, speed, node);
                     }
                     if (animatedNode->getFrameNr() > 27)
 		                animatedNode->setFrameLoop(0, 27);
