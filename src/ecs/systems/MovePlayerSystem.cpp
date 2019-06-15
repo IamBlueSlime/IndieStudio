@@ -28,18 +28,26 @@ namespace IndieStudio::ECS::System {
 
                     bool did = false;
                     if (mov.up) {
+                        std::cout << "up ; ";
                         world->move({0, 0, 1}, pos, speed, node);
                         did = true;
-                    } if (mov.down) {
+                    }
+                    if (mov.down) {
+                        std::cout << "down ; ";
                         world->move({0, 0, -1}, pos, speed, node);
                         did = true;
-                    } if (mov.left) {
+                    }
+                    if (mov.left) {
+                        std::cout << "left ; ";
                         world->move({-1, 0, 0}, pos, speed, node);
                         did = true;
-                    } if (mov.right) {
+                    }
+                    if (mov.right) {
+                        std::cout << "right ; ";
                         world->move({1, 0, 0}, pos, speed, node);
                         did = true;
                     }
+                    std::cout << std::endl;
 
                     irr::scene::IAnimatedMeshSceneNode *animatedNode =
                         static_cast<irr::scene::IAnimatedMeshSceneNode *>(node.node);

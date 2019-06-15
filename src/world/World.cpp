@@ -184,8 +184,9 @@ namespace IndieStudio {
 
     void World::move(const irr::core::vector3df &direction, ECS::Position &pos, ECS::Speed &speed, ECS::Node &node)
     {
-        irr::core::vector3df actPos(node.node->getAbsolutePosition());
+        irr::core::vector3df actPos(pos.x, pos.y, pos.z);
 
+        std::cout << direction.X << "x " << direction.Y << "y " << direction.Z << "z" << std::endl;
         if (direction.X == -1)
             node.node->setRotation(irr::core::vector3df(0, 90, 0));
         else if (direction.X == 1)
@@ -203,9 +204,11 @@ namespace IndieStudio {
         //TODO: check boundingbox at newPos, if can't move return actPos
         node.node->setPosition(newPos);
 
+        std::cout << "Position before: " << pos.x << "x " << pos.y << "y " << pos.z << "z" << std::endl;
         pos.x = newPos.X;
         pos.y = newPos.Y;
         pos.z = newPos.Z;
+        std::cout << "Position after: " << pos.x << "x " << pos.y << "y " << pos.z << "z" << std::endl;
     }
 
     void World::eject(irr::scene::ISceneNode *node, irr::core::vector3df &bombPos)
@@ -472,41 +475,21 @@ namespace IndieStudio {
             eventCB.addCallback(this->settings.players[playerId].mappings.up,
                 [&] (const EventData &event, auto, auto) {
                     mov.up = event.keyInput.PressedDown;
-                    if (!event.keyInput.PressedDown)
-                        return;
-                    mov.down = false;
-                    mov.left = false;
-                    mov.right = false;
                 }
             );
             eventCB.addCallback(this->settings.players[playerId].mappings.down,
                 [&] (const EventData &event, auto, auto) {
                     mov.down = event.keyInput.PressedDown;
-                    if (!event.keyInput.PressedDown)
-                        return;
-                    mov.up = false;
-                    mov.left = false;
-                    mov.right = false;
                 }
             );
             eventCB.addCallback(this->settings.players[playerId].mappings.left,
                 [&] (const EventData &event, auto, auto) {
                     mov.left = event.keyInput.PressedDown;
-                    if (!event.keyInput.PressedDown)
-                        return;
-                    mov.down = false;
-                    mov.up = false;
-                    mov.right = false;
                 }
             );
             eventCB.addCallback(this->settings.players[playerId].mappings.right,
                 [&] (const EventData &event, auto, auto) {
                     mov.right = event.keyInput.PressedDown;
-                    if (!event.keyInput.PressedDown)
-                        return;
-                    mov.down = false;
-                    mov.left = false;
-                    mov.up = false;
                 }
             );
             eventCB.addCallback(this->settings.players[playerId].mappings.drop,

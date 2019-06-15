@@ -9,6 +9,7 @@
 
 #include <cmath>
 #include <unordered_map>
+#include <vector>
 #include <iostream>
 #include <cassert>
 #include <irrlicht.h>
@@ -85,16 +86,12 @@ namespace IndieStudio::ECS::Event {
 
     class EventManager {
     public:
-        std::unordered_map<EventData, EventData> &getEventQueue() {
-            // if (this->event_queue_switch) {
-            //     return this->event_queue2;
-            // } else {
-                return this->event_queue1;
-            // }
+        std::vector<EventData> &getEventQueue() {
+                return this->event_queue;
         }
 
         void clear_event_queue() {
-            this->getEventQueue().clear();
+            this->event_queue.clear();
         }
 
         void switch_event_queue() {
@@ -102,16 +99,11 @@ namespace IndieStudio::ECS::Event {
         }
 
         void push_event(const EventData event) {
-            // if (this->event_queue_switch) {
-            this->event_queue1[event] = event;
-            // } else {
-            //     this->event_queue2[event] = true;
-            // }
+            this->event_queue.push_back(event);
         }
 
     private:
-        std::unordered_map<EventData, EventData> event_queue1;
-        std::unordered_map<EventData, EventData> event_queue2;
+        std::vector<EventData> event_queue;
         bool event_queue_switch = false;
     };
 
