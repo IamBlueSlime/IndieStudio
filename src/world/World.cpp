@@ -472,21 +472,41 @@ namespace IndieStudio {
             eventCB.addCallback(this->settings.players[playerId].mappings.up,
                 [&] (const EventData &event, auto, auto) {
                     mov.up = event.keyInput.PressedDown;
+                    if (!event.keyInput.PressedDown)
+                        return;
+                    mov.down = false;
+                    mov.left = false;
+                    mov.right = false;
                 }
             );
             eventCB.addCallback(this->settings.players[playerId].mappings.down,
                 [&] (const EventData &event, auto, auto) {
                     mov.down = event.keyInput.PressedDown;
+                    if (!event.keyInput.PressedDown)
+                        return;
+                    mov.up = false;
+                    mov.left = false;
+                    mov.right = false;
                 }
             );
             eventCB.addCallback(this->settings.players[playerId].mappings.left,
                 [&] (const EventData &event, auto, auto) {
                     mov.left = event.keyInput.PressedDown;
+                    if (!event.keyInput.PressedDown)
+                        return;
+                    mov.down = false;
+                    mov.up = false;
+                    mov.right = false;
                 }
             );
             eventCB.addCallback(this->settings.players[playerId].mappings.right,
                 [&] (const EventData &event, auto, auto) {
                     mov.right = event.keyInput.PressedDown;
+                    if (!event.keyInput.PressedDown)
+                        return;
+                    mov.down = false;
+                    mov.left = false;
+                    mov.up = false;
                 }
             );
             eventCB.addCallback(this->settings.players[playerId].mappings.drop,
