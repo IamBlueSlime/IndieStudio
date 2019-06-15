@@ -15,7 +15,7 @@ namespace IndieStudio {
 
     const unsigned char WorldManager::FILE_MAGIC[sizeof(World::FileHeader::magic)] =
         { '\\', 'B', 'M', 'M' };
-    const unsigned char WorldManager::FILE_FORMAT_VERSION = 1;
+    const unsigned char WorldManager::FILE_FORMAT_VERSION = 2;
 
     const std::string WorldManager::BASIC_WORLD_GENERATOR = "Basic";
 

@@ -444,14 +444,14 @@ namespace IndieStudio {
         ecs.setComponent(player, MaterialFlag(irr::video::EMF_LIGHTING, false));
         ecs.setComponent(player, Scale(Constants::TILE_SIZE_FACTOR, Constants::TILE_SIZE_FACTOR, Constants::TILE_SIZE_FACTOR));
         ecs.setComponent(player, Position(positions[playerId].first, 61, positions[playerId].second));
-        ecs.setComponent(player, Speed(5, 5, 5));
+        ecs.setComponent(player, Speed(1, 1, 1));
         ecs.setComponent(player, Movement());
         ecs.setComponent(player, IsPlayer());
         ecs.setComponent(player, Alive());
 
         auto statCmnt = Stat();
         statCmnt.playerIdx = playerId;
-        statCmnt.bomb = 10;
+        statCmnt.bomb = 1;
         statCmnt.range = 2;
         statCmnt.alive = true;
         statCmnt.draw = false;

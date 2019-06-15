@@ -358,7 +358,7 @@ namespace IndieStudio::ECS::System {
 
                     std::optional<typename Poti<ManagerType>::Direction> decision = this->execute_action(manager, ia.current_action, position, world, data.id);
                     if (!decision) {
-                            ia.current_action = this->select_action();
+                            ia.current_action = this->select_action(manager, id);
                             decision = this->execute_action(manager, ia.current_action, position, world, data.id);
                     }
 
@@ -481,14 +481,47 @@ namespace IndieStudio::ECS::System {
             return false;
         }
 
-        IA::Action select_action() {
-            int rand = std::rand() % 3;
+        IA::Action select_action(ManagerType &manager, std::size_t id) {
+            int rand = std::rand() % 100;
+            auto &stat = manager.template getComponent<ECS::Component::Stat>(id);
+            int atk_rate = 0;
+            int pickup_rate = 0;
+            int wall_rate = 0;
 
-            switch (rand) {
-                case 0: return IA::Action::ATK;
-                case 1: return IA::Action::WALL;
-                case 2: return IA::Action::PICKUP;
-                default: return IA::Action::NOTHING;
+            switch (stat.playerIdx) {
+            case 0:
+                atk_rate = 33;
+                pickup_rate = 33;
+                wall_rate = 34;
+                break;
+            case 1:
+                atk_rate = 20;
+                pickup_rate = 60;
+                wall_rate = 20;
+                break;
+            case 2:
+                atk_rate = 60;
+                pickup_rate = 20;
+                wall_rate = 20;
+                break;
+            case 3:
+                atk_rate = 20;
+                pickup_rate = 20;
+                wall_rate = 60;
+                break;
+            default:
+                break;
+            }
+
+            if (rand < atk_rate) {
+                return IA::Action::ATK;
+            } else if (rand < atk_rate + pickup_rate) {
+                return IA::Action::PICKUP;
+            } else if (rand < atk_rate + pickup_rate + wall_rate) {
+                return IA::Action::WALL;
+            } else {
+                std::cout << "WTF" << std::endl;
+                return IA::Action::NOTHING;
             }
         }
 
