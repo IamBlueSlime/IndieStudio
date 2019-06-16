@@ -5,7 +5,7 @@
 ** WinLooseSystem
 */
 
-#include <irrlicht/irrlicht.h>
+#include <irrlicht.h>
 #include "indiestudio/ecs/systems/WinLooseSystem.hpp"
 #include "indiestudio/world/World.hpp"
 #include "indiestudio/common/Scheduler.hpp"

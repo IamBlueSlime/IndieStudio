@@ -72,10 +72,8 @@ if (UNIX)
     set(INDIE_REQUIRED_LIBRARIES ${INDIE_REQUIRED_LIBRARIES} dl stdc++fs pthread)
 endif ()
 
-add_compile_options(-Wall)
-
 if (UNIX)
-    add_compile_options(-Wextra)
+    add_compile_options(-Wall -Wextra)
 endif ()
 
 if (CMAKE_BUILD_TYPE EQUAL "Debug")
