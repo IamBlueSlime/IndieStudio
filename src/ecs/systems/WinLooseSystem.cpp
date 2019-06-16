@@ -42,7 +42,7 @@ namespace IndieStudio::ECS::System {
         });
 
         if (deadPlayer == 4) {
-            std::cout << "Withdraw" << std::endl;
+            std::cout << "It's a draw!" << std::endl;
         } else if (deadPlayer == 3) {
             manager.template unsetComponent<Alive>(winnerPlayerID);
             auto &stat = manager.template getComponent<Stat>(winnerPlayerID);

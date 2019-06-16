@@ -98,8 +98,6 @@ namespace IndieStudio {
     {
         World::FileHeader header;
 
-        //std::cout << buffer.getSize() << std::endl;
-
         if (buffer.getSize() < sizeof(header))
             throw SaveError("The provided file is not a Bomberman map");
 

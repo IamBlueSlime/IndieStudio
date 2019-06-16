@@ -21,11 +21,11 @@ namespace IndieStudio::ECS::System {
                 const auto &callbacks = manager.template getComponent<EventCallbacks<ManagerType>>(data).getCallbacks();
 
                 for (const auto &event : event_manager.getEventQueue()) {
-                    const auto &callback = callbacks.find(event.second);
+                    const auto &callback = callbacks.find(event);
                     if (callback != callbacks.end()) {
                         auto &funcs = callback->second;
                         for (const auto &func : funcs) {
-                            func(event.first, id, manager);
+                            func(event, id, manager);
                         }
                     }
                 }

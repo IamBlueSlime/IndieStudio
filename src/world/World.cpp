@@ -184,28 +184,37 @@ namespace IndieStudio {
 
     void World::move(const irr::core::vector3df &direction, ECS::Position &pos, ECS::Speed &speed, ECS::Node &node)
     {
-        irr::core::vector3df actPos(node.node->getAbsolutePosition());
+        irr::core::vector3df actPos(pos.x, pos.y, pos.z);
+        irr::core::vector3df rota(0, 0, 0);
 
-        if (direction.X == -1)
-            node.node->setRotation(irr::core::vector3df(0, 90, 0));
-        else if (direction.X == 1)
-            node.node->setRotation(irr::core::vector3df(0, 270, 0));
-        else if (direction.Z == 1)
-            node.node->setRotation(irr::core::vector3df(0, 180, 0));
-        else if (direction.Z == -1)
-            node.node->setRotation(irr::core::vector3df(0, 0, 0));
+        if (direction.X == -1) {
+            rota.Y = 90;
+            if (direction.Z != 0)
+                rota.Y += (direction.Z == 1) ? 45 : -45;
+            node.node->setRotation(rota);
+        } else if (direction.X == 1) {
+            rota.Y = 270;
+            if (direction.Z != 0)
+                rota.Y += (direction.Z == 1) ? -45 : 45;
+            node.node->setRotation(rota);
+        } else if (direction.Z == 1) {
+            rota.Y = 180;
+            if (direction.X != 0)
+                rota.Y += (direction.X == 1) ? 45 : -45;
+            node.node->setRotation(rota);
+        } else if (direction.Z == -1) {
+            rota.Y = 0;
+            if (direction.X != 0)
+                rota.Y += (direction.X == 1) ? -45 : 45;
+            node.node->setRotation(rota);
+        }
 
         irr::core::vector3df newPos(
             actPos.X + (direction.X * speed.x),
             actPos.Y + (direction.Y * speed.y),
             actPos.Z + (direction.Z * speed.z));
 
-        //TODO: check boundingbox at newPos, if can't move return actPos
         node.node->setPosition(newPos);
-
-        pos.x = newPos.X;
-        pos.y = newPos.Y;
-        pos.z = newPos.Z;
     }
 
     void World::eject(irr::scene::ISceneNode *node, irr::core::vector3df &bombPos)
@@ -219,10 +228,10 @@ namespace IndieStudio {
         else
             dir.Y -= height;
         dir *= 20;
-        auto anim = this->scene.scene->createFlyStraightAnimator(pos, dir, 1000);
+        auto anim = this->scene.scene->createRotationAnimator(irr::core::vector3df(0, 50, 0));
         node->addAnimator(anim);
         anim->drop();
-        anim = this->scene.scene->createRotationAnimator(irr::core::vector3df(0, 1, 0));
+        anim = this->scene.scene->createFlyStraightAnimator(pos, dir, 1000);
         node->addAnimator(anim);
         anim->drop();
     }

@@ -81,8 +81,6 @@ if (CMAKE_BUILD_TYPE EQUAL "Debug")
 endif ()
 
 if (BUILD_GAME)
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
-
     add_executable(bomberman ${INDIE_SRC_DIR}/Main.cpp ${INDIE_SRC})
 
     target_include_directories(bomberman PRIVATE ${INDIE_API_INCLUDE_DIRS})

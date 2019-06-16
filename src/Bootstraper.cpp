@@ -14,9 +14,15 @@ namespace IndieStudio {
     {
         (void) ac;
         (void) av;
+        IndieStudio::Logger log("IndieStudio");
         Game game;
         Game::INSTANCE = &game;
-        game.start();
+        try {
+            game.start();
+        } catch (const IndieError &e) {
+            log.error(e.getComponent() + ": " + e.what());
+            return 84;
+        }
         return 0;
     }
 
