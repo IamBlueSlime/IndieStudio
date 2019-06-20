@@ -19,9 +19,9 @@ ninja:
 			if [ ! -d  build ]; then mkdir build; fi
 			cd build && cmake .. -DCMAKE_BUILD_TYPE=Debug -G"Ninja" && cmake --build .
 
-tests_run:
-			if [ ! -d  build ]; then mkdir build; fi
-			cd build && cmake .. -DBUILD_TESTS=ON && cmake --build . -- --no-print-directory && make test ARGS="-V"
+#tests_run:
+#			if [ ! -d  build ]; then mkdir build; fi
+#			cd build && cmake .. -DBUILD_TESTS=ON && cmake --build . -- --no-print-directory && make test ARGS="-V"
 
 coverage:
 			gcovr -r . --exclude-directories tests | tee coverage-litteral.txt
